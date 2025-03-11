@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.EnterTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,7 +41,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -58,10 +61,11 @@ val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setContent {
-            appNavigation()
+
+//            appNavigation()
+            mainScreen()
+
         }
     }
 }
@@ -79,12 +83,12 @@ fun getAppVersion(context: Context): String {
 fun appNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "splash",)
+    NavHost(navController = navController, startDestination = "splash")
 
 
     {
         composable("splash") { splashScreen(navController) }
-        composable("login") { loginScreen(LocalContext.current,navController) }
+        composable("login") { loginScreen(LocalContext.current, navController) }
         composable("mainscreen") { mainScreen() }
     }
 }
@@ -187,7 +191,9 @@ fun loginScreen(context: Context, navController: NavHostController?) {
                 Text(
                     "اپنا شناختی کارڈ نمبر درج کریں",
                     textAlign = TextAlign.End,
-                    fontFamily = jameelNooriFont, modifier = Modifier.fillMaxWidth(), fontSize = 26.sp
+                    fontFamily = jameelNooriFont,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 26.sp
                 )
             },
             maxLines = 1,
@@ -197,7 +203,8 @@ fun loginScreen(context: Context, navController: NavHostController?) {
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        Spacer(modifier = Modifier.height(32.dp)
+        Spacer(
+            modifier = Modifier.height(32.dp)
         )
 
         Box(
@@ -274,76 +281,83 @@ fun loginScreen(context: Context, navController: NavHostController?) {
 
 @Composable
 fun mainScreen() {
+    var devID by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
-            .fillMaxSize().padding(8.dp)
-            .background(Color.White) // Adjust as per your design
+            .fillMaxSize()
+            .background(color = Color.White)
     )
     {
-        Column {
-
-            Card(
+        Column (modifier = Modifier.fillMaxSize()){
+            Box(
                 modifier = Modifier
+                    .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(6.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(Color.White)
+                    .padding(top = 18.dp)
+                    .background(Color.Green)
+                    .clip(shape = RoundedCornerShape(20.dp))
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Profile Image
+                Row {
                     Image(
-                        painter = painterResource(id = R.drawable.user_smile_fill),
-                        contentDescription = "User Profile",
+                        painterResource(id = R.drawable.icon),
+                        contentDescription = "Logo",
                         modifier = Modifier
-                            .size(52.dp)
-                            .clip(CircleShape)
-                        //                        .background(Color.Green)
+                            .size(50.dp)
+                            .padding(4.dp)
                     )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Column {
+                    Spacer(Modifier.width(10.dp))
+                    Column() {
                         Text(
-                            text = "خوش آمدید",
+                            "خوش آمدید",
                             fontFamily = jameelNooriFont,
-                            textAlign = TextAlign.End,
-                            fontSize = 22.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.padding(top = 5.dp),
+                            fontSize = 18.sp,
+                            color = Color.White
                         )
-
                         Text(
-                            text = "Hamza",
-                            fontSize = 22.sp,
+                            "Mr.Technician",
                             fontWeight = FontWeight.Bold,
-                            color = Color.Green
+                            color = Color.White,
+                            fontSize = 20.sp
                         )
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-
                 }
             }
-            Card(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(26.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(Color.White)
-            ) {}
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 18.dp, start = 18.dp), contentAlignment = Alignment.CenterEnd) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
 
-        }
 
+                    checkButton()
+
+                    OutlinedTextField(
+                        value = devID,
+                        onValueChange = { devID = it },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 10.dp),
+                        label = {
+                            Text(
+                                text = "ڈیوائس نمبر درج کریں",
+                                modifier = Modifier.fillMaxWidth(),
+                                fontFamily = jameelNooriFont,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    )
+                }
+
+            }
 
         }
     }
 
+}
 
 // I will use it in future
 @Composable
@@ -383,6 +397,21 @@ fun LoadingScreen() {
     }
 }
 
+@Composable
+fun checkButton(){
+    Box(
+        modifier = Modifier
+            .width(120.dp)
+            .height(42.dp)
+            .padding(end = 32.dp)
+            .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.check_double_line),
+            contentDescription = "Check Icon",
+        )
+    }}
 
 
 @Preview
