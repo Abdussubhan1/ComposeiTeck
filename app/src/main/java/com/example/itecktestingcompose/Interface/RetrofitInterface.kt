@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.Interface
 
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
+import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.google.gson.GsonBuilder
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -14,6 +15,9 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("validate_cnic.php")
     suspend fun validateCnic(@Field("cnic") cnic: String): Response<ValidateCnicResponse>
+
+    @POST("validate_device.php")
+    suspend fun validateDevice(@Field("Device Number") devID: String): Response<ValidateDeviceResponse>
 }
 
 

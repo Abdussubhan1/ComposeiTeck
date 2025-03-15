@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,17 +35,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun loginScreen(
-    context: Context,
-    onClick: (String) -> Unit
-) {
-
+fun loginScreen(context: Context, navController: NavHostController? = null) {
     val version = getAppVersion(context)
+
+    var validationResult by remember { mutableStateOf(CNICValidationResult(false, false)) }
+
     var cnic by remember { mutableStateOf("") }
+    val couroutineScope = rememberCoroutineScope()
+    val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]{1}\$")
+
+
 
     Column(
         modifier = Modifier
@@ -94,49 +100,55 @@ fun loginScreen(
                 .padding(horizontal = 32.dp)
                 .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp))
                 .clickable {
-                    onClick(cnic)
-//                    if (cnic.isEmpty()) Toast.makeText(
-//                        context,
-//                        "Please enter CNIC",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-////                    val cnicPattern = Regex("^\\d{5}-\\d{7}-\\d{1}$") // CNIC pattern
-//
-////                    when {
-////                        cnic.isEmpty() -> {
-////                            Toast.makeText(context, "Please enter CNIC", Toast.LENGTH_SHORT).show()
-////                        }
-//////                        !cnicPattern.matches(cnic) -> {
-//////                            Toast.makeText(
-//////                                context,
-//////                                "Please enter a valid CNIC (XXXXX-XXXXXXX-X)",
-//////                                Toast.LENGTH_SHORT
-//////                            ).show()
-//////                        }
-//                    else {
-//
-//
-////                        GlobalScope.launch {
-////
-////                            if (validateCnic(cnic.replace("-", "")))
-////                                if (navController != null)
-////                                    navController.navigate("mainscreen")
-////                                 else {
-////                                    Toast.makeText(
-////                                        context,
-////                                        "User does not exist", Toast.LENGTH_SHORT
-////                                    ).show()
-////                                }
-////                        }
-//
-//                    }
+
+                    if (cnic.isEmpty()||!regex.matches(cnic)) Toast.makeText(
+                        context,
+                        "Please enter valid CNIC (xxxxx-xxxxxxx-x)",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    else {
+                        validationResult = CNICValidationResult(false, true) // Updating the state
+
+                        couroutineScope.launch {
+
+                            validationResult = validateCnic(cnic.replace("-", ""))
+
+
+                            if (validationResult.ifUserExist) {
+                                Toast.makeText(
+                                    context,
+                                    "Welcome ${Constants.name}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                if (navController != null) {
+                                    navController.navigate("mainscreen")
+                                }
+
+
+                            } else {
+                                Toast.makeText(context, "User does not exist", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }
 
                 },
             contentAlignment = Alignment.Center
-        ) {
+        )
+
+        {
             Image(
                 painter = painterResource(id = R.drawable.check_double_line),
                 contentDescription = "Check Icon",
+            )
+        }
+
+        if(validationResult.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.padding(25.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .size(24.dp),Color.Green
             )
         }
 
@@ -169,19 +181,12 @@ fun loginScreen(
 
 }
 
+
 @Composable
-fun checkButton() {
-    Box(
-        modifier = Modifier
-            .width(120.dp)
-            .height(42.dp)
-            .padding(end = 32.dp)
-            .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.check_double_line),
-            contentDescription = "Check Icon",
-        )
-    }
+fun loader() {
+    CircularProgressIndicator(
+        color = Color.Green,
+        modifier = Modifier.size(24.dp),
+        strokeWidth = 10.dp
+    )
 }

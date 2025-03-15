@@ -26,7 +26,7 @@ import androidx.navigation.NavHostController
 fun splashScreen(navController: NavHostController) {
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(1000) // Wait for 3 seconds
+        kotlinx.coroutines.delay(1000) // Wait for 1 second
         navController.navigate("login") {
             popUpTo("splash") { inclusive = true }
         }
