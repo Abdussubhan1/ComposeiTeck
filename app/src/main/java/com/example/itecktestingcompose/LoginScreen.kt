@@ -1,6 +1,8 @@
 package com.example.itecktestingcompose
 
 import android.content.Context
+import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,9 +32,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +57,7 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
     val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]{1}\$")
+    val keyboard=LocalSoftwareKeyboardController.current
 
 
 
@@ -71,7 +81,8 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
 
         OutlinedTextField(
             value = cnic,
-            onValueChange = { cnic = it.filter { char -> char.isDigit() || char == '-' } },
+            onValueChange = { cnic=it.filter { it.isDigit() ||it=='-'} },
+
             label = {
                 Text(
                     "اپنا شناختی کارڈ نمبر درج کریں",
@@ -84,7 +95,7 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp),
+                .padding(horizontal = 32.dp).imePadding(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
@@ -101,19 +112,23 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
                 .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp))
                 .clickable {
 
+                    if (keyboard != null) {
+                        keyboard.hide()
+                    }
+
                     if (cnic.isEmpty()||!regex.matches(cnic)) Toast.makeText(
                         context,
-                        "Please enter valid CNIC (xxxxx-xxxxxxx-x)",
+                        "Please enter valid CNIC (XXXXX-XXXXXXX-X)",
                         Toast.LENGTH_SHORT
                     ).show()
 
                     else {
-                        validationResult = CNICValidationResult(false, true) // Updating the state
+                        validationResult = CNICValidationResult(false, true) // Updating the state for Loader
 
                         couroutineScope.launch {
 
-                            validationResult = validateCnic(cnic.replace("-", ""))
-
+                            validationResult = validateCnic(cnic.replace("-",""))
+                            Log.d("cnicV", "validateCnic: $cnic")
 
                             if (validationResult.ifUserExist) {
                                 Toast.makeText(
@@ -127,7 +142,7 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
 
 
                             } else {
-                                Toast.makeText(context, "User does not exist", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Technician Not Registered", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         }
@@ -179,14 +194,7 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
         }
     }
 
+
 }
 
 
-@Composable
-fun loader() {
-    CircularProgressIndicator(
-        color = Color.Green,
-        modifier = Modifier.size(24.dp),
-        strokeWidth = 10.dp
-    )
-}

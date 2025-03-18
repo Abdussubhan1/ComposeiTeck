@@ -15,9 +15,9 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("validate_cnic.php")
     suspend fun validateCnic(@Field("cnic") cnic: String): Response<ValidateCnicResponse>
-
+    @FormUrlEncoded
     @POST("validate_device.php")
-    suspend fun validateDevice(@Field("Device Number") devID: String): Response<ValidateDeviceResponse>
+    suspend fun validateDevice(@Field("devid") devID: String): Response<ValidateDeviceResponse>
 }
 
 
