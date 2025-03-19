@@ -18,14 +18,14 @@ suspend fun validateDev(devID: String): DevValidationResult {
 
     return try {
 
-        kotlinx.coroutines.delay(2000)
+        kotlinx.coroutines.delay(1000)
 
-        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateDevice(devID)
+        val response =
+            ServiceBuilder.buildService(RetrofitInterface::class.java).validateDevice(devID)
         if (response.isSuccessful && response.body() != null) {
             val responseBody = response.body()!!
             ifDeviceExist = responseBody.Success
         }
-
 
         DevValidationResult(ifDeviceExist, false)
 

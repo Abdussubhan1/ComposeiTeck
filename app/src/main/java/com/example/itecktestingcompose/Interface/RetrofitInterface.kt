@@ -1,5 +1,6 @@
 package com.example.itecktestingcompose.Interface
 
+import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.google.gson.GsonBuilder
@@ -24,7 +25,7 @@ interface RetrofitInterface {
 object ServiceBuilder {
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://api.itecknologi.com/automated_testing/")
+        .baseUrl(Constants.baseURL)
         .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
         .build()
 
