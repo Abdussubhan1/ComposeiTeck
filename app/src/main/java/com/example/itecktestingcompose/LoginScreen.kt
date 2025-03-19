@@ -105,24 +105,25 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
                 .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp))
                 .clickable {
 
+
                     if (keyboard != null) {
                         keyboard.hide()
                     }
 
-                    if (cnic.isEmpty()||!regex.matches(cnic)) Toast.makeText(
+                    if (cnic.isEmpty()||!regex.matches(cnic)){
+                        cnic=""
+                        Toast.makeText(
                         context,
                         "Please enter valid CNIC (XXXXX-XXXXXXX-X)",
                         Toast.LENGTH_SHORT
-                    ).show()
+                    ).show()}
 
                     else {
                         validationResult = CNICValidationResult(false, true) // Updating the state for Loader
 
                         couroutineScope.launch {
-
                             validationResult = validateCnic(cnic.replace("-",""))
-                            Log.d("cnicV", "validateCnic: $cnic")
-
+                            cnic=""
                             if (validationResult.ifUserExist) {
                                 Toast.makeText(
                                     context,
