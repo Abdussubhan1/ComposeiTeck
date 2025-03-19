@@ -50,7 +50,7 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
     val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]{1}\$")
-    val keyboard=LocalSoftwareKeyboardController.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
 
 
@@ -74,7 +74,7 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
 
         OutlinedTextField(
             value = cnic,
-            onValueChange = { cnic=it.filter { it.isDigit() ||it=='-'} },
+            onValueChange = { cnic = it.filter { it.isDigit() || it == '-' } },
 
             label = {
                 Text(
@@ -88,7 +88,8 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp).imePadding(),
+                .padding(horizontal = 32.dp)
+                .imePadding(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
@@ -110,20 +111,20 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
                         keyboard.hide()
                     }
 
-                    if (cnic.isEmpty()||!regex.matches(cnic)){
-                        cnic=""
+                    if (cnic.isEmpty() || !regex.matches(cnic)) {
+                        cnic = ""
                         Toast.makeText(
-                        context,
-                        "Please enter valid CNIC (XXXXX-XXXXXXX-X)",
-                        Toast.LENGTH_SHORT
-                    ).show()}
-
-                    else {
-                        validationResult = CNICValidationResult(false, true) // Updating the state for Loader
+                            context,
+                            "Please enter valid CNIC (XXXXX-XXXXXXX-X)",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        validationResult =
+                            CNICValidationResult(false, true) // Updating the state for Loader
 
                         couroutineScope.launch {
-                            validationResult = validateCnic(cnic.replace("-",""))
-                            cnic=""
+                            validationResult = validateCnic(cnic.replace("-", ""))
+                            cnic = ""
                             if (validationResult.ifUserExist) {
                                 Toast.makeText(
                                     context,
@@ -131,12 +132,20 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 if (navController != null) {
-                                    navController.navigate("mainscreen")
+                                    navController.navigate("mainscreen") {
+                                        popUpTo("login") {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
 
 
                             } else {
-                                Toast.makeText(context, "Technician Not Registered", Toast.LENGTH_SHORT)
+                                Toast.makeText(
+                                    context,
+                                    "Technician Not Registered",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                             }
                         }
@@ -153,11 +162,12 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
             )
         }
 
-        if(validationResult.isLoading) {
+        if (validationResult.isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.padding(25.dp)
+                modifier = Modifier
+                    .padding(25.dp)
                     .align(Alignment.CenterHorizontally)
-                    .size(24.dp),Color.Green
+                    .size(24.dp), Color.Green
             )
         }
 

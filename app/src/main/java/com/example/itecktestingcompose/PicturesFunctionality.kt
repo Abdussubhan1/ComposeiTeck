@@ -6,8 +6,11 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,12 +43,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
-@Preview(showBackground = true)
+
 @Composable
 fun picturesFunctionality() {
     val context = LocalContext.current
     var initiallistCompleted by remember { mutableStateOf(false) }
+    var moveToTesting by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -115,13 +120,17 @@ fun picturesFunctionality() {
                 text = "ڈیوائس کی تنصیب سے پہلے دوسری تصویر لینے کے لیے کلک کریں۔",
                 modifier = Modifier.padding(end = 14.dp),
                 fontFamily = jameelNooriFont,
-                fontSize = 18.sp,textAlign = TextAlign.End
+                fontSize = 18.sp, textAlign = TextAlign.End
             )
         } else initiallistCompleted = true
 
     }
     if (initiallistCompleted) {
-        Row (modifier = Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
+        Row(
+            modifier = Modifier.padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
             IconButton(onClick = {
                 initiallistOfImages.clear()
                 initiallistOfImages.addAll(listOf(null, null))
@@ -138,7 +147,7 @@ fun picturesFunctionality() {
                 )
 
             }
-            IconButton(onClick = {/*Ab yaha pr agr usne cross pr click kra to ham step 2 pr chale jaenge*/}) {
+            IconButton(onClick = { moveToTesting = true }) {
                 Icon(
                     imageVector = Icons.Rounded.Cancel,
                     contentDescription = "Done Button",
@@ -164,7 +173,7 @@ fun picturesFunctionality() {
                 initiallistOfImages[index]?.let { bitmap ->
                     Image(
                         bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Captured Image $index",
+                        contentDescription = "Captured Images",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp) // Adjust as needed
@@ -173,6 +182,23 @@ fun picturesFunctionality() {
                 }
             }
         }
+
+    }
+    if (moveToTesting) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Red),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) { }
+
+        }
+
 
     }
 }

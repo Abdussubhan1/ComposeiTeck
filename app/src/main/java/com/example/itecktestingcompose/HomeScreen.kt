@@ -41,11 +41,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.itecktestingcompose.Constants.Constants
 import kotlinx.coroutines.launch
 
 @Composable
-fun mainScreen(current: Context) {
+fun mainScreen(current: Context, navController: NavHostController) {
 
     val couroutineScope = rememberCoroutineScope()
     var devID by remember { mutableStateOf("") }
@@ -168,7 +169,7 @@ fun mainScreen(current: Context) {
         Spacer(modifier = Modifier.height(30.dp))
 
         if (validationResult.ifDeviceExist) {
-            picturesFunctionality()
+            picturesFunctionality(navController)
         Spacer(modifier = Modifier.weight(0.1f))
         }
 

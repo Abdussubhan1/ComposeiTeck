@@ -16,7 +16,7 @@ fun appNavigation() {
     {
         composable("splash") { splashScreen(navController) }
         composable("login") { loginScreen(LocalContext.current, navController) }
-        composable("mainscreen") { mainScreen(LocalContext.current) }
+        composable("mainscreen") { mainScreen(LocalContext.current, navController) }
     }
 }
 
