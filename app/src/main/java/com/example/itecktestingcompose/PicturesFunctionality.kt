@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,11 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import com.example.itecktestingcompose.Constants.Constants
 
 
 @Composable
-fun picturesFunctionality() {
+fun picturesFunctionality(devID: String, validationResult: DevValidationResult) {
     val context = LocalContext.current
     var initiallistCompleted by remember { mutableStateOf(false) }
     var moveToTesting by remember { mutableStateOf(false) }
@@ -122,10 +121,12 @@ fun picturesFunctionality() {
                 fontFamily = jameelNooriFont,
                 fontSize = 18.sp, textAlign = TextAlign.End
             )
-        } else initiallistCompleted = true
+        } else
+            initiallistCompleted = true
 
     }
-    if (initiallistCompleted) {
+
+    if (initiallistCompleted && !moveToTesting) {
         Row(
             modifier = Modifier.padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -147,13 +148,19 @@ fun picturesFunctionality() {
                 )
 
             }
-            IconButton(onClick = { moveToTesting = true }) {
+
+
+            IconButton(onClick = {
+                moveToTesting = true
+            }
+
+            ) {
                 Icon(
                     imageVector = Icons.Rounded.Cancel,
-                    contentDescription = "Done Button",
+                    contentDescription = "Cross Button",
                     tint = Color.Red,
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(120.dp)
 
                 )
             }
@@ -164,7 +171,12 @@ fun picturesFunctionality() {
                 fontSize = 20.sp
             )
 
+
         }
+
+    }
+
+    if (!moveToTesting) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -182,23 +194,40 @@ fun picturesFunctionality() {
                 }
             }
         }
-
     }
     if (moveToTesting) {
+        moveToTesting(devID, validationResult)
+    }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.Red),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) { }
+}
 
-        }
 
+@Composable
+fun moveToTesting(devID: String, validationResult: DevValidationResult) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.LightGray),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Technician Name: ${Constants.name} ")
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(text = "Device Number: $devID")
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(text = "Device Found In Inventory?: ${if (validationResult.ifDeviceExist) "Yes" else "No"}")
 
     }
+
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMoveToTesting() {
+    moveToTesting(
+        devID = "12345",
+        validationResult = DevValidationResult(ifDeviceExist = true, isLoading = false)
+    )
+
+}
+

@@ -51,6 +51,8 @@ fun mainScreen(current: Context, navController: NavHostController) {
     val couroutineScope = rememberCoroutineScope()
     var devID by remember { mutableStateOf("") }
     var validationResult by remember { mutableStateOf(DevValidationResult(false, false)) }
+    var isPicturesFunctionalityDone by remember { mutableStateOf(false) }
+    var moveToTesting by remember { mutableStateOf(false) }
     val keyboard = LocalSoftwareKeyboardController.current
 
     Column(
@@ -169,8 +171,7 @@ fun mainScreen(current: Context, navController: NavHostController) {
         Spacer(modifier = Modifier.height(30.dp))
 
         if (validationResult.ifDeviceExist) {
-            picturesFunctionality(navController)
-        Spacer(modifier = Modifier.weight(0.1f))
+                picturesFunctionality(devID,validationResult)
         }
 
 
