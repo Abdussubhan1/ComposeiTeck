@@ -43,7 +43,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.itecktestingcompose.Constants.Constants
 import kotlinx.coroutines.launch
 
@@ -53,6 +52,7 @@ fun mainScreen(current: Context) {
     val couroutineScope = rememberCoroutineScope()
     var devID by remember { mutableStateOf("") }
     var validationResult by remember { mutableStateOf(DevValidationResult(false, false)) }
+    var locValidationResult = remember { mutableStateOf(LocValidationResult(0.0,0.0)) }
     val keyboard = LocalSoftwareKeyboardController.current
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null)}
 
@@ -120,6 +120,7 @@ fun mainScreen(current: Context) {
                             validationResult = DevValidationResult(false, true)
                             couroutineScope.launch {
                                 validationResult = validateDev(devID)
+                                locValidationResult.value=validateLoc(devID)
 
                                 if (validationResult.ifDeviceExist)
                                     Toast.makeText(
@@ -172,7 +173,7 @@ fun mainScreen(current: Context) {
         Spacer(modifier = Modifier.height(30.dp))
 
         if (validationResult.ifDeviceExist) {
-                picturesFunctionality(devID, initiallistOfImages=initiallistOfImages)
+                picturesFunctionality(devID, initiallistOfImages=initiallistOfImages,locValidationResult.value,couroutineScope)
         }
 
 

@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.Interface
 
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.ModelClasses.GetLocation
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.google.gson.GsonBuilder
@@ -19,6 +20,9 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("validate_device.php")
     suspend fun validateDevice(@Field("devid") devID: String): Response<ValidateDeviceResponse>
+    @FormUrlEncoded
+    @POST("get_location.php")
+    suspend fun validateLocation(@Field("devid") devID: String): Response<GetLocation>
 }
 
 
