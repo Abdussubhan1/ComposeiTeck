@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,14 +48,13 @@ import com.example.itecktestingcompose.Constants.Constants
 import kotlinx.coroutines.launch
 
 @Composable
-fun mainScreen(current: Context, navController: NavHostController) {
+fun mainScreen(current: Context) {
 
     val couroutineScope = rememberCoroutineScope()
     var devID by remember { mutableStateOf("") }
     var validationResult by remember { mutableStateOf(DevValidationResult(false, false)) }
-    var isPicturesFunctionalityDone by remember { mutableStateOf(false) }
-    var moveToTesting by remember { mutableStateOf(false) }
     val keyboard = LocalSoftwareKeyboardController.current
+    var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null)}
 
     Column(
         modifier = Modifier
@@ -171,7 +172,7 @@ fun mainScreen(current: Context, navController: NavHostController) {
         Spacer(modifier = Modifier.height(30.dp))
 
         if (validationResult.ifDeviceExist) {
-                picturesFunctionality(devID,validationResult)
+                picturesFunctionality(devID, initiallistOfImages=initiallistOfImages)
         }
 
 

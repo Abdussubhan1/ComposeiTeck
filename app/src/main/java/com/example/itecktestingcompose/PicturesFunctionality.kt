@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,11 +47,11 @@ import com.example.itecktestingcompose.Constants.Constants
 
 
 @Composable
-fun picturesFunctionality(devID: String, validationResult: DevValidationResult) {
+fun picturesFunctionality(devID: String, initiallistOfImages: SnapshotStateList<Bitmap?>) {
     val context = LocalContext.current
     var initiallistCompleted by remember { mutableStateOf(false) }
     var moveToTesting by remember { mutableStateOf(false) }
-    var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
+//    var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicturePreview()
@@ -196,26 +197,25 @@ fun picturesFunctionality(devID: String, validationResult: DevValidationResult) 
         }
     }
     if (moveToTesting) {
-        moveToTesting(devID, validationResult)
+        moveToTestingForm(devID)
     }
-
 }
 
 
 @Composable
-fun moveToTesting(devID: String, validationResult: DevValidationResult) {
+fun moveToTestingForm(devID: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray),
+            .background(Color.LightGray)
+            .padding(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Technician Name: ${Constants.name} ")
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = "Device Number: $devID")
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "Device Found In Inventory?: ${if (validationResult.ifDeviceExist) "Yes" else "No"}")
+
 
     }
 
@@ -224,9 +224,8 @@ fun moveToTesting(devID: String, validationResult: DevValidationResult) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewMoveToTesting() {
-    moveToTesting(
-        devID = "12345",
-        validationResult = DevValidationResult(ifDeviceExist = true, isLoading = false)
+    moveToTestingForm(
+        devID = "12345"
     )
 
 }
