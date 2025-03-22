@@ -50,7 +50,9 @@ import kotlinx.coroutines.launch
 fun mainScreen(current: Context) {
 
     val couroutineScope = rememberCoroutineScope()
+    var isEnabled by remember { mutableStateOf(true) }
     var devID by remember { mutableStateOf("") }
+    var device by remember { mutableStateOf("") }
     var validationResult by remember { mutableStateOf(DevValidationResult(false, false)) }
     var locValidationResult = remember { mutableStateOf(LocValidationResult(0.0,0.0)) }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -109,7 +111,7 @@ fun mainScreen(current: Context) {
                 modifier = Modifier
                     .size(60.dp)
                     .padding(start = 10.dp, end = 10.dp)
-                    .clickable {
+                    .clickable (enabled = isEnabled){
                         keyboard?.hide()
                         if (devID.isEmpty() || devID.length < 7 || devID.length > 15) Toast.makeText(
                             current,
@@ -122,12 +124,15 @@ fun mainScreen(current: Context) {
                                 validationResult = validateDev(devID)
                                 locValidationResult.value=validateLoc(devID)
 
-                                if (validationResult.ifDeviceExist)
+                                if (validationResult.ifDeviceExist){
+                                    isEnabled=false
+                                    device = devID
+                                    devID=""
                                     Toast.makeText(
                                         current,
                                         "Device ID is valid",
                                         Toast.LENGTH_SHORT
-                                    ).show()
+                                    ).show()}
                                 else {
                                     Toast.makeText(
                                         current,
@@ -139,6 +144,7 @@ fun mainScreen(current: Context) {
                             }
                         }
                     }
+
             )
             OutlinedTextField(
                 value = devID,
@@ -151,7 +157,7 @@ fun mainScreen(current: Context) {
                         textAlign = TextAlign.End,
                         modifier = Modifier.fillMaxWidth()
                     )
-                },
+                }, enabled = isEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(end = 10.dp),
@@ -173,7 +179,7 @@ fun mainScreen(current: Context) {
         Spacer(modifier = Modifier.height(30.dp))
 
         if (validationResult.ifDeviceExist) {
-                picturesFunctionality(devID, initiallistOfImages=initiallistOfImages,locValidationResult.value,couroutineScope)
+                picturesFunctionality(device, initiallistOfImages=initiallistOfImages,locValidationResult.value,couroutineScope)
         }
 
 

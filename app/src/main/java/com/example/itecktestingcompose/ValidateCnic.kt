@@ -18,7 +18,7 @@ suspend fun validateCnic(cnic: String): CNICValidationResult {
 
     return try {
 
-        kotlinx.coroutines.delay(2000)
+        kotlinx.coroutines.delay(1000)
 
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateCnic(cnic)
         if (response.isSuccessful && response.body() != null) {

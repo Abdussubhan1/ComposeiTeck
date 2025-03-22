@@ -18,7 +18,7 @@ suspend fun validateDev(devID: String): DevValidationResult {
 
     return try {
 
-        kotlinx.coroutines.delay(1000)
+//        kotlinx.coroutines.delay(3000)
 
         val response =
             ServiceBuilder.buildService(RetrofitInterface::class.java).validateDevice(devID)
