@@ -1,6 +1,5 @@
 package com.example.itecktestingcompose
 
-import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -17,8 +16,6 @@ fun appNavigation() {
     {
         composable("splash") { splashScreen(navController) }
         composable("login") { loginScreen(LocalContext.current, navController) }
-        composable("mainscreen") { mainScreen(LocalContext.current) }
+        composable("mainscreen") { mainScreen(LocalContext.current,navController) }
     }
 }
-
-

@@ -28,12 +28,13 @@ import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.RestorePage
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,13 +44,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.itecktestingcompose.Constants.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -60,8 +62,9 @@ fun picturesFunctionality(
     devID: String,
     initiallistOfImages: SnapshotStateList<Bitmap?>,
     locValidationResult: LocValidationResult,
-
-    couroutineScope: CoroutineScope
+    couroutineScope: CoroutineScope,
+    isEnabled: MutableState<Boolean>,
+    navController: NavHostController
 ) {
     val context = LocalContext.current
     var initiallistCompleted by remember { mutableStateOf(false) }
@@ -213,7 +216,12 @@ fun picturesFunctionality(
     }
     if (moveToTesting) {
         moveToTestingForm(devID)
-        devLocation(locValidationResult, couroutineScope, devID)
+        devLocation(
+            locValidationResult,
+            couroutineScope,
+            devID,
+            navController
+        )
     }
 }
 
@@ -240,7 +248,8 @@ fun moveToTestingForm(devID: String) {
 fun devLocation(
     locValidationResult: LocValidationResult,
     couroutineScope: CoroutineScope,
-    devID: String
+    devID: String,
+    navController: NavHostController
 ) {
 
 
@@ -256,14 +265,16 @@ fun devLocation(
         ) {
             Text(text = "Vehicle Location")
             Spacer(modifier = Modifier.height(10.dp))
-            Box(contentAlignment = Alignment.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(BorderStroke(2.dp, color = Color.Black))
                     .clip(shape = RoundedCornerShape(14.dp))
                     .background(
                         colorResource(R.color.purple_200)
-                    ).padding(8.dp)
+                    )
+                    .padding(8.dp)
             ) { Text(text = "${locValidationResult.latitude},${locValidationResult.longitude}") }
             Spacer(modifier = Modifier.height(10.dp))
             Icon(
@@ -277,6 +288,12 @@ fun devLocation(
                     }
                 }
             )
+            Spacer(modifier = Modifier.weight(1f))
+            Button(onClick = {
+                navController.navigate("mainscreen")
+            }, modifier = Modifier.padding(bottom = 14.dp)) {
+                reset()
+            }
         }
     }
 }
@@ -297,3 +314,14 @@ fun devLocation(
 //        locValidationResult.longitude = validateLoc(devID).longitude
 //    }
 //}
+
+
+@Preview
+@Composable
+fun reset() {
+    Icon(
+        imageVector = Icons.Rounded.RestorePage,
+        contentDescription = "reattempt", tint = Color.White,
+        modifier = Modifier.size(50.dp)
+    )
+}
