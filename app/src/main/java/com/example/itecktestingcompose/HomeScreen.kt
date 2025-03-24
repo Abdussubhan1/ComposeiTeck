@@ -181,7 +181,7 @@ fun mainScreen(current: Context, navController: NavHostController) {
 
         if (validationResult.ifDeviceExist) {
                 picturesFunctionality(device, initiallistOfImages =initiallistOfImages,locValidationResult.value,couroutineScope,
-                    isEnabled = remember { mutableStateOf(isEnabled) },navController)
+                    navController)
         }
 
 

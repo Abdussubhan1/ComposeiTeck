@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,19 +24,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
+import androidx.compose.material.icons.rounded.BatteryAlert
+import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.RestorePage
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -63,9 +66,9 @@ fun picturesFunctionality(
     initiallistOfImages: SnapshotStateList<Bitmap?>,
     locValidationResult: LocValidationResult,
     couroutineScope: CoroutineScope,
-    isEnabled: MutableState<Boolean>,
     navController: NavHostController
 ) {
+
     val context = LocalContext.current
     var initiallistCompleted by remember { mutableStateOf(false) }
     var moveToTesting by remember { mutableStateOf(false) }
@@ -222,6 +225,7 @@ fun picturesFunctionality(
             devID,
             navController
         )
+
     }
 }
 
@@ -251,7 +255,9 @@ fun devLocation(
     devID: String,
     navController: NavHostController
 ) {
-
+    var battery by remember { mutableStateOf("") }
+    var context = LocalContext.current
+    var showDialogue by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -268,55 +274,109 @@ fun devLocation(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .padding(horizontal = 30.dp)
                     .fillMaxWidth()
-                    .border(BorderStroke(2.dp, color = Color.Black))
                     .clip(shape = RoundedCornerShape(14.dp))
                     .background(
                         colorResource(R.color.purple_200)
                     )
-                    .padding(8.dp)
-            ) { Text(text = "${locValidationResult.latitude},${locValidationResult.longitude}") }
+                    .border(3.dp, color = Color.Black, shape = RoundedCornerShape(14.dp))
+                    .padding(8.dp),
+            )
+            {
+                Text(text = "${locValidationResult.latitude},${locValidationResult.longitude}")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(text = "Battery: $battery")
+                    if (battery == "Connected") {
+                        Icon(
+                            imageVector = Icons.Rounded.BatteryChargingFull,
+                            contentDescription = "Battery Full Icon",
+                            tint = Color.Green,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Text(text = "+ 12V ")
+                    } else if (battery == "Disconnected") {
+                        Icon(
+                            imageVector = Icons.Rounded.BatteryAlert,
+                            contentDescription = "Battery Full Icon",
+                            tint = Color.Red,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Text(text = " 0V ")
+                    }
+
+                }
+            }
             Spacer(modifier = Modifier.height(10.dp))
             Icon(
                 imageVector = Icons.Rounded.Refresh,
                 contentDescription = "Refresh Icon",
                 tint = Color.Black,
-                modifier = Modifier.clickable {
-                    couroutineScope.launch {
-                        locValidationResult.latitude = validateLoc(devID).latitude
-                        locValidationResult.longitude = validateLoc(devID).longitude
+                modifier = Modifier
+                    .size(35.dp)
+                    .clickable {
+                        couroutineScope.launch {
+                            locValidationResult.latitude = validateLoc(devID).latitude
+                            locValidationResult.longitude = validateLoc(devID).longitude
+                            battery = validateBattery(devID)
+                            Toast.makeText(
+                                context,
+                                "Refreshed!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-                }
             )
+
+
             Spacer(modifier = Modifier.weight(1f))
-            Button(onClick = {
-                navController.navigate("mainscreen")
-            }, modifier = Modifier.padding(bottom = 14.dp)) {
+            Button(
+                onClick = {
+                    showDialogue = true
+
+                }, modifier = Modifier
+                    .padding(bottom = 14.dp)
+                    .background(Color.LightGray)
+            ) {
                 reset()
             }
         }
     }
+    if (showDialogue) {
+        AlertDialog(
+            title = { Text(text = "Change Tracker") },
+            text = { Text(text = "Are you sure you want to change tracker?") },
+            onDismissRequest = { showDialogue = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    navController.navigate("mainscreen")
+                    showDialogue = false
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialogue = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
+
 }
 
-
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewMoveToTesting() {
-//    moveToTestingForm(
-//        devID = "12345"
-//    )
-//
-//}
-
-//onClick = {
-//    couroutineScope.launch {
-//        locValidationResult.latitude = validateLoc(devID).latitude
-//        locValidationResult.longitude = validateLoc(devID).longitude
-//    }
-//}
-
-
-@Preview
+@Preview(showBackground = false)
 @Composable
 fun reset() {
     Icon(
@@ -324,4 +384,18 @@ fun reset() {
         contentDescription = "reattempt", tint = Color.White,
         modifier = Modifier.size(50.dp)
     )
+}
+
+
+@Preview
+@Composable
+fun PreviewDevLocation() {
+
+    devLocation(
+        LocValidationResult(22.22222, 23.22222),
+        rememberCoroutineScope(),
+        "123456789",
+        NavHostController(LocalContext.current)
+    )
+
 }

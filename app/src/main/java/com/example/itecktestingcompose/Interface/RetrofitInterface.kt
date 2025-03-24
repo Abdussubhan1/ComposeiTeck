@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.Interface
 
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
@@ -23,6 +24,10 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("get_location.php")
     suspend fun validateLocation(@Field("devid") devID: String): Response<GetLocation>
+    @FormUrlEncoded
+    @POST("get_battery.php")
+    suspend fun validateBattery(@Field("devid") devID: String): Response<Battery>
+
 }
 
 

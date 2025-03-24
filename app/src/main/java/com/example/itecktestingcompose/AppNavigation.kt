@@ -8,7 +8,6 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-
 fun appNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "splash")
