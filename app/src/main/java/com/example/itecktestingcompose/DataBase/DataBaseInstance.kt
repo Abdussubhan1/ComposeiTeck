@@ -10,7 +10,10 @@ import com.example.itecktestingcompose.DataBase.DeviceSearchHistoryDAO
 abstract class AppDatabase : RoomDatabase() {
 
     // Provide DAO instance
-    abstract fun deviceSearchHistoryDAO(): DeviceSearchHistoryDAO
+    abstract fun getHistory(): DeviceSearchHistoryDAO
+
+
+    //this pattern is a Singleton
 
     companion object {
         @Volatile
@@ -28,4 +31,5 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
     }
+
 }

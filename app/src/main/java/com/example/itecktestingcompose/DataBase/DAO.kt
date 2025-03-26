@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DeviceSearchHistoryDAO {
@@ -11,6 +12,6 @@ interface DeviceSearchHistoryDAO {
     fun insert(device: DeviceSearchHistory)
 
     @Query("SELECT * FROM DeviceSearchHistory ORDER BY id DESC")
-    fun getAllHistory(): List<DeviceSearchHistory>
+    fun getAllHistory(): Flow<List<DeviceSearchHistory>>
 
 }
