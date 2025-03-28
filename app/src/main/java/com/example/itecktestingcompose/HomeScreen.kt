@@ -2,12 +2,12 @@ package com.example.itecktestingcompose
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,8 +30,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,22 +40,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.DataBase.AppDatabase
 import com.example.itecktestingcompose.DataBase.DeviceSearchHistory
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,6 +67,12 @@ fun mainScreen(current: Context, navController: NavHostController) {
     var locValidationResult = remember { mutableStateOf(LocValidationResult(0.0, 0.0)) }
     val keyboard = LocalSoftwareKeyboardController.current
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
+    var showHistory by remember { mutableStateOf(false) }
+
+    val db = AppDatabase.AppDatabaseInstance.getDatabase(current)
+    val dao = db.getHistory()
+
+
 
 
     Column(
@@ -109,9 +115,29 @@ fun mainScreen(current: Context, navController: NavHostController) {
 
 
         }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Icon(
+                imageVector = Icons.Default.History,
+                contentDescription = "History Icon",
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        showHistory = true
+                    },
+                tint = Color.Blue
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+        }
+
 
         Row(
-            modifier = Modifier.padding(top = 10.dp),
+
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -124,14 +150,21 @@ fun mainScreen(current: Context, navController: NavHostController) {
                     .padding(start = 10.dp, end = 10.dp)
                     .clickable(enabled = isEnabled) {
                         keyboard?.hide()
-                        if (devID.isEmpty() || devID.length < 7 || devID.length > 15) Toast.makeText(
-                            current,
-                            "Please enter valid device ID",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        else {
+                        if (devID.isEmpty() || devID.length < 7 || devID.length > 15) {
+
+                            couroutineScope.launch { dao.insert(DeviceSearchHistory(0, devID)) }
+
+                            Toast.makeText(
+                                current,
+                                "Please enter valid device ID",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
                             validationResult = DevValidationResult(false, true)
                             couroutineScope.launch {
+
+                                dao.insert(DeviceSearchHistory(0, devID))
+//                                Log.d("DeviceSearchHistory", devID)
                                 validationResult = validateDev(devID)
                                 locValidationResult.value = validateLoc(devID)
 
@@ -189,7 +222,7 @@ fun mainScreen(current: Context, navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        if (validationResult.ifDeviceExist) {
+        if (validationResult.ifDeviceExist && !showHistory) {
             picturesFunctionality(
                 device,
                 initiallistOfImages = initiallistOfImages,
@@ -198,17 +231,82 @@ fun mainScreen(current: Context, navController: NavHostController) {
                 navController
             )
         }
+        if (showHistory) {
+            var historyList = dao.getAllHistory()
+            showHistory(historyList)
+
+        }
 
 
     }
 
 }
 
-@Preview
 @Composable
-fun mainScreenPreview() {
-    mainScreen(LocalContext.current, rememberNavController())
+fun showHistory(historyList: LiveData<List<DeviceSearchHistory>>) {
+
+    val items by historyList.observeAsState(initial = emptyList())
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(5.dp)
+            .background(colorResource(R.color.white))
+    ) {
+        Card(
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        {
+            Surface(color = Color.LightGray, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.icon),
+                        contentDescription = "",
+                        modifier = Modifier.size(55.dp)
+                    )
+
+                    Text(
+                        text = " History Tab",
+                        fontWeight = FontWeight.Bold, fontSize = 20.sp
+                    )
+
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        LazyColumn {
+            items(items) { item ->
+                Text(
+                    text = item,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
+
+    }
+
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun showHistoryPreview() {
+    showHistory(historyList = null!!)
+}
+
+
+//@Preview
+//@Composable
+//fun mainScreenPreview() {
+//    mainScreen(LocalContext.current, rememberNavController())
+//}
 
 
 

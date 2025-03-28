@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -54,6 +55,8 @@ dependencies {
     implementation(libs.androidx.storage)
     implementation(libs.androidx.navigation.compose)
     implementation ("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,7 +72,12 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.0-alpha01")
     implementation("androidx.camera:camera-lifecycle:1.3.0-alpha01")
     implementation("androidx.camera:camera-view:1.3.0-alpha01")
+
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 }

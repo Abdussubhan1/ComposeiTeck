@@ -6,8 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class DeviceSearchHistory(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
-    @ColumnInfo("Device_numbers") val deviceNumber: String
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val deviceNumber: String
 )
 
 
