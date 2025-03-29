@@ -1,5 +1,6 @@
 package com.example.itecktestingcompose
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
@@ -7,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -31,7 +32,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,13 +49,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.DataBase.AppDatabase
 import com.example.itecktestingcompose.DataBase.DeviceSearchHistory
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun mainScreen(current: Context, navController: NavHostController) {
 
@@ -67,10 +67,10 @@ fun mainScreen(current: Context, navController: NavHostController) {
     var locValidationResult = remember { mutableStateOf(LocValidationResult(0.0, 0.0)) }
     val keyboard = LocalSoftwareKeyboardController.current
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
-    var showHistory by remember { mutableStateOf(false) }
 
     val db = AppDatabase.AppDatabaseInstance.getDatabase(current)
     val dao = db.getHistory()
+
 
 
 
@@ -128,7 +128,7 @@ fun mainScreen(current: Context, navController: NavHostController) {
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        showHistory = true
+                        navController.navigate("historyscreen")
                     },
                 tint = Color.Blue
             )
@@ -152,7 +152,11 @@ fun mainScreen(current: Context, navController: NavHostController) {
                         keyboard?.hide()
                         if (devID.isEmpty() || devID.length < 7 || devID.length > 15) {
 
-                            couroutineScope.launch { dao.insert(DeviceSearchHistory(0, devID)) }
+                            couroutineScope.launch {
+                                if (devID.isNotEmpty()) {
+                                    dao.insert(DeviceSearchHistory(0, devID))
+                                }
+                            }
 
                             Toast.makeText(
                                 current,
@@ -163,8 +167,8 @@ fun mainScreen(current: Context, navController: NavHostController) {
                             validationResult = DevValidationResult(false, true)
                             couroutineScope.launch {
 
-                                dao.insert(DeviceSearchHistory(0, devID))
-//                                Log.d("DeviceSearchHistory", devID)
+                                dao.insert(DeviceSearchHistory(0, deviceNumber = devID))
+
                                 validationResult = validateDev(devID)
                                 locValidationResult.value = validateLoc(devID)
 
@@ -222,7 +226,7 @@ fun mainScreen(current: Context, navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        if (validationResult.ifDeviceExist && !showHistory) {
+        if (validationResult.ifDeviceExist) {
             picturesFunctionality(
                 device,
                 initiallistOfImages = initiallistOfImages,
@@ -231,82 +235,11 @@ fun mainScreen(current: Context, navController: NavHostController) {
                 navController
             )
         }
-        if (showHistory) {
-            var historyList = dao.getAllHistory()
-            showHistory(historyList)
-
-        }
-
 
     }
 
 }
 
-@Composable
-fun showHistory(historyList: LiveData<List<DeviceSearchHistory>>) {
-
-    val items by historyList.observeAsState(initial = emptyList())
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(5.dp)
-            .background(colorResource(R.color.white))
-    ) {
-        Card(
-            shape = RoundedCornerShape(18.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        {
-            Surface(color = Color.LightGray, modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.icon),
-                        contentDescription = "",
-                        modifier = Modifier.size(55.dp)
-                    )
-
-                    Text(
-                        text = " History Tab",
-                        fontWeight = FontWeight.Bold, fontSize = 20.sp
-                    )
-
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        LazyColumn {
-            items(items) { item ->
-                Text(
-                    text = item,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
-
-    }
-
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun showHistoryPreview() {
-    showHistory(historyList = null!!)
-}
-
-
-//@Preview
-//@Composable
-//fun mainScreenPreview() {
-//    mainScreen(LocalContext.current, rememberNavController())
-//}
 
 
 
