@@ -1,11 +1,11 @@
 package com.example.itecktestingcompose
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,11 +16,15 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,22 +34,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
 import kotlinx.coroutines.launch
 
 @Composable
-fun loginScreen(context: Context, navController: NavHostController? = null) {
-    val version = getAppVersion(context)
+fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
-    var validationResult by remember { mutableStateOf(CNICValidationResult(false, false)) }
+    var validationResult by remember {
+        mutableStateOf(
+            CNICValidationResult(
+                ifUserExist = false,
+                isLoading = false
+            )
+        )
+    }
 
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
@@ -53,44 +66,58 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
     val keyboard = LocalSoftwareKeyboardController.current
 
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFFFF)),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(Color(0XFF122333)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
+       Spacer(modifier = Modifier.height(150.dp))
+//        Box(
+//            modifier = Modifier
+//                .wrapContentSize()
+//                .background(Color(0XFF122333)),
+//            contentAlignment = Alignment.Center,
+//        ) {
+            Image(
+                painter = painterResource(id = R.drawable.img_nic_3),
+                contentDescription = "CNIC Image",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(width = 356.dp, height = 150.dp),
+//                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+            )
+//        }
 
-        Image(
-            painter = painterResource(id = R.drawable.img_nic_2),
-            contentDescription = "CNIC Image",
-            modifier = Modifier
-                .height(200.dp)
-                .size(300.dp)
-        )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedTextField(
+        TextField(
             value = cnic,
             onValueChange = { cnic = it.filter { it.isDigit() || it == '-' } },
 
-            label = {
+            placeholder = {
                 Text(
                     "اپنا شناختی کارڈ نمبر درج کریں",
                     textAlign = TextAlign.End,
                     fontFamily = jameelNooriFont,
                     modifier = Modifier.fillMaxWidth(),
-                    fontSize = 26.sp
+                    fontSize = 20.sp
                 )
             },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-                .imePadding(),
+                .padding(horizontal = 32.dp),
             singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color(0XFFD9D9D9),
+                unfocusedContainerColor = Color(0XFFD9D9D9),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = Color(0XFF122333)
+            ),
+            shape = RoundedCornerShape(80.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
         )
@@ -173,32 +200,16 @@ fun loginScreen(context: Context, navController: NavHostController? = null) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(bottom = 16.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.icon),
-                contentDescription = "iTeck Icon",
-                modifier = Modifier.size(40.dp)
-            )
-
-            Text(
-                text = "By iTecknologi",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF00008B)
-            )
-
-            Text(
-                text = "Version: $version",
-                fontSize = 12.sp,
-                color = Color(0xFFA8A8A8)
-            )
-        }
+        BottomLogo()
     }
 
 
+}
+
+@Preview
+@Composable
+fun LoginPreview() {
+    LoginScreen(context = LocalContext.current, rememberNavController())
 }
 
 
