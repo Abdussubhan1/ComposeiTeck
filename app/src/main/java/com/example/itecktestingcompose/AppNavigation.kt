@@ -15,8 +15,9 @@ fun AppNavigation() {
     {
         composable("splash") { SplashScreen(navController) }
         composable("login") { LoginScreen(LocalContext.current, navController) }
-        composable("mainscreen") { DeviceEntryScreen(LocalContext.current,navController) }
-        composable("testingPage") { TestingPage() }
-//        composable("historyscreen") { showHistory(LocalContext.current) }
+        composable("mainscreen") { DeviceEntryScreen(LocalContext.current, navController) }
+        composable("testingPage") { TestingPage(navController) }
     }
 }
+
+

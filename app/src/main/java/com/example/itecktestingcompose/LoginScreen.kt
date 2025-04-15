@@ -12,16 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -51,6 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
+    HandleDoubleBackToExit() //this is used to ensure secure exit from app
     var validationResult by remember {
         mutableStateOf(
             CNICValidationResult(
@@ -62,7 +59,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
-    val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]{1}\$")
+    val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]$")
     val keyboard = LocalSoftwareKeyboardController.current
 
 
@@ -73,20 +70,20 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-       Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(150.dp))
 //        Box(
 //            modifier = Modifier
 //                .wrapContentSize()
 //                .background(Color(0XFF122333)),
 //            contentAlignment = Alignment.Center,
 //        ) {
-            Image(
-                painter = painterResource(id = R.drawable.img_nic_3),
-                contentDescription = "CNIC Image",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(width = 356.dp, height = 150.dp),
+        Image(
+            painter = painterResource(id = R.drawable.img_nic_3),
+            contentDescription = "CNIC Image",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.size(width = 356.dp, height = 150.dp),
 //                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
-            )
+        )
 //        }
 
 
@@ -131,7 +128,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
                 .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp))
-                .clickable {
+                .clickable(enabled = !validationResult.isLoading) {
 
 
                     if (keyboard != null) {
@@ -147,7 +144,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                         ).show()
                     } else {
                         validationResult =
-                            CNICValidationResult(false, true) // Updating the state for Loader
+                            CNICValidationResult(ifUserExist = false, isLoading = true) // Updating the state for Loader
 
                         couroutineScope.launch {
                             validationResult = validateCnic(cnic.replace("-", ""))
@@ -183,10 +180,12 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
         )
 
         {
-            Image(
-                painter = painterResource(id = R.drawable.check_double_line),
-                contentDescription = "Check Icon",
-            )
+            if (!validationResult.isLoading)
+                Image(
+                    painter = painterResource(id = R.drawable.check_double_line),
+                    contentDescription = "Check Icon",
+                ) else
+                Text("Loading...", color = Color.Black, fontSize = 20.sp)
         }
 
         if (validationResult.isLoading) {

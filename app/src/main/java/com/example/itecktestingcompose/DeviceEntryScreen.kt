@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -77,6 +80,8 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
     var initiallistCompleted by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
     var moveToTesting by remember { mutableStateOf(false) }
+
+   HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     Column(
         modifier = Modifier
@@ -168,6 +173,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                                         if (validationResult.ifDeviceExist) {
                                             tbEnable = true
                                             isEnabled = false
+                                            Constants.deviceID = devID
 //                                            device = devID
 //                                            devID = ""
                                             Toast.makeText(
@@ -211,8 +217,8 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF00C853), // Green color
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFF00C853).copy(alpha = 0.4f),
-                disabledContentColor = Color.White.copy(alpha = 0.6f)
+                disabledContainerColor = Color(0xFF00C853).copy(alpha = 0.05f),
+                disabledContentColor = Color.White.copy(alpha = 0.3f)
             ),
             contentPadding = PaddingValues(0.dp) // Ensures same text alignment as Box
         ) {
@@ -230,6 +236,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
 
                     if (firstNullIndex != -1) {
                         initiallistOfImages[firstNullIndex] = result
+                        Constants.initialPictures = initiallistOfImages
                     }
                 } else {
                     Toast.makeText(current, "Capture Failed!", Toast.LENGTH_SHORT).show()
@@ -262,9 +269,9 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                                 cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                             }
                     )
-                    Spacer(modifier = Modifier.width(14.dp))
+                    Spacer(modifier = Modifier.width(20.dp))
                     Text(
-                        text = "ڈیوائس کی تنصیب سے پہلے, پہلی تصویر لینے کے لیے کلک کریں",
+                        text = "ڈیوائس کی پہلی تصویر لینے کے لیے کلک کریں",
                         modifier = Modifier.padding(end = 14.dp),
                         fontFamily = jameelNooriFont,
                         maxLines = 2,
@@ -284,7 +291,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     Text(
-                        text = "ڈیوائس کی تنصیب سے پہلے دوسری تصویر لینے کے لیے کلک کریں۔",
+                        text = "ڈیوائس کی دوسری تصویر لینے کے لیے کلک کریں۔",
                         modifier = Modifier.padding(end = 14.dp),
                         fontFamily = jameelNooriFont,
                         fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
@@ -294,28 +301,37 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
 
             }
 
-            if (initiallistCompleted && !moveToTesting) {
-                PicConfirm(initiallistOfImages, onRetakeConfirmed = {initiallistCompleted=false},navController)
-
-            }
-            if (!moveToTesting) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+            if (initiallistCompleted) {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     items(initiallistOfImages.size) { index ->
                         initiallistOfImages[index]?.let { bitmap ->
                             Image(
                                 bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Captured Images",
+                                contentDescription = "Captured Images $index",
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp) // Adjust as needed
-                                    .padding(8.dp)
+                                    .width(200.dp) // Use fixed width instead of fillMaxWidth
+                                    .height(200.dp)
+                                    .clip(RoundedCornerShape(12.dp)) // Optional: make it prettier
+                                    .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
                             )
                         }
                     }
                 }
+            }
+
+            if (initiallistCompleted && !moveToTesting) {
+                PicConfirm(
+                    initiallistOfImages,
+                    onRetakeConfirmed = { initiallistCompleted = false },
+                    navController
+                )
+
             }
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -359,13 +375,11 @@ fun CustomTextField(
 }
 
 
-
 @Preview
 @Composable
 fun MainScreenPreview() {
-    DeviceEntryScreen(LocalContext.current, rememberNavController() )
+    DeviceEntryScreen(LocalContext.current, rememberNavController())
 }
-
 
 
 @Composable
@@ -380,44 +394,54 @@ fun PicConfirm(
             .padding(16.dp), // optional for padding around content
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "دونوں تصاویر دوبارہ لینا چاہتے ہیں؟",
-            fontFamily = jameelNooriFont,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            fontSize = 18.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
 
-        Spacer(modifier = Modifier.height(24.dp)) // space between text and buttons
+        Spacer(modifier = Modifier.height(15.dp)) // space between text and buttons
 
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         ) {
-            Button(onClick = {
-                navController.navigate("testingPage")
-            },elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp), colors = ButtonDefaults.buttonColors(Color.Red).copy()) {
-                Text(text = "نہیں",
-                    fontFamily = jameelNooriFont,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp)
-            }
             Button(
                 onClick = {
                     initiallistOfImages.clear()
                     initiallistOfImages.addAll(listOf(null, null))
                     onRetakeConfirmed()
-
-            },colors = ButtonDefaults.buttonColors(Color.Green), elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp) ) {
-                Text(text = " ہاں",
+                },
+                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                shape = RoundedCornerShape(50),
+                elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                Text(
+                    text = "دونوں تصویریں دوبارہ لیں۔",
                     fontFamily = jameelNooriFont,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    fontSize = 18.sp)
+                    fontSize = 21.sp
+                )
+            }
+            Button(
+                onClick = {
+                    navController.navigate("testingPage"){popUpTo("mainscreen"){inclusive = true}}
+                },
+                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp), shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    text = " آگے بڑھیں۔",
+                    fontFamily = jameelNooriFont,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 21.sp
+                )
             }
         }
     }

@@ -3,6 +3,7 @@ package com.example.itecktestingcompose.Interface
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
+import com.example.itecktestingcompose.ModelClasses.Ignition
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.google.gson.GsonBuilder
@@ -27,6 +28,9 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("get_battery.php")
     suspend fun validateBattery(@Field("devid") devID: String): Response<Battery>
+    @FormUrlEncoded
+    @POST("get_ignition.php")
+    suspend fun validateIgnition(@Field("devid") devID: String): Response<Ignition>
 
 }
 
