@@ -11,5 +11,6 @@ object Constants {
     var baseURL:String="https://api.itecknologi.com/automated_testing/"
     var deviceID:String=""
     var initialPictures=mutableStateListOf<Bitmap?>(null, null)
-
+    var deviceLat:Double=0.0
+    var deviceLong:Double=0.0
 }

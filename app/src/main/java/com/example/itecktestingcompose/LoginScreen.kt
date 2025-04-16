@@ -127,7 +127,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                 .width(200.dp)
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
-                .background(Color(0xFF008000), shape = RoundedCornerShape(10.dp))
+                .background(Color(0XFF39B54A), shape = RoundedCornerShape(10.dp))
                 .clickable(enabled = !validationResult.isLoading) {
 
 
@@ -193,7 +193,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                 modifier = Modifier
                     .padding(25.dp)
                     .align(Alignment.CenterHorizontally)
-                    .size(24.dp), Color.Green
+                    .size(24.dp), Color(0XFF39B54A)
             )
         }
 

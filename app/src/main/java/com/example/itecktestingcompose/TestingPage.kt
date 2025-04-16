@@ -1,5 +1,8 @@
 package com.example.itecktestingcompose
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +34,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,19 +47,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.ModelClasses.Ignition
 import kotlinx.coroutines.launch
 
 @Composable
 fun TestingPage(navController: NavHostController) {
+    var comp by remember { mutableIntStateOf(0) }
 
-    var showDialogue by remember { mutableStateOf(false) }
+    var showDialogueReset by remember { mutableStateOf(false) }
     HandleDoubleBackToExit()
     Column(
         modifier = Modifier
@@ -75,7 +80,7 @@ fun TestingPage(navController: NavHostController) {
                 Icon(
                     painter = painterResource(id = R.drawable.user_smile_fill), // Add smile icon
                     contentDescription = null,
-                    tint = Color.Green,
+                    tint = Color(0XFF39B54A),
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -83,7 +88,7 @@ fun TestingPage(navController: NavHostController) {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Text(
                         Constants.name,
-                        color = Color.Green,
+                        color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -144,38 +149,72 @@ fun TestingPage(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.height(32.dp))
 
-        Box(contentAlignment = Alignment.Center,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
-                .padding(16.dp)
+                .padding(18.dp)
         ) {
-            ValidationStatusUI()
+            comp = ValidationStatusUI()
         }
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = {
-                showDialogue = true
-            },
-            elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-            modifier = Modifier
-                .fillMaxWidth(), shape = RoundedCornerShape(50)
+        Spacer(modifier = Modifier.height(100.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically)
         ) {
-            Text(
-                text = " ڈیوائس کو تبدیل کریں اور انسٹالیشن کو دہرائیں۔",
-                fontFamily = jameelNooriFont,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                fontSize = 21.sp
-            )
+            Button(
+                onClick = {
+                    showDialogueReset = true
+                },
+                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                modifier = Modifier
+                    .fillMaxWidth(), shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    text = " ڈیوائس تبدیل کریں",
+                    fontFamily = jameelNooriFont,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 21.sp
+                )
+            }
+
+            Button(
+                enabled = if (comp == 4) true else false,
+                onClick = {
+                    showDialogueReset = true
+                },
+                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0XFF39B54A), // Green color
+                    contentColor = Color.White,
+                    disabledContainerColor = Color(0xFF122333).copy(alpha = 0.05f),
+                    disabledContentColor = Color.White.copy(alpha = 0.3f)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(), shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    text = " کام مکمل ہو گیا ہے",
+                    fontFamily = jameelNooriFont,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 21.sp
+                )
+            }
         }
-        if (showDialogue) {
+
+        if (showDialogueReset) {
             Alert(
                 title = "ٹریکر کی تبدیلی",
                 text = "کیا آپ واقعی ٹریکر تبدیل کرنا چاہتے ہیں؟",
-                onDismiss = { showDialogue = false },
+                onDismiss = { showDialogueReset = false },
                 navController = navController
             )
 
@@ -190,42 +229,141 @@ fun TestingPage(navController: NavHostController) {
 
 
 @Composable
-fun ValidationStatusUI() {
-    val couroutineScope = rememberCoroutineScope()
+fun ValidationStatusUI(): Int {
+    val coroutineScope = rememberCoroutineScope()
     var battery by remember { mutableStateOf("") }
     var ignition by remember { mutableStateOf("") }
+    var relay by remember { mutableStateOf(false) }
+    var loc by remember { mutableStateOf(false) }
+    var locResult by remember { mutableStateOf(false) }
+
+    var validationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
+
+    if (loc) {
+        locResult = getLocation()
+        Log.d(TAG, "ValidationStatusUI:  Subhan $locResult")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0XFF182b3c)) // Dark blue background
+            .background(Color(0XFF182b3c))
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-            StatusRow("Location", Color.Red, onRefresh = {})
 
-            StatusRow(
-                "Battery",
-                if (battery == "Disconnected") Color.Red else Color(0xFF00C853),
-                onRefresh = {
-                    couroutineScope.launch {
-                        battery = validateBattery(Constants.deviceID)
-                    }
-                })
+            // LOCATION Wali Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                StatusRow("Location", if (locResult) Color(0xFF00C853) else Color.Red)
+                Spacer(modifier = Modifier.width(4.dp))
+                if (validationStep == 0) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .clickable {
+                                loc = true
+                                if (locResult) validationStep = 1
+                            }
+                    )
+                }
+            }
 
-            StatusRow("Ignition",if (ignition == "OFF") Color.Red else Color(0xFF00C853), onRefresh = {couroutineScope.launch {
-                ignition = validateIgnition(Constants.deviceID)
-            }})
-            StatusRow("Relay", Color.Red, onRefresh = {})}
+            // BATTERY Wali Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                StatusRow(
+                    "Battery",
+                    if (battery == "Disconnected") Color.Red else if (battery == "Connected") Color.Green else Color.LightGray
+                )
+
+                if (validationStep == 1) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                coroutineScope.launch {
+                                    battery = validateBattery(Constants.deviceID)
+                                    if (battery != "Disconnected") validationStep = 2
+                                }
+                            }
+                    )
+                }
+            }
+
+            // IGNITION Wali Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                StatusRow(
+                    "Ignition",
+                    if (ignition == "OFF") Color.Red else if (ignition == "ON") Color.Green else Color.LightGray
+                )
+
+                if (validationStep == 2) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                coroutineScope.launch {
+                                    ignition = validateIgnition(Constants.deviceID)
+                                    if (ignition != "OFF") validationStep = 3
+                                }
+                            }
+                    )
+                }
+            }
+
+            // RELAY Wali Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                StatusRow("Relay", if (relay) Color(0xFF00C853) else Color.LightGray)
+
+                if (validationStep == 3) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                coroutineScope.launch {
+//                                    relay = validateRelay(Constants.deviceID)
+                                }
+                            }
+                    )
+                }
+            }
         }
-
     }
+    return validationStep
 }
+
 
 @Composable
 fun CustomTextField_screen2(
@@ -307,20 +445,21 @@ fun Alert(
 fun StatusRow(
     label: String,
     statusColor: Color,
-    onRefresh: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.9f)
             .padding(vertical = 8.dp)
     ) {
         Text(
             label,
-            fontSize = 14.sp,
+            fontSize = 12.sp,
             color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .weight(0.2f)
+                .weight(0.15f)
         )
 
         LinearProgressIndicator(
@@ -332,15 +471,6 @@ fun StatusRow(
                 .clip(RoundedCornerShape(50))
         )
 
-        Icon(
-            imageVector = Icons.Default.Refresh,
-            contentDescription = "Refresh",
-            tint = Color.White,
-            modifier = Modifier
-                .weight(0.2f)
-                .size(24.dp)
-                .clickable { onRefresh() }
-        )
     }
 }
 

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -101,7 +102,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                 Icon(
                     painter = painterResource(id = R.drawable.user_smile_fill), // Add smile icon
                     contentDescription = null,
-                    tint = Color.Green,
+                    tint = Color(0XFF39B54A),
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -109,7 +110,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Text(
                         Constants.name,
-                        color = Color.Green,
+                        color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -153,7 +154,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF00C853)) // Green search
+                            .background(Color(0XFF39B54A)) // Green search
                             .clickable {
                                 keyboard?.hide()
                                 if (devID.isEmpty() || devID.length < 7 || devID.length > 15) {
@@ -215,9 +216,9 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                 .height(48.dp),
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF00C853), // Green color
+                containerColor = Color(0XFF39B54A), // Green color
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFF00C853).copy(alpha = 0.05f),
+                disabledContainerColor = Color(0XFF39B54A).copy(alpha = 0.05f),
                 disabledContentColor = Color.White.copy(alpha = 0.3f)
             ),
             contentPadding = PaddingValues(0.dp) // Ensures same text alignment as Box
@@ -261,7 +262,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                     Icon(
                         imageVector = Icons.Default.CameraEnhance,
                         contentDescription = "Camera Icon 1",
-                        tint = Color.Green,
+                        tint = Color(0XFF39B54A),
                         modifier = Modifier
                             .size(60.dp)
                             .padding(start = 14.dp)
@@ -281,7 +282,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                     Icon(
                         imageVector = Icons.Default.CameraEnhance,
                         contentDescription = "Camera Icon 1",
-                        tint = Color.Green,
+                        tint = Color(0XFF39B54A),
                         modifier = Modifier
                             .size(60.dp)
                             .padding(start = 14.dp)
@@ -400,7 +401,7 @@ fun PicConfirm(
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically)
         ) {
             Button(
                 onClick = {
@@ -409,7 +410,7 @@ fun PicConfirm(
                     onRetakeConfirmed()
                 },
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-                shape = RoundedCornerShape(50),
+                shape = RoundedCornerShape(50),border = BorderStroke(1.dp, Color.Red),
                 elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -432,7 +433,7 @@ fun PicConfirm(
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp), shape = RoundedCornerShape(50)
+                    .height(48.dp), shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color(0XFF39B54A))
             ) {
                 Text(
                     text = " آگے بڑھیں۔",

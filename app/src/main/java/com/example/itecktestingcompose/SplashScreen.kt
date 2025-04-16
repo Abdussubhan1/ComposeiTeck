@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,13 +53,13 @@ fun SplashScreen(navController: NavHostController) {
                 contentDescription = "Gear Logo",
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
                 modifier = Modifier
-                    .size(100.dp)
+                    .width(99.dp).height(124.dp)
             )
 
             Text(
                 text = "Testing",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 27.sp,
+                fontWeight = FontWeight(700),
                 color = Color.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

@@ -2,6 +2,11 @@ package com.example.itecktestingcompose
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
@@ -12,9 +17,11 @@ data class DevValidationResult(
 )
 
 
+
 suspend fun validateDev(devID: String): DevValidationResult {
 
     var ifDeviceExist = false
+
 
     return try {
 
@@ -32,7 +39,7 @@ suspend fun validateDev(devID: String): DevValidationResult {
 
     } catch (e: Exception) {
         Log.d(TAG, "validateDevice: $e")
-        DevValidationResult(false, false)
+        DevValidationResult(ifDeviceExist=false,isLoading = false)
     }
 }
 
