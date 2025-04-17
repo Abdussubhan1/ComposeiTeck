@@ -241,7 +241,7 @@ fun ValidationStatusUI(): Int {
 
     if (loc) {
         locResult = getLocation()
-        Log.d(TAG, "ValidationStatusUI:  Subhan $locResult")
+        loc=false
     }
 
     Column(
@@ -263,7 +263,7 @@ fun ValidationStatusUI(): Int {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
-                StatusRow("Location", if (locResult) Color(0xFF00C853) else Color.Red)
+                StatusRow("Location", if (locResult) Color(0xFF00C853) else Color.LightGray)
                 Spacer(modifier = Modifier.width(4.dp))
                 if (validationStep == 0) {
                     Icon(
@@ -273,6 +273,7 @@ fun ValidationStatusUI(): Int {
                         modifier = Modifier
                             .size(22.dp)
                             .clickable {
+                                coroutineScope.launch { validateLoc(Constants.deviceID) }
                                 loc = true
                                 if (locResult) validationStep = 1
                             }

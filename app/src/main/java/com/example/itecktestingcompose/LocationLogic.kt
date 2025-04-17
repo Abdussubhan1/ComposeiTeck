@@ -17,19 +17,32 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.location.Location
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
+import com.example.itecktestingcompose.Interface.RetrofitInterface
+import com.example.itecktestingcompose.Interface.ServiceBuilder
 import kotlinx.coroutines.coroutineScope
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
+var deviceLocation: Pair<Double, Double>? = null
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun getLocation(): Boolean {
-    val context = LocalContext.current
+    var deviceLocationResult by remember {
+        mutableStateOf(ValidateLocationResponse(0.0000, 0.0000))
+    }
+    var mobLat: Double?
+    var mobLong: Double?
     var flag by remember { mutableStateOf(false) }
-    var mobLat by remember { mutableStateOf<Double?>(null) }
-    var mobLong by remember { mutableStateOf<Double?>(null) }
-
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val fusedLocationClient = remember {
         LocationServices.getFusedLocationProviderClient(context)
     }
@@ -49,44 +62,65 @@ fun getLocation(): Boolean {
         hasPermission = isGranted
     }
 
-    // Observe permission changes
 
-    if (!hasPermission) {
-        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-    } else {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            location?.let {
-                mobLat = it.latitude
-                mobLong = it.longitude
 
-                Log.d(TAG, "getLocation: ${it.latitude} ${it.longitude}")
 
-                if (mobLat != null && mobLong != null) {
-                    flag = checkLocationWithinRange(
-                        dLat = Constants.deviceLat,
-                        dLong = Constants.deviceLong,
-                        mobLat = mobLat!!,
-                        mobLong = mobLong!!
+    coroutineScope.launch {
+
+//        validateLoc(Constants.deviceID)
+        test()
+        if (!hasPermission) {
+            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        if (hasPermission) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    mobLat = it.latitude
+                    mobLong = it.longitude
+//                    Log.d(TAG, "getLocation: $mobLat $mobLong")
+                    val isWithinRange = checkLocationWithinRange(
+                        dLat = deviceLocation?.first!!,
+                        dLong = deviceLocation?.second!!, mobLat, mobLong
                     )
 
-
-
-//                        validateLoc(Constants.deviceID)
-
+                    flag = isWithinRange
                 }
             }
         }
+
     }
 
-
-//    // Use this to validate when location is available
-//    LaunchedEffect(mobLat, mobLong) {
-//
-//    }
 
     return flag
 }
 
+suspend fun test(): ValidateLocationResponse {
+    return try {
+        var lat = 0.0
+        var long = 0.0
+
+        val response =
+            ServiceBuilder.buildService(RetrofitInterface::class.java)
+                .validateLocation(Constants.deviceID)
+        if (response.isSuccessful && response.body() != null) {
+            var responseBody = response.body()!!
+            if (responseBody.Success) {
+                lat = responseBody.Lat
+                long = responseBody.Lng
+                deviceLocation = Pair(lat, long)
+                Log.d(TAG, "validateDevice: $lat $long")
+
+            }
+
+        }
+
+        (ValidateLocationResponse(lat, long))
+
+    } catch (e: Exception) {
+        Log.d(TAG, "validateDevice: $e")
+        (ValidateLocationResponse(0.0, 0.0))
+    }
+}
 
 fun checkLocationWithinRange(
     dLat: Double,
@@ -94,17 +128,26 @@ fun checkLocationWithinRange(
     mobLat: Double?,
     mobLong: Double?
 ): Boolean {
+    Log.d(TAG, "checkLocationWithinRange: device($dLat, $dLong), mobile($mobLat, $mobLong)")
+
     if (mobLat == null || mobLong == null) return false
 
-    val results = FloatArray(1)
+    val earthRadius = 6371000.0 // Radius of Earth in meters
 
-    // Calculate distance between the device's coordinates and mobile's coordinates
-    Location.distanceBetween(dLat, dLong, mobLat, mobLong, results)
+    val latDistance = Math.toRadians(mobLat - dLat)
+    val lonDistance = Math.toRadians(mobLong - dLong)
+    Log.d(TAG, "checkLocationWithinRange: $latDistance $lonDistance")
 
-    // results[0] contains the distance in meters
-    val distanceInMeters = results[0]
+    val a = sin(latDistance / 2).pow(2.0) +
+            cos(Math.toRadians(dLat)) * cos(Math.toRadians(mobLat)) *
+            sin(lonDistance / 2).pow(2.0)
 
-    // Return true if within 25 meters, else false
-    return distanceInMeters <= 500000
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    val distanceInMeters = earthRadius * c
+    Log.d(TAG, "checkLocationWithinRange: $distanceInMeters")
+
+    // Return true if within 500 meters, else false
+    return distanceInMeters <= 50000
 
 }
