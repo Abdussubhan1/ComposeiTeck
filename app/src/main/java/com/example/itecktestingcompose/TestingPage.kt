@@ -1,8 +1,7 @@
 package com.example.itecktestingcompose
 
-import android.content.ContentValues.TAG
+import android.graphics.Bitmap
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -35,6 +35,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,6 +59,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TestingPage(navController: NavHostController) {
+
     var comp by remember { mutableIntStateOf(0) }
 
     var showDialogueReset by remember { mutableStateOf(false) }
@@ -230,6 +232,11 @@ fun TestingPage(navController: NavHostController) {
 
 @Composable
 fun ValidationStatusUI(): Int {
+
+    var deviceLocationResult by remember {
+        mutableStateOf(ValidateLocationResponse(false, false, 0.0, 0.0))
+    }
+
     val coroutineScope = rememberCoroutineScope()
     var battery by remember { mutableStateOf("") }
     var ignition by remember { mutableStateOf("") }
@@ -237,11 +244,16 @@ fun ValidationStatusUI(): Int {
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableStateOf(false) }
 
+
     var validationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 
     if (loc) {
-        locResult = getLocation()
-        loc=false
+        getLocation()
+        if (Constants.mobileLocationLat != 0.0 && Constants.mobileLocationLong != 0.0) {
+            locResult = checkLocationWithinRange()
+        }
+        Log.d("TAG", "checkloc: $locResult")
+        loc = false
     }
 
     Column(
@@ -263,9 +275,9 @@ fun ValidationStatusUI(): Int {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
-                StatusRow("Location", if (locResult) Color(0xFF00C853) else Color.LightGray)
+                StatusRow("Location", if (locResult) Color.Green else Color.LightGray)
                 Spacer(modifier = Modifier.width(4.dp))
-                if (validationStep == 0) {
+                if (validationStep == 0 && !deviceLocationResult.isLoading) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -273,11 +285,21 @@ fun ValidationStatusUI(): Int {
                         modifier = Modifier
                             .size(22.dp)
                             .clickable {
-                                coroutineScope.launch { validateLoc(Constants.deviceID) }
-                                loc = true
-                                if (locResult) validationStep = 1
+                                deviceLocationResult =
+                                    ValidateLocationResponse(false, true, 0.0, 0.0)
+                                coroutineScope.launch {
+                                    deviceLocationResult = validateLoc(Constants.deviceID)
+                                    if (deviceLocationResult.Success) {
+                                        loc = true
+                                        Constants.deviceLocationLat = deviceLocationResult.Lat
+                                        Constants.deviceLocationLong = deviceLocationResult.Lng
+                                    }
+                                }
+
                             }
+
                     )
+                    if (locResult) validationStep = 1
                 }
             }
 
@@ -360,6 +382,18 @@ fun ValidationStatusUI(): Int {
                     )
                 }
             }
+//            Spacer(modifier = Modifier.height(10.dp))
+//            if(deviceLocationResult.isLoading)
+//            {
+//            Text(
+//                "Please Wait...",
+//                modifier = Modifier.fillMaxWidth(),
+//                textAlign = TextAlign.Center,
+//                color = Color.Green,
+//                fontSize = 20.sp,
+//                fontWeight = FontWeight.SemiBold
+//            )
+//            }
         }
     }
     return validationStep
@@ -424,6 +458,10 @@ fun Alert(
         confirmButton = {
             TextButton(onClick = {
                 navController.navigate("mainscreen")
+                Constants.deviceID = ""
+                Constants.initialPictures = mutableStateListOf<Bitmap?>(null, null)
+                Constants.deviceLocationLat = 0.0
+                Constants.deviceLocationLong = 0.0
             }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
                 Text("جی ہاں", color = Color.White, fontFamily = jameelNooriFont)
             }

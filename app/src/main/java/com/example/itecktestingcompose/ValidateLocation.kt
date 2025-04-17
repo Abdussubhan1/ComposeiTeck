@@ -8,36 +8,33 @@ import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
 data class ValidateLocationResponse(
+    val Success: Boolean,
+    var isLoading: Boolean,
     val Lat: Double,
     val Lng: Double
 )
 
-
-suspend fun validateLoc(devID: String):ValidateLocationResponse {
-    var lat = 0.0
-    var long = 0.0
-
+suspend fun validateLoc(devID: String): ValidateLocationResponse {
     return try {
+        val service = ServiceBuilder.buildService(RetrofitInterface::class.java)
+        val response = service.validateLocation(devID)
 
-        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateLocation(devID)
-        if (response.isSuccessful && response.body() != null) {
-            var responseBody = response.body()!!
-            if (responseBody.Success) {
-                 lat = responseBody.Lat
-                 long = responseBody.Lng
-                Log.d(TAG, "validateDevice: $lat $long")
-
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null && body.Success) {
+                Log.d(TAG, "validateDevice: ${body.Lat}, ${body.Lng}")
+                return ValidateLocationResponse(body.Success,false,body.Lat, body.Lng)
             }
-
         }
 
-        (ValidateLocationResponse(lat, long))
+        ValidateLocationResponse(false,false,0.0, 0.0) // Fallback default if not successful
 
     } catch (e: Exception) {
-        Log.d(TAG, "validateDevice: $e")
-        (ValidateLocationResponse(0.0, 0.0))
+        Log.e(TAG, "validateDevice error: ${e.message}")
+        ValidateLocationResponse(false,false,0.0, 0.0)
     }
 }
+
 
 
 

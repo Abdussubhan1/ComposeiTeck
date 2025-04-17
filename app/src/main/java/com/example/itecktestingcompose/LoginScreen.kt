@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +48,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
-    HandleDoubleBackToExit() //this is used to ensure secure exit from app
+    HandleDoubleBackToExit()
+
     var validationResult by remember {
         mutableStateOf(
             CNICValidationResult(
@@ -61,6 +63,10 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
     val couroutineScope = rememberCoroutineScope()
     val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]$")
     val keyboard = LocalSoftwareKeyboardController.current
+    val version = remember { getAppVersion(context) }
+
+    Log.d("LoginScreen", "checkVersion: $version")
+
 
 
     Column(
@@ -71,20 +77,13 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
         verticalArrangement = Arrangement.Center,
     ) {
         Spacer(modifier = Modifier.height(150.dp))
-//        Box(
-//            modifier = Modifier
-//                .wrapContentSize()
-//                .background(Color(0XFF122333)),
-//            contentAlignment = Alignment.Center,
-//        ) {
+
         Image(
             painter = painterResource(id = R.drawable.img_nic_3),
             contentDescription = "CNIC Image",
             contentScale = ContentScale.Fit,
-            modifier = Modifier.size(width = 356.dp, height = 150.dp),
-//                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+            modifier = Modifier.size(width = 356.dp, height = 150.dp)
         )
-//        }
 
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -144,7 +143,10 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                         ).show()
                     } else {
                         validationResult =
-                            CNICValidationResult(ifUserExist = false, isLoading = true) // Updating the state for Loader
+                            CNICValidationResult(
+                                ifUserExist = false,
+                                isLoading = true
+                            ) // Updating the state for Loader
 
                         couroutineScope.launch {
                             validationResult = validateCnic(cnic.replace("-", ""))
@@ -199,7 +201,12 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
         Spacer(modifier = Modifier.weight(1f))
 
+
+
         BottomLogo()
+
+
+
     }
 
 

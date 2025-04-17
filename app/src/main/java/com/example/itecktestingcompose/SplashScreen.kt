@@ -53,7 +53,8 @@ fun SplashScreen(navController: NavHostController) {
                 contentDescription = "Gear Logo",
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
                 modifier = Modifier
-                    .width(99.dp).height(124.dp)
+                    .width(99.dp)
+                    .height(124.dp)
             )
 
             Text(
