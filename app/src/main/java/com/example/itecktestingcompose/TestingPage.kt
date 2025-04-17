@@ -2,6 +2,7 @@ package com.example.itecktestingcompose
 
 import android.graphics.Bitmap
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -187,7 +189,7 @@ fun TestingPage(navController: NavHostController) {
             }
 
             Button(
-                enabled = if (comp == 4) true else false,
+                enabled = comp == 4,
                 onClick = {
                     showDialogueReset = true
                 },
@@ -251,6 +253,7 @@ fun ValidationStatusUI(): Int {
         getLocation()
         if (Constants.mobileLocationLat != 0.0 && Constants.mobileLocationLong != 0.0) {
             locResult = checkLocationWithinRange()
+            if(!locResult) {Toast.makeText(LocalContext.current,"Tracker is not aligned with your mobile",Toast.LENGTH_LONG).show()}
         }
         Log.d("TAG", "checkloc: $locResult")
         loc = false

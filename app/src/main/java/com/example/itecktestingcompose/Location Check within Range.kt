@@ -33,7 +33,7 @@ fun checkLocationWithinRange(): Boolean {
     Log.d(TAG, "checkLocationWithinRange: $distanceInMeters")
 
     // Return true if within 500 meters, else false
-    result = distanceInMeters <= 50000
+    result = distanceInMeters <= 50
     Log.d(TAG, "checkLocationWithinRange: $result")
     return result
 
