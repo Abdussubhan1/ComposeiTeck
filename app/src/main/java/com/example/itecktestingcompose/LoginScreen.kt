@@ -1,7 +1,6 @@
 package com.example.itecktestingcompose
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -63,11 +62,6 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
     val couroutineScope = rememberCoroutineScope()
     val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]$")
     val keyboard = LocalSoftwareKeyboardController.current
-    val version = remember { getAppVersion(context) }
-
-    Log.d("LoginScreen", "checkVersion: $version")
-
-
 
     Column(
         modifier = Modifier
@@ -90,7 +84,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
         TextField(
             value = cnic,
-            onValueChange = { cnic = it.filter { it.isDigit() || it == '-' } },
+            onValueChange = { it -> cnic = it.filter { it.isDigit() || it == '-' } },
 
             placeholder = {
                 Text(
@@ -129,10 +123,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                 .background(Color(0XFF39B54A), shape = RoundedCornerShape(10.dp))
                 .clickable(enabled = !validationResult.isLoading) {
 
-
-                    if (keyboard != null) {
-                        keyboard.hide()
-                    }
+                    keyboard?.hide()
 
                     if (cnic.isEmpty() || !regex.matches(cnic)) {
                         cnic = ""
@@ -157,11 +148,9 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                                     "Welcome ${Constants.name}",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                if (navController != null) {
-                                    navController.navigate("mainscreen") {
-                                        popUpTo("login") {
-                                            inclusive = true
-                                        }
+                                navController?.navigate("mainscreen") {
+                                    popUpTo("login") {
+                                        inclusive = true
                                     }
                                 }
 
@@ -204,7 +193,6 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
 
         BottomLogo()
-
 
 
     }

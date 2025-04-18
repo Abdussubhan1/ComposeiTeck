@@ -1,6 +1,6 @@
 package com.example.itecktestingcompose
 
-import android.graphics.Bitmap
+
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -236,7 +235,12 @@ fun TestingPage(navController: NavHostController) {
 fun ValidationStatusUI(): Int {
 
     var deviceLocationResult by remember {
-        mutableStateOf(ValidateLocationResponse(false, false, 0.0, 0.0))
+        mutableStateOf(ValidateLocationResponse(
+            Success = false,
+            isLoading = false,
+            Lat = 0.0,
+            Lng = 0.0
+        ))
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -289,7 +293,12 @@ fun ValidationStatusUI(): Int {
                             .size(22.dp)
                             .clickable {
                                 deviceLocationResult =
-                                    ValidateLocationResponse(false, true, 0.0, 0.0)
+                                    ValidateLocationResponse(
+                                        Success = false,
+                                        isLoading = true,
+                                        Lat = 0.0,
+                                        Lng = 0.0
+                                    )
                                 coroutineScope.launch {
                                     deviceLocationResult = validateLoc(Constants.deviceID)
                                     if (deviceLocationResult.Success) {
@@ -385,18 +394,18 @@ fun ValidationStatusUI(): Int {
                     )
                 }
             }
-//            Spacer(modifier = Modifier.height(10.dp))
-//            if(deviceLocationResult.isLoading)
-//            {
-//            Text(
-//                "Please Wait...",
-//                modifier = Modifier.fillMaxWidth(),
-//                textAlign = TextAlign.Center,
-//                color = Color.Green,
-//                fontSize = 20.sp,
-//                fontWeight = FontWeight.SemiBold
-//            )
-//            }
+            Spacer(modifier = Modifier.height(10.dp))
+            if(deviceLocationResult.isLoading)
+            {
+            Text(
+                "Please Wait...",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.Green,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            }
         }
     }
     return validationStep
@@ -462,7 +471,7 @@ fun Alert(
             TextButton(onClick = {
                 navController.navigate("mainscreen")
                 Constants.deviceID = ""
-                Constants.initialPictures = mutableStateListOf<Bitmap?>(null, null)
+                Constants.initialPictures = mutableStateListOf(null, null)
                 Constants.deviceLocationLat = 0.0
                 Constants.deviceLocationLong = 0.0
             }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {

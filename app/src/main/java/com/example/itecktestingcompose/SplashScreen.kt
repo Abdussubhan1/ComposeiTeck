@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
+    var version = getAppVersion(LocalContext.current)
 
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(2000) // Wait for 2 seconds
@@ -69,6 +71,15 @@ fun SplashScreen(navController: NavHostController) {
             )
         }
         BottomLogo()
+        Text(
+            "App Version $version",
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 14.dp)
+        )
     }
 
 

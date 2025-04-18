@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +31,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -70,17 +68,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun DeviceEntryScreen(current: Context, navController: NavHostController) {
     var devID by remember { mutableStateOf("") }
-    var validationResult by remember { mutableStateOf(DevValidationResult(false, false)) }
+    var validationResult by remember { mutableStateOf(DevValidationResult(
+        ifDeviceExist = false,
+        isLoading = false
+    )) }
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
-//    var locValidationResult = remember { mutableStateOf(LocValidationResult(0.0, 0.0)) }
     var isEnabled by remember { mutableStateOf(true) }
-//    var device by remember { mutableStateOf("") }
     var tbEnable by remember { mutableStateOf(false) }
     var pictureTaking by remember { mutableStateOf(false) }
     var initiallistCompleted by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
     var moveToTesting by remember { mutableStateOf(false) }
+
+
 
    HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
@@ -166,7 +167,10 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
-                                    validationResult = DevValidationResult(false, true)
+                                    validationResult = DevValidationResult(
+                                        ifDeviceExist = false,
+                                        isLoading = true
+                                    )
                                     couroutineScope.launch {
 
                                         validationResult = validateDev(devID)
@@ -355,7 +359,7 @@ fun CustomTextField(
         placeholder = {
             Text(
                 placeholder,
-                color = Color.Gray,
+                color = Color.DarkGray,
                 fontSize = 18.sp,
                 textAlign = TextAlign.End,
                 fontFamily = jameelNooriFont,

@@ -16,4 +16,6 @@ object Constants {
     var deviceLocationLat:Double=0.0
     var deviceLocationLong:Double=0.0
 
+
 }
+
