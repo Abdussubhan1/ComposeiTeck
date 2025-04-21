@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,7 +34,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +59,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -234,30 +239,48 @@ fun TestingPage(navController: NavHostController) {
 @Composable
 fun ValidationStatusUI(): Int {
 
-    var deviceLocationResult by remember {
-        mutableStateOf(ValidateLocationResponse(
-            Success = false,
-            isLoading = false,
-            Lat = 0.0,
-            Lng = 0.0
-        ))
-    }
+    var battery by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
-    var battery by remember { mutableStateOf("") }
+
+    var deviceLocationResult by remember {
+        mutableStateOf(
+            ValidateLocationResponse(
+                isLoading = false,
+                Lat = 0.0,
+                Lng = 0.0
+            )
+        )
+    }
+
+    var batteryResult by remember {
+        mutableStateOf(
+            batteryResponse(
+                isLoading = false,
+                battery = ""
+            )
+        )
+    }
+
+    var ignitionResult by remember {
+        mutableStateOf(
+            ignitionResponse(
+                isLoading = false,
+                ignition = ""
+            )
+        )
+    }
+
     var ignition by remember { mutableStateOf("") }
     var relay by remember { mutableStateOf(false) }
     var loc by remember { mutableStateOf(false) }
-    var locResult by remember { mutableStateOf(false) }
-
-
-    var validationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
+    var locResult by remember { mutableStateOf(0.0) }
+    var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 
     if (loc) {
         getLocation()
         if (Constants.mobileLocationLat != 0.0 && Constants.mobileLocationLong != 0.0) {
             locResult = checkLocationWithinRange()
-            if(!locResult) {Toast.makeText(LocalContext.current,"Tracker is not aligned with your mobile",Toast.LENGTH_LONG).show()}
         }
         Log.d("TAG", "checkloc: $locResult")
         loc = false
@@ -268,7 +291,7 @@ fun ValidationStatusUI(): Int {
             .fillMaxWidth()
             .background(Color(0XFF182b3c))
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
@@ -276,15 +299,39 @@ fun ValidationStatusUI(): Int {
             horizontalAlignment = Alignment.Start
         ) {
 
+            val rowModifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(vertical = 8.dp, horizontal = 4.dp)
+
             // LOCATION Wali Row
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = rowModifier
             ) {
-                StatusRow("Location", if (locResult) Color.Green else Color.LightGray)
+
+                Text(
+                    "Location",
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(0.15f)
+                        .wrapContentSize(Alignment.CenterStart)
+                )
+                LinearProgressIndicator(
+                    progress = { 1f },
+                    color = if (locResult in 1.00..50.00) Color.Green else if (locResult > 50.00) Color.Red else Color.LightGray,
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .clip(RoundedCornerShape(50))
+                        .wrapContentSize()
+                        .height(10.dp)
+                )
                 Spacer(modifier = Modifier.width(4.dp))
-                if (validationStep == 0 && !deviceLocationResult.isLoading) {
+                if (moveToNextValidationStep == 0 && !deviceLocationResult.isLoading) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -294,39 +341,62 @@ fun ValidationStatusUI(): Int {
                             .clickable {
                                 deviceLocationResult =
                                     ValidateLocationResponse(
-                                        Success = false,
                                         isLoading = true,
                                         Lat = 0.0,
                                         Lng = 0.0
                                     )
                                 coroutineScope.launch {
                                     deviceLocationResult = validateLoc(Constants.deviceID)
-                                    if (deviceLocationResult.Success) {
-                                        loc = true
-                                        Constants.deviceLocationLat = deviceLocationResult.Lat
-                                        Constants.deviceLocationLong = deviceLocationResult.Lng
-                                    }
+                                    loc = true
+                                    Constants.deviceLocationLat = deviceLocationResult.Lat
+                                    Constants.deviceLocationLong = deviceLocationResult.Lng
+
                                 }
 
                             }
 
                     )
-                    if (locResult) validationStep = 1
+                    if (locResult in 1.00..50.00) moveToNextValidationStep = 1
                 }
             }
 
             // BATTERY Wali Row
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = rowModifier
             ) {
-                StatusRow(
-                    "Battery",
-                    if (battery == "Disconnected") Color.Red else if (battery == "Connected") Color.Green else Color.LightGray
-                )
+                var batteryProgress by remember { mutableFloatStateOf(0.0f) }
+                batteryProgress = when {
+                    battery == "Connected" && batteryProgress == 0.0f -> 0.30f
+                    battery == "Disconnected" && batteryProgress == 0.30f -> 0.60f
+                    battery == "Connected" && batteryProgress == 0.60f -> 1.0f
+                    else -> batteryProgress
+                }
+                if (batteryProgress == 1f) moveToNextValidationStep = 2
 
-                if (validationStep == 1) {
+                Text(
+                    "Battery",
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(0.15f)
+                        .wrapContentSize(Alignment.CenterStart)
+                )
+                LinearProgressIndicator(
+                    progress = { batteryProgress },
+                    color = if (battery == "Disconnected" || battery == "Connected") Color.Green else Color.LightGray,
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .clip(RoundedCornerShape(50))
+                        .wrapContentSize()
+                        .height(10.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                if (moveToNextValidationStep == 1 && !deviceLocationResult.isLoading) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -334,9 +404,9 @@ fun ValidationStatusUI(): Int {
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
+                                batteryResult = batteryResponse(isLoading = true, battery = "")
                                 coroutineScope.launch {
-                                    battery = validateBattery(Constants.deviceID)
-                                    if (battery != "Disconnected") validationStep = 2
+                                    batteryResult = validateBattery(Constants.deviceID)
                                 }
                             }
                     )
@@ -347,14 +417,30 @@ fun ValidationStatusUI(): Int {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = rowModifier
             ) {
-                StatusRow(
+                Text(
                     "Ignition",
-                    if (ignition == "OFF") Color.Red else if (ignition == "ON") Color.Green else Color.LightGray
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(0.15f)
+                        .wrapContentSize(Alignment.CenterStart)
                 )
+                LinearProgressIndicator(
+                    progress = { 1f },
+                    color = if (ignition == "OFF") Color.Red else if (ignition == "ON") Color.Green else Color.LightGray,
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .clip(RoundedCornerShape(50))
+                        .wrapContentSize()
+                        .height(10.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
 
-                if (validationStep == 2) {
+                if (moveToNextValidationStep == 2) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -362,9 +448,10 @@ fun ValidationStatusUI(): Int {
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
+                                ignitionResult = ignitionResponse(isLoading = true, ignition = "")
                                 coroutineScope.launch {
-                                    ignition = validateIgnition(Constants.deviceID)
-                                    if (ignition != "OFF") validationStep = 3
+                                    ignitionResult = validateIgnition(Constants.deviceID)
+                                    if (ignition != "OFF") moveToNextValidationStep = 4
                                 }
                             }
                     )
@@ -375,11 +462,31 @@ fun ValidationStatusUI(): Int {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = rowModifier
             ) {
-                StatusRow("Relay", if (relay) Color(0xFF00C853) else Color.LightGray)
+                Text(
+                    "Relay",
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(0.15f)
+                        .wrapContentSize(Alignment.CenterStart)
+                )
+                LinearProgressIndicator(
+                    progress = { 1f },
+                    color = if (relay) Color(0xFF00C853) else Color.LightGray,
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .clip(RoundedCornerShape(50))
+                        .wrapContentSize()
+                        .height(10.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
 
-                if (validationStep == 3) {
+
+                if (moveToNextValidationStep == 3) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -394,9 +501,10 @@ fun ValidationStatusUI(): Int {
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            if(deviceLocationResult.isLoading)
-            {
+
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        if (deviceLocationResult.isLoading || batteryResult.isLoading) {
             Text(
                 "Please Wait...",
                 modifier = Modifier.fillMaxWidth(),
@@ -405,10 +513,26 @@ fun ValidationStatusUI(): Int {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.wrapContentSize()) {
+            Column {
+                Text(
+                    "Battery Status:  ${batteryResult.battery}",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+                Text(
+                    "Ignition Status:  ${ignitionResult.ignition}",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
             }
+
         }
     }
-    return validationStep
+
+    return moveToNextValidationStep
 }
 
 
@@ -490,38 +614,3 @@ fun Alert(
 
     )
 }
-
-
-@Composable
-fun StatusRow(
-    label: String,
-    statusColor: Color,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .padding(vertical = 8.dp)
-    ) {
-        Text(
-            label,
-            fontSize = 12.sp,
-            color = Color.White,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .weight(0.15f)
-        )
-
-        LinearProgressIndicator(
-            progress = { 1f },
-            color = statusColor,
-            modifier = Modifier
-                .weight(0.45f)
-                .height(10.dp)
-                .clip(RoundedCornerShape(50))
-        )
-
-    }
-}
-

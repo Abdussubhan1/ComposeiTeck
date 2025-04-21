@@ -5,11 +5,18 @@ import android.util.Log
 import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
-suspend fun validateIgnition(devID: String) :String{
+data class ignitionResponse(
+    var isLoading: Boolean,
+    var ignition: String
+)
+
+
+
+suspend fun validateIgnition(devID: String) :ignitionResponse{
 
     var ignition=""
 
-    try {
+    return try {
 
         val response =
             ServiceBuilder.buildService(RetrofitInterface::class.java).validateIgnition(devID)
@@ -18,10 +25,10 @@ suspend fun validateIgnition(devID: String) :String{
             ignition = responseBody.Ignition
 
         }
-        return ignition
+        ignitionResponse(isLoading = false, ignition = ignition)
 
     } catch (e: Exception) {
         Log.d(TAG, "validateDevice: $e")
-        return "Error"
+        ignitionResponse(isLoading = false, ignition = ignition)
     }
 }

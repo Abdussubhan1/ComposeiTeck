@@ -1,18 +1,22 @@
 package com.example.itecktestingcompose
 
 
-
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
+data class batteryResponse(
+    var isLoading: Boolean,
+    var battery: String
+)
 
-suspend fun validateBattery(devID: String) :String{
 
-    var battery=""
+suspend fun validateBattery(devID: String): batteryResponse {
 
-try {
+    var battery = ""
+
+   return try {
 
         val response =
             ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID)
@@ -21,11 +25,11 @@ try {
             battery = responseBody.Battery
 
         }
-        return battery
+         batteryResponse(isLoading = false, battery = battery)
 
     } catch (e: Exception) {
         Log.d(TAG, "validateDevice: $e")
-       return "Error"
+       batteryResponse(isLoading = false, battery = battery)
     }
 }
 

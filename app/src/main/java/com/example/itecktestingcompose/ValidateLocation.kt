@@ -8,7 +8,6 @@ import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
 data class ValidateLocationResponse(
-    val Success: Boolean,
     var isLoading: Boolean,
     val Lat: Double,
     val Lng: Double
@@ -23,15 +22,15 @@ suspend fun validateLoc(devID: String): ValidateLocationResponse {
             val body = response.body()
             if (body != null && body.Success) {
                 Log.d(TAG, "validateDevice: ${body.Lat}, ${body.Lng}")
-                return ValidateLocationResponse(body.Success,false,body.Lat, body.Lng)
+                return ValidateLocationResponse(false,body.Lat, body.Lng)
             }
         }
 
-        ValidateLocationResponse(false,false,0.0, 0.0) // Fallback default if not successful
+        ValidateLocationResponse(false,0.0,0.0) // Fallback default if not successful
 
     } catch (e: Exception) {
         Log.e(TAG, "validateDevice error: ${e.message}")
-        ValidateLocationResponse(false,false,0.0, 0.0)
+        ValidateLocationResponse(false,0.0,0.0)
     }
 }
 

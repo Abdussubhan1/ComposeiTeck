@@ -9,7 +9,7 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-fun checkLocationWithinRange(): Boolean {
+fun checkLocationWithinRange(): Double {
     var mobLat = Constants.mobileLocationLat
     var mobLong = Constants.mobileLocationLong
     var dLat = Constants.deviceLocationLat
@@ -32,10 +32,12 @@ fun checkLocationWithinRange(): Boolean {
     val distanceInMeters = earthRadius * c
     Log.d(TAG, "checkLocationWithinRange: $distanceInMeters")
 
+    return distanceInMeters
+
     // Return true if within 500 meters, else false
     result = distanceInMeters <= 50
-    Log.d(TAG, "checkLocationWithinRange: $result")
-    return result
+
+//    return result
 
 
 }
