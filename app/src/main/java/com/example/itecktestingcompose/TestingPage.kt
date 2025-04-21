@@ -369,9 +369,9 @@ fun ValidationStatusUI(): Int {
             ) {
                 var batteryProgress by remember { mutableFloatStateOf(0.0f) }
                 batteryProgress = when {
-                    battery == "Connected" && batteryProgress == 0.0f -> 0.30f
-                    battery == "Disconnected" && batteryProgress == 0.30f -> 0.60f
-                    battery == "Connected" && batteryProgress == 0.60f -> 1.0f
+                    batteryResult.battery == "Connected" && batteryProgress == 0.0f -> 0.30f
+                    batteryResult.battery == "Disconnected" && batteryProgress == 0.30f -> 0.60f
+                    batteryResult.battery == "Connected" && batteryProgress == 0.60f -> 1.0f
                     else -> batteryProgress
                 }
                 if (batteryProgress == 1f) moveToNextValidationStep = 2
