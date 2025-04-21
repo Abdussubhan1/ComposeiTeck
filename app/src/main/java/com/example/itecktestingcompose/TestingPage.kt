@@ -388,7 +388,7 @@ fun ValidationStatusUI(): Int {
                 )
                 LinearProgressIndicator(
                     progress = { batteryProgress },
-                    color = if (battery == "Disconnected" || battery == "Connected") Color.Green else Color.LightGray,
+                    color = if (batteryResult.battery == "Disconnected" || batteryResult.battery == "Connected") Color.Green else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -431,7 +431,7 @@ fun ValidationStatusUI(): Int {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (ignition == "OFF") Color.Red else if (ignition == "ON") Color.Green else Color.LightGray,
+                    color = if (ignitionResult.ignition == "OFF") Color.Red else if (ignitionResult.ignition == "ON") Color.Green else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -515,17 +515,17 @@ fun ValidationStatusUI(): Int {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.wrapContentSize()) {
-            Column {
+        Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.wrapContentSize()) {
                 Text(
                     "Battery Status:  ${batteryResult.battery}",
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 12.sp
                 )
                 Text(
                     "Ignition Status:  ${ignitionResult.ignition}",
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 12.sp
                 )
             }
 
