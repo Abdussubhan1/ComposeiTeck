@@ -47,6 +47,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
+
+
     HandleDoubleBackToExit()
 
     var validationResult by remember {

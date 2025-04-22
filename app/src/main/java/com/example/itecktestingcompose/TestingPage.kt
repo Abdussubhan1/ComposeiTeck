@@ -336,7 +336,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (locResult in 1.00..50.00) Color.Green else if (locResult > 50.00 || locResult == 0.0) Color.Red else Color.LightGray,
+                    color = if (locResult in 1.00..100.00) Color.Green else if (locResult > 100.00 || locResult == 0.0) Color.Red else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -373,7 +373,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                             }
 
                     )
-                    if (locResult in 1.00..50.00 && deviceLocationResult.Success) {
+                    if (locResult in 1.00..100.00 && deviceLocationResult.Success) {
                         moveToNextValidationStep =
                             1
                     }

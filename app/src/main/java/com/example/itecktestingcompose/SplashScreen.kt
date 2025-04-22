@@ -31,7 +31,7 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
-    var version = getAppVersion(LocalContext.current)
+    val version = getAppVersion(LocalContext.current)
 
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(2000) // Wait for 2 seconds
