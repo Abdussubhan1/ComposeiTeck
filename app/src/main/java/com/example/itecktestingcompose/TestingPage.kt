@@ -2,7 +2,7 @@ package com.example.itecktestingcompose
 
 
 import android.util.Log
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,8 +34,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -47,7 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,14 +59,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun TestingPage(navController: NavHostController) {
 
-    var comp by remember { mutableIntStateOf(0) }
+    var comp by remember { mutableStateOf(false) }
 
     var showDialogueReset by remember { mutableStateOf(false) }
     HandleDoubleBackToExit()
@@ -164,7 +162,9 @@ fun TestingPage(navController: NavHostController) {
                 .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
                 .padding(18.dp)
         ) {
-            comp = ValidationStatusUI()
+            ValidationStatusUI(onTestingCompleted = {result->
+                comp = result
+            })
         }
         Spacer(modifier = Modifier.height(100.dp))
 
@@ -177,10 +177,12 @@ fun TestingPage(navController: NavHostController) {
                 onClick = {
                     showDialogueReset = true
                 },
-                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color.Red),
                 modifier = Modifier
-                    .fillMaxWidth(), shape = RoundedCornerShape(50)
+                    .fillMaxWidth()
+                    .height(48.dp)
             ) {
                 Text(
                     text = " ڈیوائس تبدیل کریں",
@@ -193,22 +195,24 @@ fun TestingPage(navController: NavHostController) {
             }
 
             Button(
-                enabled = comp == 4,
+                enabled = comp,
                 onClick = {
-                    showDialogueReset = true
+                    navController.navigate("finalPicturesScreen") {
+                        popUpTo("testingPage") {
+                            inclusive = true
+                        }
+                    }
                 },
-                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0XFF39B54A), // Green color
-                    contentColor = Color.White,
-                    disabledContainerColor = Color(0xFF122333).copy(alpha = 0.05f),
-                    disabledContentColor = Color.White.copy(alpha = 0.3f)
-                ),
+                elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
                 modifier = Modifier
-                    .fillMaxWidth(), shape = RoundedCornerShape(50)
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(50),
+                border = BorderStroke(1.dp, Color(0XFF39B54A))
             ) {
                 Text(
-                    text = " کام مکمل ہو گیا ہے",
+                    text = " آگے بڑھیں۔",
                     fontFamily = jameelNooriFont,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -237,9 +241,11 @@ fun TestingPage(navController: NavHostController) {
 
 
 @Composable
-fun ValidationStatusUI(): Int {
+fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
+    var showBattery by remember { mutableStateOf(false) }
+    var showIgnition by remember { mutableStateOf(false) }
 
-    var battery by remember { mutableStateOf("") }
+//    var battery by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -270,11 +276,12 @@ fun ValidationStatusUI(): Int {
             )
         )
     }
+    var testingCompleted by remember { mutableStateOf(false) }
 
     var ignition by remember { mutableStateOf("") }
     var relay by remember { mutableStateOf(false) }
     var loc by remember { mutableStateOf(false) }
-    var locResult by remember { mutableStateOf(0.0) }
+    var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 
     if (loc) {
@@ -323,7 +330,7 @@ fun ValidationStatusUI(): Int {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (locResult in 1.00..50.00) Color.Green else if (locResult > 50.00) Color.Red else Color.LightGray,
+                    color = if (locResult in 1.00..50.00) Color.Green else if (locResult > 50.00 || locResult == 0.0) Color.Red else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -405,6 +412,7 @@ fun ValidationStatusUI(): Int {
                             .size(24.dp)
                             .clickable {
                                 batteryResult = batteryResponse(isLoading = true, battery = "")
+                                showBattery = true
                                 coroutineScope.launch {
                                     batteryResult = validateBattery(Constants.deviceID)
                                 }
@@ -419,6 +427,10 @@ fun ValidationStatusUI(): Int {
                 horizontalArrangement = Arrangement.Center,
                 modifier = rowModifier
             ) {
+                if (ignitionResult.ignition == "ON") {
+                    testingCompleted = true
+                    onTestingCompleted(true)
+                }
                 Text(
                     "Ignition",
                     fontSize = 12.sp,
@@ -440,7 +452,7 @@ fun ValidationStatusUI(): Int {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
 
-                if (moveToNextValidationStep == 2) {
+                if (moveToNextValidationStep == 2 && !batteryResult.isLoading) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -449,16 +461,18 @@ fun ValidationStatusUI(): Int {
                             .size(24.dp)
                             .clickable {
                                 ignitionResult = ignitionResponse(isLoading = true, ignition = "")
+                                showIgnition = true
+                                showBattery = false
                                 coroutineScope.launch {
                                     ignitionResult = validateIgnition(Constants.deviceID)
-                                    if (ignition != "OFF") moveToNextValidationStep = 4
                                 }
+
                             }
                     )
                 }
             }
 
-            // RELAY Wali Row
+            /* RELAY Wali Row
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -500,39 +514,43 @@ fun ValidationStatusUI(): Int {
                             }
                     )
                 }
-            }
+            }*/
 
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        if (deviceLocationResult.isLoading || batteryResult.isLoading) {
+        Spacer(modifier = Modifier.height(5.dp))
+        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading) {
             Text(
-                "Please Wait...",
+                "Please Wait..",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                color = Color.Green,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
+//        Spacer(modifier = Modifier.height(10.dp))
         Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.wrapContentSize()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val text = when {
+                    showBattery -> "Battery: ${batteryResult.battery}"
+                    showIgnition -> "Ignition: ${ignitionResult.ignition}"
+                    else -> ""
+                }
                 Text(
-                    "Battery Status:  ${batteryResult.battery}",
-                    color = Color.White,
-                    fontSize = 12.sp
+                    text = text,
+                    color = if (text == "Battery: Disconnected" || text == "Ignition: OFF") Color.Red else Color.Green,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
                 )
-                Text(
-                    "Ignition Status:  ${ignitionResult.ignition}",
-                    color = Color.White,
-                    fontSize = 12.sp
-                )
+
             }
 
         }
     }
 
-    return moveToNextValidationStep
 }
 
 

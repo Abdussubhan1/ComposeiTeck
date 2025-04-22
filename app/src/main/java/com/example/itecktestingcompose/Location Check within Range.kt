@@ -17,7 +17,7 @@ fun checkLocationWithinRange(): Double {
     Log.d(TAG, "checkLocationWithinRange: device($dLat, $dLong), mobile($mobLat, $mobLong)")
 
     val earthRadius = 6371000.0 // Radius of Earth in meters
-    var result: Boolean
+//    var result: Boolean
 
     val latDistance = Math.toRadians(mobLat - dLat)
     val lonDistance = Math.toRadians(mobLong - dLong)
@@ -35,7 +35,7 @@ fun checkLocationWithinRange(): Double {
     return distanceInMeters
 
     // Return true if within 500 meters, else false
-    result = distanceInMeters <= 50
+//    result = distanceInMeters <= 50
 
 //    return result
 

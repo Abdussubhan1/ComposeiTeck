@@ -17,6 +17,7 @@ fun AppNavigation() {
         composable("login") { LoginScreen(LocalContext.current, navController) }
         composable("mainscreen") { DeviceEntryScreen(LocalContext.current, navController) }
         composable("testingPage") { TestingPage(navController) }
+        composable("finalPicturesScreen"){FinalPicturesScreen()}
     }
 }
 
