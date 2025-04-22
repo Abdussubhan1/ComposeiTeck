@@ -16,6 +16,7 @@ object Constants {
     var mobileLocationLong:Double=0.0
     var deviceLocationLat:Double=0.0
     var deviceLocationLong:Double=0.0
+    var deviceLocation:String=""
 
 
 }

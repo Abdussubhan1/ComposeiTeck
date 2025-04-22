@@ -10,7 +10,9 @@ import com.example.itecktestingcompose.Interface.ServiceBuilder
 data class ValidateLocationResponse(
     var isLoading: Boolean,
     val Lat: Double,
-    val Lng: Double
+    val Lng: Double,
+    val Message: String = "",
+    val Success: Boolean
 )
 
 suspend fun validateLoc(devID: String): ValidateLocationResponse {
@@ -22,15 +24,15 @@ suspend fun validateLoc(devID: String): ValidateLocationResponse {
             val body = response.body()
             if (body != null && body.Success) {
                 Log.d(TAG, "validateDevice: ${body.Lat}, ${body.Lng}")
-                return ValidateLocationResponse(false,body.Lat, body.Lng)
+                return ValidateLocationResponse(false,body.Lat, body.Lng, body.Message, body.Success)
             }
         }
 
-        ValidateLocationResponse(false,0.0,0.0) // Fallback default if not successful
+        ValidateLocationResponse(false,0.0,0.0,"Failed", false) // Fallback default if not successful
 
     } catch (e: Exception) {
         Log.e(TAG, "validateDevice error: ${e.message}")
-        ValidateLocationResponse(false,0.0,0.0)
+        ValidateLocationResponse(false,0.0,0.0,"Failed", false)
     }
 }
 

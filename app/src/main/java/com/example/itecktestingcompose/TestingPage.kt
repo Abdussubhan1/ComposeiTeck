@@ -102,12 +102,12 @@ fun TestingPage(navController: NavHostController) {
             }
 
 
-            Icon(
-                imageVector = Icons.Default.Lightbulb,
-                contentDescription = "Tips",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
-            )
+//            Icon(
+//                imageVector = Icons.Default.Lightbulb,
+//                contentDescription = "Tips",
+//                tint = Color.White,
+//                modifier = Modifier.size(32.dp)
+//            )
 
 
         }
@@ -162,11 +162,11 @@ fun TestingPage(navController: NavHostController) {
                 .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
                 .padding(18.dp)
         ) {
-            ValidationStatusUI(onTestingCompleted = {result->
+            ValidationStatusUI(onTestingCompleted = { result ->
                 comp = result
             })
         }
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -179,7 +179,7 @@ fun TestingPage(navController: NavHostController) {
                 },
                 elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-                shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color.Red),
+                shape = RoundedCornerShape(50), border = BorderStroke(1.5.dp, Color.Red),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
@@ -204,18 +204,21 @@ fun TestingPage(navController: NavHostController) {
                     }
                 },
                 elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = Color.Transparent,
+                    contentColor = Color.White
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(50),
-                border = BorderStroke(1.dp, Color(0XFF39B54A))
+                border = if (comp) {BorderStroke(1.5.dp, Color(0XFF39B54A))} else null
             ) {
                 Text(
                     text = " آگے بڑھیں۔",
                     fontFamily = jameelNooriFont,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
                     textAlign = TextAlign.Center,
                     fontSize = 21.sp
                 )
@@ -244,6 +247,7 @@ fun TestingPage(navController: NavHostController) {
 fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
     var showBattery by remember { mutableStateOf(false) }
     var showIgnition by remember { mutableStateOf(false) }
+    var showLocation by remember { mutableStateOf(false) }
 
 //    var battery by remember { mutableStateOf("") }
 
@@ -254,7 +258,9 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
             ValidateLocationResponse(
                 isLoading = false,
                 Lat = 0.0,
-                Lng = 0.0
+                Lng = 0.0,
+                Message = "",
+                Success = false
             )
         )
     }
@@ -286,9 +292,9 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
 
     if (loc) {
         getLocation()
-        if (Constants.mobileLocationLat != 0.0 && Constants.mobileLocationLong != 0.0) {
-            locResult = checkLocationWithinRange()
-        }
+//        if (Constants.mobileLocationLat != 0.0 && Constants.mobileLocationLong != 0.0) {
+        locResult = checkLocationWithinRange()
+//        }
         Log.d("TAG", "checkloc: $locResult")
         loc = false
     }
@@ -307,8 +313,8 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
         ) {
 
             val rowModifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(vertical = 8.dp, horizontal = 4.dp)
+                .fillMaxWidth()
+                .padding(vertical = 12.dp)
 
             // LOCATION Wali Row
 
@@ -346,24 +352,31 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                         modifier = Modifier
                             .size(22.dp)
                             .clickable {
+                                showLocation = true
+                                loc = true
                                 deviceLocationResult =
                                     ValidateLocationResponse(
-                                        isLoading = true,
+                                        isLoading = true, //Just yeh loader dikhane k lie hy
                                         Lat = 0.0,
-                                        Lng = 0.0
+                                        Lng = 0.0,
+                                        Message = "",
+                                        Success = false
                                     )
                                 coroutineScope.launch {
                                     deviceLocationResult = validateLoc(Constants.deviceID)
-                                    loc = true
                                     Constants.deviceLocationLat = deviceLocationResult.Lat
                                     Constants.deviceLocationLong = deviceLocationResult.Lng
+                                    Constants.deviceLocation = deviceLocationResult.Message
 
                                 }
 
                             }
 
                     )
-                    if (locResult in 1.00..50.00) moveToNextValidationStep = 1
+                    if (locResult in 1.00..50.00 && deviceLocationResult.Success) {
+                        moveToNextValidationStep =
+                            1
+                    }
                 }
             }
 
@@ -403,7 +416,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                         .height(10.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                if (moveToNextValidationStep == 1 && !deviceLocationResult.isLoading) {
+                if (moveToNextValidationStep == 1 && !batteryResult.isLoading) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
@@ -413,6 +426,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                             .clickable {
                                 batteryResult = batteryResponse(isLoading = true, battery = "")
                                 showBattery = true
+                                showLocation = false
                                 coroutineScope.launch {
                                     batteryResult = validateBattery(Constants.deviceID)
                                 }
@@ -524,27 +538,34 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.White,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
         }
-//        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val text = when {
+                    showLocation -> "Location: ${deviceLocationResult.Message}"
                     showBattery -> "Battery: ${batteryResult.battery}"
                     showIgnition -> "Ignition: ${ignitionResult.ignition}"
                     else -> ""
                 }
-                Text(
-                    text = text,
-                    color = if (text == "Battery: Disconnected" || text == "Ignition: OFF") Color.Red else Color.Green,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
+
+                if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading) {
+                    Text(
+                        text = text,
+                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed") Color.Red else Color.Green,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 5,
+                        fontSize = 12.sp,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center, lineHeight = 26.sp
+                    )
+                }
 
             }
 
@@ -616,6 +637,7 @@ fun Alert(
                 Constants.initialPictures = mutableStateListOf(null, null)
                 Constants.deviceLocationLat = 0.0
                 Constants.deviceLocationLong = 0.0
+                Constants.deviceLocation = ""
             }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
                 Text("جی ہاں", color = Color.White, fontFamily = jameelNooriFont)
             }

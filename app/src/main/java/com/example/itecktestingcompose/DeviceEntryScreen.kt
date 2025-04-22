@@ -119,12 +119,12 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
             }
 
 
-            Icon(
-                imageVector = Icons.Default.Lightbulb,
-                contentDescription = "Tips",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
-            )
+//            Icon(
+//                imageVector = Icons.Default.Lightbulb,
+//                contentDescription = "Tips",
+//                tint = Color.White,
+//                modifier = Modifier.size(32.dp)
+//            )
 
 
         }

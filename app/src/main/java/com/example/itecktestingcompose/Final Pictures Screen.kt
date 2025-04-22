@@ -95,12 +95,12 @@ fun FinalPicturesScreen() {
             }
 
 
-            Icon(
-                imageVector = Icons.Default.Lightbulb,
-                contentDescription = "Tips",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
-            )
+//            Icon(
+//                imageVector = Icons.Default.Lightbulb,
+//                contentDescription = "Tips",
+//                tint = Color.White,
+//                modifier = Modifier.size(32.dp)
+//            )
 
 
         }
@@ -241,6 +241,7 @@ fun FinalPicturesScreen() {
                 }
 
                 if (FinallistCompleted) {
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -257,7 +258,7 @@ fun FinalPicturesScreen() {
                                 FinallistCompleted = false
                             },
                             colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-                            shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color.Red),
+                            shape = RoundedCornerShape(50), border = BorderStroke(1.5.dp, Color.Red),
                             elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -283,7 +284,7 @@ fun FinalPicturesScreen() {
                                 .fillMaxWidth()
                                 .height(48.dp),
                             shape = RoundedCornerShape(50),
-                            border = BorderStroke(1.dp, Color(0XFF39B54A))
+                            border = BorderStroke(1.5.dp, Color(0XFF39B54A))
                         ) {
                             Text(
                                 text = " کام مکمل ہو گیا ہے۔",
