@@ -4,6 +4,7 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
 import com.example.itecktestingcompose.ModelClasses.Ignition
+import com.example.itecktestingcompose.ModelClasses.Status
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.google.gson.GsonBuilder
@@ -18,19 +19,35 @@ import retrofit2.http.POST
 interface RetrofitInterface {
     @FormUrlEncoded
     @POST("validate_cnic.php")
-    suspend fun validateCnic(@Field("cnic") cnic: String): Response<ValidateCnicResponse>
+    suspend fun validateCnic(
+        @Field("cnic") cnic: String,
+        @Field("DeviceId") mobileID: String,
+        @Field("FcmToken") FCMToken: String,
+        @Field("Appversion") appVersion: String,
+        @Field("OSVersion") OSVersion: String,
+        @Field("Brand") Brand: String
+    ): Response<ValidateCnicResponse>
+
     @FormUrlEncoded
     @POST("validate_device.php")
     suspend fun validateDevice(@Field("devid") devID: String): Response<ValidateDeviceResponse>
+
     @FormUrlEncoded
     @POST("get_location.php")
     suspend fun validateLocation(@Field("devid") devID: String): Response<GetLocation>
+
     @FormUrlEncoded
     @POST("get_battery.php")
     suspend fun validateBattery(@Field("devid") devID: String): Response<Battery>
+
     @FormUrlEncoded
     @POST("get_ignition.php")
     suspend fun validateIgnition(@Field("devid") devID: String): Response<Ignition>
+
+
+    @FormUrlEncoded
+    @POST("get_status.php")
+    suspend fun getStatus(@Field("devid") devID: String): Response<Status>
 
 }
 

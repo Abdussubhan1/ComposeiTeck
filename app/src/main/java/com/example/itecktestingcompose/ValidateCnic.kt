@@ -12,15 +12,24 @@ data class CNICValidationResult(
 )
 
 
-suspend fun validateCnic(cnic: String): CNICValidationResult {
+suspend fun validateCnic(
+    cnic: String,
+    mobileID: String,
+    FCMToken: String,
+    appVersion: String,
+    OSVersion: String,
+    Brand: String
+): CNICValidationResult {
 
     var ifUserExist = false
 
     return try {
 
-        kotlinx.coroutines.delay(1000)
+//        kotlinx.coroutines.delay(1000)
 
-        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateCnic(cnic)
+        val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
+            .validateCnic(cnic, mobileID, FCMToken, appVersion, OSVersion, Brand)
+
         if (response.isSuccessful && response.body() != null) {
             val responseBody = response.body()!!
             ifUserExist = responseBody.Success
@@ -31,7 +40,7 @@ suspend fun validateCnic(cnic: String): CNICValidationResult {
 
         CNICValidationResult(ifUserExist, false)
     } catch (e: Exception) {
-        Log.d("cnicV", "validateCnic: $cnic")
+        Log.d("cnicV", "Exception: $e")
         CNICValidationResult(false, false)
     }
 

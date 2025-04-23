@@ -207,7 +207,7 @@ fun TestingPage(navController: NavHostController) {
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = Color.Transparent,
                     disabledContentColor = Color.Transparent,
-                    contentColor = Color.White
+                    contentColor = Color.White, containerColor =Color.Transparent
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

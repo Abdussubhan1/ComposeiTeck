@@ -5,7 +5,8 @@ plugins {
     id("com.google.devtools.ksp")
 //For FCM
 //    id ("com.android.application")
-    id ("com.google.gms.google-services")
+    id("com.google.gms.google-services")
+    alias(libs.plugins.google.firebase.crashlytics)
 
 }
 
@@ -61,6 +62,7 @@ dependencies {
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.crashlytics)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,8 +87,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
+
 //For FCM
-    implementation (libs.firebase.messaging)
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    // Add the dependency for the Firebase SDK for Google Analytics
+    implementation("com.google.firebase:firebase-analytics")
 
 }

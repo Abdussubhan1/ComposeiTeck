@@ -48,7 +48,6 @@ import kotlinx.coroutines.launch
 fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
 
-
     HandleDoubleBackToExit()
 
     var validationResult by remember {
@@ -62,7 +61,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
-    val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]$")
+//    val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]$")
     val keyboard = LocalSoftwareKeyboardController.current
 
     Column(
@@ -86,7 +85,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
 
         TextField(
             value = cnic,
-            onValueChange = { it -> cnic = it.filter { it.isDigit() || it == '-' } },
+            onValueChange = { it -> cnic = it.filter { it.isDigit() } },
 
             placeholder = {
                 Text(
@@ -122,49 +121,47 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                 .width(200.dp)
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
-                .background(Color(0XFF39B54A), shape = RoundedCornerShape(10.dp))
-                .clickable(enabled = !validationResult.isLoading) {
+                .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
+                .clickable(enabled = !validationResult.isLoading && cnic != "") {
 
                     keyboard?.hide()
 
-                    if (cnic.isEmpty() || !regex.matches(cnic)) {
-                        cnic = ""
-                        Toast.makeText(
-                            context,
-                            "Please enter valid CNIC (XXXXX-XXXXXXX-X)",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        validationResult =
-                            CNICValidationResult(
-                                ifUserExist = false,
-                                isLoading = true
-                            ) // Updating the state for Loader
+                    validationResult =
+                        CNICValidationResult(
+                            ifUserExist = false,
+                            isLoading = true
+                        ) // Updating the state for Loader
 
-                        couroutineScope.launch {
-                            validationResult = validateCnic(cnic.replace("-", ""))
-                            cnic = ""
-                            if (validationResult.ifUserExist) {
-                                Toast.makeText(
-                                    context,
-                                    "Welcome ${Constants.name}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                navController?.navigate("mainscreen") {
-                                    popUpTo("login") {
-                                        inclusive = true
-                                    }
+                    couroutineScope.launch {
+                        validationResult = validateCnic(
+                            cnic,
+                            Constants.mobileID,
+                            Constants.FCMToken,
+                            Constants.appVersion,
+                            Constants.osVersion,
+                            Constants.brand
+                        )
+
+                        if (validationResult.ifUserExist) {
+                            Toast.makeText(
+                                context,
+                                "Welcome ${Constants.name}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController?.navigate("mainscreen") {
+                                popUpTo("login") {
+                                    inclusive = true
                                 }
-
-
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Technician Not Registered",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
                             }
+                            cnic = ""
+
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Technician Not Registered",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
                         }
                     }
 
@@ -178,7 +175,7 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                     painter = painterResource(id = R.drawable.check_double_line),
                     contentDescription = "Check Icon",
                 ) else
-                Text("Loading...", color = Color.Black, fontSize = 20.sp)
+                Text("Loading...", color = Color.Black, fontSize = 16.sp)
         }
 
         if (validationResult.isLoading) {

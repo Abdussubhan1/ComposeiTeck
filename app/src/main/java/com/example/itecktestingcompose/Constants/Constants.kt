@@ -7,6 +7,7 @@ import java.util.ArrayList
 
 object Constants {
 
+    var FCMToken: String=""
     var appVersion: String=""
     var model: String=""
     var brand: String=""

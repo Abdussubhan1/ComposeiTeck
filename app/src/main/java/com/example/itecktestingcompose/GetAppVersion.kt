@@ -6,7 +6,7 @@ import com.example.itecktestingcompose.Constants.Constants
 
 fun getAppVersion(context: Context): String {
     return try {
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val packageInfo= context.packageManager.getPackageInfo(context.packageName, 0)
         Constants.appVersion=packageInfo.versionName ?: "0"
         packageInfo.versionName ?: ""
 

@@ -1,3 +1,5 @@
+package com.example.itecktestingcompose
+
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.FirebaseMessaging
 import android.util.Log
@@ -13,5 +15,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Log.d("FCM Token", "Refreshed token: $token")
         // You can send this token to your server if needed
+
+        //todo CALL API here
     }
 }
