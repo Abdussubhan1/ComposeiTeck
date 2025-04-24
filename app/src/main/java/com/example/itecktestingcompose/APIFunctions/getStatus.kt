@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.APIFunctions
 
 import android.content.ContentValues.TAG
 import android.util.Log
@@ -35,8 +35,6 @@ var p_voltages=""
             ignition_status=responseBody.Ignition
             location_status=responseBody.Location
             p_voltages=responseBody.PowerVoltages
-
-
         }
 
         StatusResult(gps_time,gsm_Signals,ignition_status,location_status,p_voltages)

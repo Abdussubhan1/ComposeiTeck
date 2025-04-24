@@ -1,5 +1,6 @@
 package com.example.itecktestingcompose.Interface
 
+import android.graphics.Bitmap
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
@@ -7,13 +8,18 @@ import com.example.itecktestingcompose.ModelClasses.Ignition
 import com.example.itecktestingcompose.ModelClasses.Status
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
+import com.example.itecktestingcompose.ModelClasses.postDataResponse
 import com.google.gson.GsonBuilder
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 
 interface RetrofitInterface {
@@ -48,6 +54,28 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("get_status.php")
     suspend fun getStatus(@Field("devid") devID: String): Response<Status>
+
+    @Multipart
+    @POST("get_log.php")
+    suspend fun postData(
+        @Part("CNIC") cnic: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("dev_id") mobileID: RequestBody,
+        @Part("type") type: RequestBody,
+        @Part("applogin") appLoginID: RequestBody,
+        @Part images: List<MultipartBody.Part>
+    ): Response<postDataResponse>
+
+//    @FormUrlEncoded
+//    @POST("get_log.php")
+//    suspend fun postData(
+//        @Field("CNIC") cnic: String,
+//        @Field("name") name: String,
+//        @Field("dev_id") mobileID: String,
+//        @Field("type") type: Int,
+//        @Field("applogin") appLoginID: Int,
+//        @Field("img[]") images: List<String>
+//    ): Response<postDataResponse>
 
 }
 

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.AppScreens
 
 import android.Manifest
 import android.content.Context
@@ -29,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -61,17 +60,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.itecktestingcompose.APIFunctions.DevValidationResult
+import com.example.itecktestingcompose.APIFunctions.validateDev
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun DeviceEntryScreen(current: Context, navController: NavHostController) {
     var devID by remember { mutableStateOf("") }
-    var validationResult by remember { mutableStateOf(DevValidationResult(
+    var validationResult by remember { mutableStateOf(
+        DevValidationResult(
         ifDeviceExist = false,
         isLoading = false
-    )) }
+    )
+    ) }
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
     var isEnabled by remember { mutableStateOf(true) }

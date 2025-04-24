@@ -7,6 +7,8 @@ import java.util.ArrayList
 
 object Constants {
 
+    var cnic: String=""
+    var appLoginID: Int=0
     var FCMToken: String=""
     var appVersion: String=""
     var model: String=""
@@ -23,7 +25,6 @@ object Constants {
     var deviceLocationLat:Double=0.0
     var deviceLocationLong:Double=0.0
     var deviceLocation:String=""
-
 
 }
 

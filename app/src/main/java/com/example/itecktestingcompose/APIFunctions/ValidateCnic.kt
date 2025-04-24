@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.APIFunctions
 
 import android.util.Log
 import com.example.itecktestingcompose.Constants.Constants
@@ -25,7 +25,6 @@ suspend fun validateCnic(
 
     return try {
 
-//        kotlinx.coroutines.delay(1000)
 
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
             .validateCnic(cnic, mobileID, FCMToken, appVersion, OSVersion, Brand)
@@ -35,6 +34,7 @@ suspend fun validateCnic(
             ifUserExist = responseBody.Success
             if (ifUserExist) {
                 Constants.name = responseBody.Name
+                Constants.appLoginID=responseBody.AppLoginid
             }
         }
 

@@ -1,7 +1,6 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.Functions
 
 import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.FirebaseMessaging
 import android.util.Log
 import com.google.firebase.messaging.RemoteMessage
 
@@ -13,8 +12,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("FCM Token", "Refreshed token: $token")
-        // You can send this token to your server if needed
+        Log.d("FCM_TOKEN", "New token: $token")
+
+        saveTokenLocally(applicationContext, token) //Any new refreshed token will be saved here
+
+//        sendTokenToServer(token)
 
         //todo CALL API here
     }

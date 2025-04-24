@@ -1,6 +1,5 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.UnusedScreen
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.itecktestingcompose.DataBase.AppDatabase
 import com.example.itecktestingcompose.DataBase.DeviceSearchHistory
+import com.example.itecktestingcompose.R
 import kotlinx.coroutines.launch
 
 

@@ -1,8 +1,7 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.AppScreens
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,7 +10,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +22,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -32,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -62,17 +58,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.itecktestingcompose.APIFunctions.StatusResult
+import com.example.itecktestingcompose.APIFunctions.getStatus
+import com.example.itecktestingcompose.APIFunctions.submitData
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 
 @Composable
-fun FinalPicturesScreen() {
-    var current = LocalContext.current
+fun FinalPicturesScreen(navController: NavController) {
+
+    HandleDoubleBackToExit()
+    val current = LocalContext.current
     var FinallistCompleted by remember { mutableStateOf(false) }
-    var FinallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
+    val FinallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
     var showFinalTicket by remember { mutableStateOf(false) }
-    var couroutineScope = rememberCoroutineScope()
+    val couroutineScope = rememberCoroutineScope()
     var statusResult by remember {
         mutableStateOf(
             StatusResult(
@@ -332,6 +337,11 @@ fun FinalPicturesScreen() {
         }
 
         if (showFinalTicket) {
+
+            val allPictures = ArrayList<Bitmap?>()
+            allPictures.addAll(Constants.initialPictures)
+            allPictures.addAll(Constants.finalPictures)
+
             Spacer(modifier = Modifier.height(5.dp))
             Card(
                 modifier = Modifier
@@ -350,8 +360,9 @@ fun FinalPicturesScreen() {
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     Text(
-                        text = "Ticket",
+                        text = "Summary",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF37474F),
@@ -410,16 +421,16 @@ fun FinalPicturesScreen() {
                         items(Constants.initialPictures.size) { index ->
                             Constants.initialPictures[index]?.let { bitmap ->
 
-                                    Image(
-                                        bitmap = bitmap.asImageBitmap(),
-                                        contentDescription = "Initial Picture $index",
-                                        modifier = Modifier
-                                            .width(180.dp)
-                                            .height(180.dp)
-                                            .clip(RoundedCornerShape(16.dp))
-                                            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
-                                            .shadow(4.dp, RoundedCornerShape(16.dp))
-                                    )
+                                Image(
+                                    bitmap = bitmap.asImageBitmap(),
+                                    contentDescription = "Initial Picture $index",
+                                    modifier = Modifier
+                                        .width(180.dp)
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                                        .shadow(4.dp, RoundedCornerShape(16.dp))
+                                )
 
 
                             }
@@ -443,16 +454,16 @@ fun FinalPicturesScreen() {
                         items(FinallistOfImages.size) { index ->
                             FinallistOfImages[index]?.let { bitmap ->
 
-                                    Image(
-                                        bitmap = bitmap.asImageBitmap(),
-                                        contentDescription = "Captured Image $index",
-                                        modifier = Modifier
-                                            .width(180.dp)
-                                            .height(180.dp)
-                                            .clip(RoundedCornerShape(16.dp))
-                                            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
-                                            .shadow(4.dp, RoundedCornerShape(16.dp))
-                                    )
+                                Image(
+                                    bitmap = bitmap.asImageBitmap(),
+                                    contentDescription = "Captured Image $index",
+                                    modifier = Modifier
+                                        .width(180.dp)
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                                        .shadow(4.dp, RoundedCornerShape(16.dp))
+                                )
 
                             }
                         }
@@ -465,7 +476,32 @@ fun FinalPicturesScreen() {
             Spacer(modifier = Modifier.height(15.dp))
             Button(
                 onClick = {
-                    //TODO
+                    couroutineScope.launch {
+                        val submitSuccess = submitData(
+                            Constants.cnic,
+                            Constants.name,
+                            Constants.deviceID,
+                            1,
+                            Constants.appLoginID,
+                            allPictures
+                        )
+
+                        if (submitSuccess) {
+                            Constants.deviceID = ""
+                            Constants.initialPictures = mutableStateListOf(null, null)
+                            Constants.deviceLocationLat = 0.0
+                            Constants.deviceLocationLong = 0.0
+                            Constants.mobileLocationLat = 0.0
+                            Constants.mobileLocationLong = 0.0
+                            Constants.deviceLocation = ""
+                            Constants.finalPictures = mutableStateListOf(null, null)
+
+                            navController.navigate("AllahHafizScreen") {
+                                popUpTo("finalPicturesScreen") { inclusive = true }
+                            }
+
+                        }
+                    }
                 },
                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
@@ -499,5 +535,5 @@ fun FinalPicturesScreen() {
 @Preview
 @Composable
 fun FinalPicturesScreenPreview() {
-    FinalPicturesScreen()
+    FinalPicturesScreen(rememberNavController())
 }

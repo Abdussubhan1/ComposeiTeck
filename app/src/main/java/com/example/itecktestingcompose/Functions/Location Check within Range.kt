@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.Functions
 
 import android.content.ContentValues.TAG
 import android.util.Log

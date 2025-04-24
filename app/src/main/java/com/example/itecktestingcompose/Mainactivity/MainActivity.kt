@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.Mainactivity
 
 import android.content.ContentValues.TAG
 import android.os.Bundle
@@ -9,6 +9,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.Functions.AppNavigation
+import com.example.itecktestingcompose.Functions.getDeviceInfo
+import com.example.itecktestingcompose.Functions.getSavedToken
+import com.example.itecktestingcompose.Functions.saveTokenLocally
+import com.example.itecktestingcompose.R
 import com.google.firebase.messaging.FirebaseMessaging
 
 
@@ -18,11 +23,16 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        Constants.FCMToken = getSavedToken(this) ?: "" //Saving the updated token
+
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-//        onNewToken()
-        getDeviceInfo(this)
-        generateFCM()
+
+        enableEdgeToEdge() //FullScreen View of Application
+
+        getDeviceInfo(this) //Function to get Mobile related Information
+
+        generateFCM() //Function to get FCM Token
 
         setContent {
             AppNavigation()
@@ -32,17 +42,13 @@ class MainActivity : ComponentActivity() {
     private fun generateFCM() {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-
             if (task.isSuccessful) {
                 val fcmToken = task.result
-                Constants.FCMToken=fcmToken
-                Log.d(TAG, "generateFCM: $fcmToken")
+                saveTokenLocally(this, fcmToken)
             } else {
                 Log.e(TAG, "Error getting FCM token: " + task.exception);
             }
         }
-
-
     }
 }
 

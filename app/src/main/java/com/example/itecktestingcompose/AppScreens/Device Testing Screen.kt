@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.AppScreens
 
 
 import android.util.Log
@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
@@ -58,7 +57,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.itecktestingcompose.APIFunctions.ValidateLocationResponse
+import com.example.itecktestingcompose.APIFunctions.batteryResponse
+import com.example.itecktestingcompose.APIFunctions.ignitionResponse
+import com.example.itecktestingcompose.APIFunctions.validateBattery
+import com.example.itecktestingcompose.APIFunctions.validateIgnition
+import com.example.itecktestingcompose.APIFunctions.validateLoc
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.Functions.checkLocationWithinRange
+import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.Functions.getLocation
+import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 
 @Composable

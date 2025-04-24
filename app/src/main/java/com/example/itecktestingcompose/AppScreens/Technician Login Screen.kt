@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.AppScreens
 
 import android.content.Context
 import android.widget.Toast
@@ -41,7 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.itecktestingcompose.APIFunctions.CNICValidationResult
+import com.example.itecktestingcompose.APIFunctions.validateCnic
 import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 
 @Composable
@@ -153,7 +158,8 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                                     inclusive = true
                                 }
                             }
-                            cnic = ""
+                            Constants.cnic=cnic
+                            cnic=""
 
                         } else {
                             Toast.makeText(

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.APIFunctions
 
 import android.content.ContentValues.TAG
 import android.util.Log
@@ -12,7 +12,7 @@ data class ignitionResponse(
 
 
 
-suspend fun validateIgnition(devID: String) :ignitionResponse{
+suspend fun validateIgnition(devID: String) : ignitionResponse {
 
     var ignition=""
 

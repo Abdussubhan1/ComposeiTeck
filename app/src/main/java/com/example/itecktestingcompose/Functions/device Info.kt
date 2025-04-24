@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.Functions
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context

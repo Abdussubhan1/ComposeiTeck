@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.example.itecktestingcompose.APIFunctions
 
 
 import android.content.ContentValues.TAG
