@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.Functions
+package com.example.itecktestingcompose.functions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext

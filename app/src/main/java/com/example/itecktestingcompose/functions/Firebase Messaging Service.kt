@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.Functions
+package com.example.itecktestingcompose.functions
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log

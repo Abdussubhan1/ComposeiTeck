@@ -63,7 +63,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.DevValidationResult
 import com.example.itecktestingcompose.APIFunctions.validateDev
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.Functions
+package com.example.itecktestingcompose.functions
 
 import android.content.pm.PackageManager
 import androidx.compose.runtime.Composable

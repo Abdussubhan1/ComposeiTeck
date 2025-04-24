@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.Functions
+package com.example.itecktestingcompose.functions
 
 import android.content.Context
 import androidx.core.content.edit

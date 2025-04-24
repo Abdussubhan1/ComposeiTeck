@@ -64,7 +64,7 @@ import com.example.itecktestingcompose.APIFunctions.StatusResult
 import com.example.itecktestingcompose.APIFunctions.getStatus
 import com.example.itecktestingcompose.APIFunctions.submitData
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch

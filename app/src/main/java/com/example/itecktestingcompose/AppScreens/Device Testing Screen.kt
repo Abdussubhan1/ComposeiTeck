@@ -64,10 +64,10 @@ import com.example.itecktestingcompose.APIFunctions.validateBattery
 import com.example.itecktestingcompose.APIFunctions.validateIgnition
 import com.example.itecktestingcompose.APIFunctions.validateLoc
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.Functions.HandleDoubleBackToExit
-import com.example.itecktestingcompose.Functions.checkLocationWithinRange
+import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.functions.checkLocationWithinRange
 import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.Functions.getLocation
+import com.example.itecktestingcompose.functions.getLocation
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 

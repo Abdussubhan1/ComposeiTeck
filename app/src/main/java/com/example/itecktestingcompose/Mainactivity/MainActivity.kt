@@ -9,10 +9,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.Functions.AppNavigation
-import com.example.itecktestingcompose.Functions.getDeviceInfo
-import com.example.itecktestingcompose.Functions.getSavedToken
-import com.example.itecktestingcompose.Functions.saveTokenLocally
+import com.example.itecktestingcompose.functions.AppNavigation
+import com.example.itecktestingcompose.functions.getDeviceInfo
+import com.example.itecktestingcompose.functions.getSavedToken
+import com.example.itecktestingcompose.functions.saveTokenLocally
 import com.example.itecktestingcompose.R
 import com.google.firebase.messaging.FirebaseMessaging
 
