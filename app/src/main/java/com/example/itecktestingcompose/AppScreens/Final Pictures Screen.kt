@@ -338,6 +338,8 @@ fun FinalPicturesScreen(navController: NavController) {
 
         if (showFinalTicket) {
 
+        //Now all 4 pictures are contained in a Array
+
             val allPictures = ArrayList<Bitmap?>()
             allPictures.addAll(Constants.initialPictures)
             allPictures.addAll(Constants.finalPictures)

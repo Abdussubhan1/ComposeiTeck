@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
+import androidx.compose.material.icons.filled.NotificationImportant
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -70,7 +71,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun DeviceEntryScreen(current: Context, navController: NavHostController) {
+fun DeviceEntryScreen(context: Context, navController: NavHostController) {
     var devID by remember { mutableStateOf("") }
     var validationResult by remember { mutableStateOf(
         DevValidationResult(
@@ -115,6 +116,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         Constants.name,
                         color = Color(0XFF39B54A),
@@ -125,12 +127,14 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
             }
 
 
-//            Icon(
-//                imageVector = Icons.Default.Lightbulb,
-//                contentDescription = "Tips",
-//                tint = Color.White,
-//                modifier = Modifier.size(32.dp)
-//            )
+            Icon(
+                imageVector = Icons.Default.NotificationImportant,
+                contentDescription = "Tips",
+                tint = Color.White,
+                modifier = Modifier.size(32.dp).clickable {
+                    navController.navigate("NotificationScreen")
+                }
+            )
 
 
         }
@@ -162,17 +166,8 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(Color(0XFF39B54A)) // Green search
-                            .clickable {
+                            .clickable (enabled = devID!=""){
                                 keyboard?.hide()
-                                if (devID.isEmpty() || devID.length < 7 || devID.length > 15) {
-
-
-                                    Toast.makeText(
-                                        current,
-                                        "Please enter valid device ID",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
                                     validationResult = DevValidationResult(
                                         ifDeviceExist = false,
                                         isLoading = true
@@ -185,23 +180,21 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                                             tbEnable = true
                                             isEnabled = false
                                             Constants.deviceID = devID
-//                                            device = devID
-//                                            devID = ""
+
                                             Toast.makeText(
-                                                current,
+                                                context,
                                                 "Device ID is valid",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         } else {
                                             Toast.makeText(
-                                                current,
+                                                context,
                                                 "Device Not found in Inventory",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                            devID = ""
                                         }
                                     }
-                                }
+
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -250,7 +243,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                         Constants.initialPictures = initiallistOfImages
                     }
                 } else {
-                    Toast.makeText(current, "Capture Failed!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Capture Failed!", Toast.LENGTH_SHORT).show()
                 }
             }
             val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -259,7 +252,7 @@ fun DeviceEntryScreen(current: Context, navController: NavHostController) {
                 if (isGranted) {
                     cameraLauncher.launch(null) // Launch camera
                 } else {
-                    Toast.makeText(current, "Camera Permission Denied!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Camera Permission Denied!", Toast.LENGTH_SHORT).show()
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))

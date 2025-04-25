@@ -1,10 +1,11 @@
 package com.example.itecktestingcompose.functions
 
+
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
+import android.graphics.BitmapFactory
 import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -13,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+
 
         if (remoteMessage.data.isNotEmpty()) {
 
@@ -25,28 +27,40 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d("FCM Message", "Received message: ${remoteMessage.data}")
     }
 
+    //Function to show Notification
+
     @SuppressLint("ServiceCast")
-    private fun showNotification(title: String, message: String) {
+    fun showNotification(title: String, message: String) {
+
         val channelId = "my_channel_id"
         val channelName = "My Notification Channel"
+        val importance = NotificationManager.IMPORTANCE_HIGH
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
 
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(channelId, channelName, importance)
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            setShowBadge(true)
+        }
+
         notificationManager.createNotificationChannel(channel)
 
+        val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.icon)
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification) // Make sure you have this icon in drawable
+            .setSmallIcon(R.drawable.icon)
+            .setLargeIcon(largeIcon)// Make sure you have this icon in drawable
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
-        notificationManager.notify(0, notificationBuilder.build())
+        val notificationId = System.currentTimeMillis().toInt() //to avoid notification overlapping. any coming notification will be new
+
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
+
 
 
     override fun onNewToken(token: String) {
@@ -55,8 +69,5 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         saveTokenLocally(applicationContext, token) //Any new refreshed token will be saved here
 
-//        sendTokenToServer(token)
-
-        //todo CALL API here
     }
 }

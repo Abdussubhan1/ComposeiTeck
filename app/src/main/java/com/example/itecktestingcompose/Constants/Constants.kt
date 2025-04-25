@@ -8,7 +8,7 @@ import java.util.ArrayList
 object Constants {
 
     var cnic: String=""
-    var appLoginID: Int=0
+    var appLoginID: String=""
     var FCMToken: String=""
     var appVersion: String=""
     var model: String=""

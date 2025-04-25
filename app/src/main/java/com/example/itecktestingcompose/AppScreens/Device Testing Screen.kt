@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -145,7 +146,7 @@ fun TestingPage(navController: NavHostController) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF00C853)) // Green search
+                            .background(Color(0XFF39B54A))// Green search
                             .clickable(enabled = false) {
 
                             },
@@ -217,13 +218,15 @@ fun TestingPage(navController: NavHostController) {
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = Color.Transparent,
                     disabledContentColor = Color.Transparent,
-                    contentColor = Color.White, containerColor =Color.Transparent
+                    contentColor = Color.White, containerColor = Color.Transparent
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(50),
-                border = if (comp) {BorderStroke(1.5.dp, Color(0XFF39B54A))} else null
+                border = if (comp) {
+                    BorderStroke(1.5.dp, Color(0XFF39B54A))
+                } else null
             ) {
                 Text(
                     text = " آگے بڑھیں۔",
@@ -346,7 +349,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (locResult in 1.00..100.00) Color.Green else if (locResult > 100.00 || locResult == 0.0) Color.Red else Color.LightGray,
+                    color = if (locResult in 1.00..100.00) Color(0XFF39B54A) else if (locResult > 100.00 || locResult == 0.0) Color.Red else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -418,7 +421,9 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { batteryProgress },
-                    color = if (batteryResult.battery == "Disconnected" || batteryResult.battery == "Connected") Color.Green else Color.LightGray,
+                    color = if (batteryResult.battery == "Disconnected" || batteryResult.battery == "Connected") Color(
+                        0XFF39B54A
+                    ) else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -467,7 +472,9 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (ignitionResult.ignition == "OFF") Color.Red else if (ignitionResult.ignition == "ON") Color.Green else Color.LightGray,
+                    color = if (ignitionResult.ignition == "OFF") Color.Red else if (ignitionResult.ignition == "ON") Color(
+                        0XFF39B54A
+                    ) else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -568,7 +575,9 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading) {
                     Text(
                         text = text,
-                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed") Color.Red else Color.Green,
+                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed") Color.Red else Color(
+                            0XFF39B54A
+                        ),
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 5,
                         fontSize = 12.sp,
@@ -620,47 +629,75 @@ fun Alert(
     onDismiss: () -> Unit,
     navController: NavHostController
 ) {
-    AlertDialog(
-        title = {
-            Text(
-                text = title,
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.White,
-                fontFamily = jameelNooriFont,
-                textAlign = TextAlign.End
-            )
-        },
-        text = {
-            Text(
-                text = text,
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.White,
-                fontFamily = jameelNooriFont,
-                textAlign = TextAlign.End
-            )
-        },
-        onDismissRequest = { onDismiss() },
-        confirmButton = {
-            TextButton(onClick = {
-                navController.navigate("mainscreen")
-                Constants.deviceID = ""
-                Constants.initialPictures = mutableStateListOf(null, null)
-                Constants.deviceLocationLat = 0.0
-                Constants.deviceLocationLong = 0.0
-                Constants.deviceLocation = ""
-            }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
-                Text("جی ہاں", color = Color.White, fontFamily = jameelNooriFont)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onDismiss() },
-                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                shape = RoundedCornerShape(50)
-            ) {
-                Text("نہیں", color = Color.White, fontFamily = jameelNooriFont)
-            }
-        }, containerColor = Color(0xFF122333), titleContentColor = Color.White
 
-    )
+        AlertDialog(
+            icon = {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = "Warning",
+                    tint = Color.Red,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .fillMaxWidth()
+                )
+            },
+            title = {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    fontFamily = jameelNooriFont,
+                    textAlign = TextAlign.End, fontSize = 26.sp
+                )
+            },
+            text = {
+                Text(
+                    text = text,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    fontFamily = jameelNooriFont,
+                    textAlign = TextAlign.End, fontSize = 20.sp
+                )
+            },
+            onDismissRequest = { onDismiss() },
+            confirmButton = {
+                TextButton(onClick = {
+                    navController.navigate("mainscreen")
+                    Constants.deviceID = ""
+                    Constants.initialPictures = mutableStateListOf(null, null)
+                    Constants.deviceLocationLat = 0.0
+                    Constants.deviceLocationLong = 0.0
+                    Constants.deviceLocation = ""
+                }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
+                    Text(
+                        "جی ہاں",
+                        color = Color.White,
+                        fontFamily = jameelNooriFont,
+                        fontSize = 20.sp
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { onDismiss() },
+                    elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Text(
+                        "نہیں",
+                        color = Color.White,
+                        fontFamily = jameelNooriFont,
+                        fontSize = 20.sp
+                    )
+                }
+            }, containerColor = Color(0xFF122333), titleContentColor = Color.White
+
+        )
+
+}
+
+@Preview
+@Composable
+fun AlertPreview() {
+    Alert("Title", "Text", {}, rememberNavController())
 }

@@ -41,7 +41,7 @@ suspend fun validateCnic(
         CNICValidationResult(ifUserExist, false)
     } catch (e: Exception) {
         Log.d("cnicV", "Exception: $e")
-        CNICValidationResult(false, false)
+        CNICValidationResult(ifUserExist = false, isLoading = false)
     }
 
 }

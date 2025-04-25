@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,7 +51,7 @@ import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(context: Context, navController: NavHostController? = null) {
+fun LoginScreen(context: Context, navController: NavHostController) {
 
 
     HandleDoubleBackToExit()
@@ -74,9 +75,9 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
             .fillMaxSize()
             .background(Color(0XFF122333)),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(130.dp))
 
         Image(
             painter = painterResource(id = R.drawable.img_nic_3),
@@ -85,13 +86,11 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
             modifier = Modifier.size(width = 356.dp, height = 150.dp)
         )
 
-
         Spacer(modifier = Modifier.height(10.dp))
 
         TextField(
             value = cnic,
             onValueChange = { it -> cnic = it.filter { it.isDigit() } },
-
             placeholder = {
                 Text(
                     "اپنا شناختی کارڈ نمبر درج کریں",
@@ -115,11 +114,9 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
             ),
             shape = RoundedCornerShape(80.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
 
-        )
-        Spacer(
-            modifier = Modifier.height(32.dp)
-        )
+        Spacer(modifier = Modifier.height(32.dp))
 
         Box(
             modifier = Modifier
@@ -128,14 +125,11 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                 .padding(horizontal = 32.dp)
                 .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
                 .clickable(enabled = !validationResult.isLoading && cnic != "") {
-
                     keyboard?.hide()
-
-                    validationResult =
-                        CNICValidationResult(
-                            ifUserExist = false,
-                            isLoading = true
-                        ) // Updating the state for Loader
+                    validationResult = CNICValidationResult(
+                        ifUserExist = false,
+                        isLoading = true
+                    )
 
                     couroutineScope.launch {
                         validationResult = validateCnic(
@@ -148,39 +142,26 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
                         )
 
                         if (validationResult.ifUserExist) {
-                            Toast.makeText(
-                                context,
-                                "Welcome ${Constants.name}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            navController?.navigate("mainscreen") {
-                                popUpTo("login") {
-                                    inclusive = true
-                                }
+                            Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT)
+                                .show()
+                            navController.navigate("mainscreen") {
+                                popUpTo("login") { inclusive = true }
                             }
-                            Constants.cnic=cnic
-                            cnic=""
-
+                            Constants.cnic = cnic
                         } else {
-                            Toast.makeText(
-                                context,
-                                "Technician Not Registered",
-                                Toast.LENGTH_SHORT
-                            )
+                            Toast.makeText(context, "Technician Not Registered", Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }
-
                 },
             contentAlignment = Alignment.Center
-        )
-
-        {
+        ) {
             if (!validationResult.isLoading)
                 Image(
                     painter = painterResource(id = R.drawable.check_double_line),
-                    contentDescription = "Check Icon",
-                ) else
+                    contentDescription = "Check Icon"
+                )
+            else
                 Text("Loading...", color = Color.Black, fontSize = 16.sp)
         }
 
@@ -188,18 +169,14 @@ fun LoginScreen(context: Context, navController: NavHostController? = null) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .padding(25.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .size(24.dp), Color(0XFF39B54A)
+                    .size(24.dp),
+                color = Color(0XFF39B54A)
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-
+        Spacer(modifier = Modifier.height(16.dp))
 
         BottomLogo()
-
-
     }
 
 

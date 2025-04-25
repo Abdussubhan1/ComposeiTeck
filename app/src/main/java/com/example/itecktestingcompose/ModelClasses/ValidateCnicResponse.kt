@@ -5,7 +5,7 @@ data class ValidateCnicResponse(
     val Name: String,
     val Success: Boolean,
     val Id: Int,
-    val AppLoginid:Int
+    val AppLoginid:String
 
 )
 

@@ -79,7 +79,7 @@ fun AllahHafiz(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Exit", color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text("Home   \uD83C\uDFE0", color = Color.White, fontWeight = FontWeight.SemiBold)
         }
     }
 }

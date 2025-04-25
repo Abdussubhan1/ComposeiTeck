@@ -32,7 +32,7 @@ suspend fun submitData(
     name: String,
     mobileID: String,
     type: Int,
-    appLoginID: Int,
+    appLoginID: String,
     images: ArrayList<Bitmap?>
 ): Boolean {
     var message = false
