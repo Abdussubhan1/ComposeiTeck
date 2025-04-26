@@ -5,6 +5,8 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
 import com.example.itecktestingcompose.ModelClasses.Ignition
+import com.example.itecktestingcompose.ModelClasses.NotificationHistory
+import com.example.itecktestingcompose.ModelClasses.NotificationHistoryItem
 import com.example.itecktestingcompose.ModelClasses.Status
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
@@ -66,16 +68,9 @@ interface RetrofitInterface {
         @Part images: List<MultipartBody.Part>
     ): Response<postDataResponse>
 
-//    @FormUrlEncoded
-//    @POST("get_log.php")
-//    suspend fun postData(
-//        @Field("CNIC") cnic: String,
-//        @Field("name") name: String,
-//        @Field("dev_id") mobileID: String,
-//        @Field("type") type: Int,
-//        @Field("applogin") appLoginID: Int,
-//        @Field("img[]") images: List<String>
-//    ): Response<postDataResponse>
+    @FormUrlEncoded
+    @POST("get_notification_history.php")
+    suspend fun getNotificationHistory(@Field("cnic") cnic: String): Response<NotificationHistory>
 
 }
 

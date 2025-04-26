@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
@@ -20,6 +21,7 @@ import com.example.itecktestingcompose.functions.saveTokenLocally
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.functions.getAppVersion
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.launch
 
 
 val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
@@ -55,6 +57,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppNavigation(version,context)
         }
+
+//        lifecycleScope.launch {
+//            val notificationHistory = com.example.itecktestingcompose.APIFunctions.notificationHistory(Constants.cnic)
+//        }
+
 
     }
 
