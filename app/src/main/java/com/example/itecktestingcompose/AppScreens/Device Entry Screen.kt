@@ -72,13 +72,20 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DeviceEntryScreen(context: Context, navController: NavHostController) {
+
+    val sharedPref = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val hasNewNotification =
+        remember { mutableStateOf(sharedPref.getBoolean("hasNewNotification", false)) }
+
     var devID by remember { mutableStateOf("") }
-    var validationResult by remember { mutableStateOf(
-        DevValidationResult(
-        ifDeviceExist = false,
-        isLoading = false
-    )
-    ) }
+    var validationResult by remember {
+        mutableStateOf(
+            DevValidationResult(
+                ifDeviceExist = false,
+                isLoading = false
+            )
+        )
+    }
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
     var isEnabled by remember { mutableStateOf(true) }
@@ -90,7 +97,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
 
 
-   HandleDoubleBackToExit() //this is used to ensure secure exit from app
+    HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     Column(
         modifier = Modifier
@@ -103,7 +110,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+//            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -124,17 +131,35 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         fontWeight = FontWeight.Bold
                     )
                 }
+
+            }
+            Spacer(modifier = Modifier.weight(1f))
+
+            Box(
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Icon(
+                    imageVector = Icons.Default.NotificationImportant,
+                    contentDescription = "Tips",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            navController.navigate("NotificationScreen")
+                            sharedPref.edit().putBoolean("hasNewNotification", false).apply()
+                            hasNewNotification.value = false
+                        }
+                )
+
+                if (hasNewNotification.value) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp) // Small dot
+                            .background(Color(0xFFFFEB3B), shape = CircleShape)
+                    )
+                }
             }
 
-
-            Icon(
-                imageVector = Icons.Default.NotificationImportant,
-                contentDescription = "Tips",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp).clickable {
-                    navController.navigate("NotificationScreen")
-                }
-            )
 
 
         }
@@ -166,34 +191,34 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(Color(0XFF39B54A)) // Green search
-                            .clickable (enabled = devID!=""){
+                            .clickable(enabled = devID != "") {
                                 keyboard?.hide()
-                                    validationResult = DevValidationResult(
-                                        ifDeviceExist = false,
-                                        isLoading = true
-                                    )
-                                    couroutineScope.launch {
+                                validationResult = DevValidationResult(
+                                    ifDeviceExist = false,
+                                    isLoading = true
+                                )
+                                couroutineScope.launch {
 
-                                        validationResult = validateDev(devID)
+                                    validationResult = validateDev(devID)
 
-                                        if (validationResult.ifDeviceExist) {
-                                            tbEnable = true
-                                            isEnabled = false
-                                            Constants.deviceID = devID
+                                    if (validationResult.ifDeviceExist) {
+                                        tbEnable = true
+                                        isEnabled = false
+                                        Constants.deviceID = devID
 
-                                            Toast.makeText(
-                                                context,
-                                                "Device ID is valid",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                "Device Not found in Inventory",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
+                                        Toast.makeText(
+                                            context,
+                                            "Device ID is valid",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Device Not found in Inventory",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
+                                }
 
                             },
                         contentAlignment = Alignment.Center
@@ -413,7 +438,7 @@ fun PicConfirm(
                     onRetakeConfirmed()
                 },
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-                shape = RoundedCornerShape(50),border = BorderStroke(1.dp, Color.Red),
+                shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color.Red),
                 elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -430,13 +455,19 @@ fun PicConfirm(
             }
             Button(
                 onClick = {
-                    navController.navigate("testingPage"){popUpTo("mainscreen"){inclusive = true}}
+                    navController.navigate("testingPage") {
+                        popUpTo("mainscreen") {
+                            inclusive = true
+                        }
+                    }
                 },
                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp), shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color(0XFF39B54A))
+                    .height(48.dp),
+                shape = RoundedCornerShape(50),
+                border = BorderStroke(1.dp, Color(0XFF39B54A))
             ) {
                 Text(
                     text = " آگے بڑھیں۔",

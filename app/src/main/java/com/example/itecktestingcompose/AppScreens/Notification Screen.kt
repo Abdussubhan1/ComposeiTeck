@@ -2,6 +2,7 @@ package com.example.itecktestingcompose.AppScreens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,12 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,12 +56,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun NotificationScreen(navController: NavHostController) {
     var notifications by remember { mutableStateOf<List<NotificationHistoryItem>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         notifications = notificationHistory(Constants.cnic)
+        isLoading = false
     }
 
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333))
@@ -87,7 +95,7 @@ fun NotificationScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Notifications",
+            text = "Notifications History",
             color = Color.White,
             fontSize = 28.sp,
             textDecoration = TextDecoration.Underline,
@@ -97,35 +105,73 @@ fun NotificationScreen(navController: NavHostController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(25.dp)
+                    .size(24.dp),
+                color = Color(0XFF39B54A)
+            )
+        }
 
 
+        Box(
+            modifier = Modifier
+                .height(550.dp)
+                .fillMaxWidth()
+        ) {
             LazyColumn {
                 items(notifications) { item ->
                     NotificationCard(item)
                 }
             }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.Center
+//        ) {
+//
+//            Box(
+//                modifier = Modifier
+//                    .background(
+//                        Color.White,
+//                        shape = androidx.compose.foundation.shape.CircleShape
+//                    )
+//                    .clickable { notifications = emptyList() }
+//            ) {
+//                Text(
+//                    "Clear List   \uD83D\uDDD1\uFE0F", fontFamily = FontFamily.Serif,
+//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier.width(100.dp).height(20.dp)
+//                )
+//            }
+//
+//        }
+        BottomLogo()
 
     }
 }
+
 @Composable
 fun NotificationCard(item: NotificationHistoryItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A2B3C))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = item.title, color = Color.White, fontSize = 18.sp)
+            Text(text = item.title, color = Color.Black, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = item.body, color = Color.LightGray)
+            Text(text = item.body, color = Color.Black)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Date: ${item.entrydate.date}", color = Color.Gray, fontSize = 12.sp)
+            Text(text = "Date: ${item.entrydate.date}", color = Color.DarkGray, fontSize = 12.sp)
         }
     }
 }
-
-
 
 
 @Preview

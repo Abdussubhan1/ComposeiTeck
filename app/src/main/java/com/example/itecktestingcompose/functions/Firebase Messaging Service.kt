@@ -4,11 +4,14 @@ package com.example.itecktestingcompose.functions
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.itecktestingcompose.Mainactivity.MainActivity
 import com.example.itecktestingcompose.R
 import com.google.firebase.messaging.RemoteMessage
 
@@ -20,6 +23,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             val title = remoteMessage.data["title"] ?: "Default Title"
             val body = remoteMessage.data["body"] ?: "Default Body"
+            val sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            sharedPref.edit().putBoolean("hasNewNotification", true).apply()
 
             showNotification(title, body)
 
@@ -48,15 +53,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.icon)
 
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.icon)
             .setLargeIcon(largeIcon)// Make sure you have this icon in drawable
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent) //this will open app on notification click
             .setAutoCancel(true)
 
-        val notificationId = System.currentTimeMillis().toInt() //to avoid notification overlapping. any coming notification will be new
+        val notificationId = System.currentTimeMillis().toInt() //to avoid notification overlapping. any coming notification will be new.
 
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
