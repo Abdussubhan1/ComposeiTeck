@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import android.Manifest
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +51,7 @@ fun getLocation() {
                 location?.let {
                     Constants.mobileLocationLat = it.latitude
                     Constants.mobileLocationLong = it.longitude
+                    Log.d("TAG", "getLocation: ${Constants.mobileLocationLat}, ${Constants.mobileLocationLong}")
                 }
             }
         }

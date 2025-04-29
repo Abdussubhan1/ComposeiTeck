@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.AppScreens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.CNICValidationResult
@@ -147,6 +149,13 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                             navController.navigate("mainscreen") {
                                 popUpTo("login") { inclusive = true }
                             }
+
+                            //Save cnic in shared preference
+
+                            val sharePref =context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+                            sharePref.edit() { putString("CNIC", cnic) }
+                            val storedCNIC = sharePref.getString("CNIC", null)
+
                             Constants.cnic = cnic
                         } else {
                             Toast.makeText(context, "Technician Not Registered", Toast.LENGTH_SHORT)

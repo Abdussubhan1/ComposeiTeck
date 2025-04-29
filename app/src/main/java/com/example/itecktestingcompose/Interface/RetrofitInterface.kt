@@ -11,6 +11,7 @@ import com.example.itecktestingcompose.ModelClasses.Status
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.example.itecktestingcompose.ModelClasses.postDataResponse
+import com.example.itecktestingcompose.ModelClasses.technicianLocation
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -71,6 +72,14 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("get_notification_history.php")
     suspend fun getNotificationHistory(@Field("cnic") cnic: String): Response<NotificationHistory>
+
+    @FormUrlEncoded
+    @POST("Technical_location.php")
+    suspend fun getTechnicianLocation(
+        @Field("cnic") cnic: String,
+        @Field("lat") lat: Double,
+        @Field("lng") lng: Double
+    ): Response<technicianLocation>
 
 }
 

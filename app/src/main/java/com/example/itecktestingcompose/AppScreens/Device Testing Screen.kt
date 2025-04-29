@@ -295,10 +295,10 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
             )
         )
     }
-    var testingCompleted by remember { mutableStateOf(false) }
+//    var testingCompleted by remember { mutableStateOf(false) }
 
-    var ignition by remember { mutableStateOf("") }
-    var relay by remember { mutableStateOf(false) }
+//    var ignition by remember { mutableStateOf("") }
+//    var relay by remember { mutableStateOf(false) }
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
@@ -457,7 +457,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 modifier = rowModifier
             ) {
                 if (ignitionResult.ignition == "ON") {
-                    testingCompleted = true
+//                    testingCompleted = true
                     onTestingCompleted(true)
                 }
                 Text(
@@ -630,69 +630,60 @@ fun Alert(
     navController: NavHostController
 ) {
 
-        AlertDialog(
-            icon = {
-                Icon(
-                    Icons.Default.Warning,
-                    contentDescription = "Warning",
-                    tint = Color.Red,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .fillMaxWidth()
-                )
-            },
-            title = {
-                Text(
-                    text = title,
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Color.White,
-                    fontFamily = jameelNooriFont,
-                    textAlign = TextAlign.End, fontSize = 26.sp
-                )
-            },
-            text = {
-                Text(
-                    text = text,
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Color.White,
-                    fontFamily = jameelNooriFont,
-                    textAlign = TextAlign.End, fontSize = 20.sp
-                )
-            },
-            onDismissRequest = { onDismiss() },
-            confirmButton = {
-                TextButton(onClick = {
-                    navController.navigate("mainscreen")
-                    Constants.deviceID = ""
-                    Constants.initialPictures = mutableStateListOf(null, null)
-                    Constants.deviceLocationLat = 0.0
-                    Constants.deviceLocationLong = 0.0
-                    Constants.deviceLocation = ""
-                }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
-                    Text(
-                        "جی ہاں",
-                        color = Color.White,
-                        fontFamily = jameelNooriFont,
-                        fontSize = 20.sp
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { onDismiss() },
-                    elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                    shape = RoundedCornerShape(50)
-                ) {
-                    Text(
-                        "نہیں",
-                        color = Color.White,
-                        fontFamily = jameelNooriFont,
-                        fontSize = 20.sp
-                    )
-                }
-            }, containerColor = Color(0xFF122333), titleContentColor = Color.White
+    AlertDialog(
 
-        )
+        title = {
+            Text(
+                text = title,
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White,
+                fontFamily = jameelNooriFont,
+                textAlign = TextAlign.End, fontSize = 26.sp
+            )
+        },
+        text = {
+            Text(
+                text = text,
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White,
+                fontFamily = jameelNooriFont,
+                textAlign = TextAlign.End, fontSize = 20.sp
+            )
+        },
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(onClick = {
+                navController.navigate("mainscreen")
+                Constants.deviceID = ""
+                Constants.initialPictures = mutableStateListOf(null, null)
+                Constants.deviceLocationLat = 0.0
+                Constants.deviceLocationLong = 0.0
+                Constants.deviceLocation = ""
+            }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
+                Text(
+                    "جی ہاں",
+                    color = Color.White,
+                    fontFamily = jameelNooriFont,
+                    fontSize = 20.sp
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onDismiss() },
+                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    "نہیں",
+                    color = Color.White,
+                    fontFamily = jameelNooriFont,
+                    fontSize = 20.sp
+                )
+            }
+        }, containerColor = Color(0xFF122333), titleContentColor = Color.White
+
+    )
 
 }
 

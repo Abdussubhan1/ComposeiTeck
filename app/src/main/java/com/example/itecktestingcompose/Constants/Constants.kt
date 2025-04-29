@@ -2,8 +2,7 @@ package com.example.itecktestingcompose.Constants
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import java.util.ArrayList
+
 
 object Constants {
 
