@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -84,7 +85,7 @@ fun FinalPicturesScreen(navController: NavController) {
     val current = LocalContext.current
     var FinallistCompleted by remember { mutableStateOf(false) }
     val FinallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
-    var showFinalTicket by remember { mutableStateOf(true) }
+    var showFinalTicket by remember { mutableStateOf(false) }
     val couroutineScope = rememberCoroutineScope()
     var statusResult by remember {
         mutableStateOf(
@@ -321,7 +322,7 @@ fun FinalPicturesScreen(navController: NavController) {
 
                                 },
                                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                                colors = ButtonDefaults.buttonColors(Color(0xFF122333), disabledContentColor = Color(0XFF122333)),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp),
@@ -388,8 +389,8 @@ fun FinalPicturesScreen(navController: NavController) {
 
             Card(
                 modifier = Modifier
-                    .width(350.dp)
-                    .height(600.dp),
+                    .fillMaxWidth(0.94f)
+                    .height(500.dp),
                 border = BorderStroke(2.dp, Color(0xFFB0BEC5)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))

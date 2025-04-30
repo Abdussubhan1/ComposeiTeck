@@ -455,7 +455,7 @@ fun PicConfirm(
             }
             Button(
                 onClick = {
-                    navController.navigate("finalPicturesScreen") {
+                    navController.navigate("testingPage") {
                         popUpTo("mainscreen") {
                             inclusive = true
                         }
