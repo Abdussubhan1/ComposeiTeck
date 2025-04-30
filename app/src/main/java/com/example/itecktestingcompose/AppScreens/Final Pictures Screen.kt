@@ -26,9 +26,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +38,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -48,12 +52,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -73,10 +79,12 @@ import kotlinx.coroutines.launch
 fun FinalPicturesScreen(navController: NavController) {
 
     HandleDoubleBackToExit()
+
+    var cust_Contact by remember { mutableStateOf("") }
     val current = LocalContext.current
     var FinallistCompleted by remember { mutableStateOf(false) }
     val FinallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
-    var showFinalTicket by remember { mutableStateOf(false) }
+    var showFinalTicket by remember { mutableStateOf(true) }
     val couroutineScope = rememberCoroutineScope()
     var statusResult by remember {
         mutableStateOf(
@@ -89,10 +97,12 @@ fun FinalPicturesScreen(navController: NavController) {
             )
         )
     }
+    val scroll = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scroll)
             .background(Color(0xFF122333)) // Dark blue background
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -338,13 +348,44 @@ fun FinalPicturesScreen(navController: NavController) {
 
         if (showFinalTicket) {
 
-        //Now all 4 pictures are contained in a Array
+            //Now all 4 pictures are contained in a Array
 
             val allPictures = ArrayList<Bitmap?>()
             allPictures.addAll(Constants.initialPictures)
             allPictures.addAll(Constants.finalPictures)
 
-            Spacer(modifier = Modifier.height(5.dp))
+            //For customer Contact Number
+            TextField(
+                trailingIcon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null) },
+                value = cust_Contact, onValueChange = {
+                    cust_Contact = it
+                    Constants.cust_Contact = cust_Contact
+                },
+                placeholder = {
+                    Text(
+                        "Enter Customer Contact Number",
+                        color = Color.DarkGray,
+                        fontSize = 16.sp,
+                        fontFamily = jameelNooriFont,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(50),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color(0XFF000000),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+
             Card(
                 modifier = Modifier
                     .width(350.dp)
@@ -353,18 +394,16 @@ fun FinalPicturesScreen(navController: NavController) {
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
             ) {
-                val scroll = rememberScrollState()
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(scroll)
+                        .verticalScroll(rememberScrollState())
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
                     Text(
-                        text = "Summary",
+                        text = "Summary of Installation",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF37474F),
@@ -475,8 +514,9 @@ fun FinalPicturesScreen(navController: NavController) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(15.dp))
-            Button(
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button (enabled = cust_Contact!="",
                 onClick = {
                     couroutineScope.launch {
                         val submitSuccess = submitData(
@@ -526,8 +566,6 @@ fun FinalPicturesScreen(navController: NavController) {
 
         }
 
-
-        BottomLogo()
 
     }
 

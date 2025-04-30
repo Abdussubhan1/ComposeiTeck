@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 object Constants {
 
+    var cust_Contact: String=""
     var cnic: String=""
     var appLoginID: String=""
     var FCMToken: String=""

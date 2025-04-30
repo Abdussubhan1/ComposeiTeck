@@ -1,7 +1,6 @@
 package com.example.itecktestingcompose.AppScreens
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
@@ -153,10 +151,11 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                             //Save cnic in shared preference
 
                             val sharePref =context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
-                            sharePref.edit() { putString("CNIC", cnic) }
-                            val storedCNIC = sharePref.getString("CNIC", null)
+                            sharePref.edit { putString("CNIC", cnic) }
 
+                            //Also saving in RAM
                             Constants.cnic = cnic
+
                         } else {
                             Toast.makeText(context, "Technician Not Registered", Toast.LENGTH_SHORT)
                                 .show()

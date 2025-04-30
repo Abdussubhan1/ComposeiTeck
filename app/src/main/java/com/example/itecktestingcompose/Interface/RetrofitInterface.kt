@@ -1,12 +1,10 @@
 package com.example.itecktestingcompose.Interface
 
-import android.graphics.Bitmap
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
 import com.example.itecktestingcompose.ModelClasses.Ignition
 import com.example.itecktestingcompose.ModelClasses.NotificationHistory
-import com.example.itecktestingcompose.ModelClasses.NotificationHistoryItem
 import com.example.itecktestingcompose.ModelClasses.Status
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
@@ -78,7 +76,8 @@ interface RetrofitInterface {
     suspend fun getTechnicianLocation(
         @Field("cnic") cnic: String,
         @Field("lat") lat: Double,
-        @Field("lng") lng: Double
+        @Field("lng") lng: Double,
+        @Field("gpsstatus") gpsstatus: Int
     ): Response<technicianLocation>
 
 }

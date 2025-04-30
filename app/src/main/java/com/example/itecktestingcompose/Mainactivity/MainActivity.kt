@@ -15,23 +15,13 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.ModelClasses.LocationWorker
 import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
 import com.example.itecktestingcompose.functions.getSavedToken
-import com.example.itecktestingcompose.functions.saveTokenLocally
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.functions.getAppVersion
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 
 val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
@@ -59,6 +49,8 @@ class MainActivity : ComponentActivity() {
             requestBackgroundLocationPermission()
         }
 
+        generateFCM()
+
 
         val context = this
 
@@ -73,7 +65,21 @@ class MainActivity : ComponentActivity() {
             AppNavigation(version, context)
         }
 
+
     }
+
+    private fun generateFCM() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val fcmToken = task.result
+                Constants.FCMToken = fcmToken
+
+            } else {
+                Log.e(TAG, "Error getting FCM token: ${task.exception}")
+            }
+        }
+    }
+
 
     // To prompt user for Notification Permission
     override fun onResume() {
@@ -105,11 +111,8 @@ class MainActivity : ComponentActivity() {
                 arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
                 102
             )
-        } else {
-            startLocationWorker()
         }
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -130,7 +133,7 @@ class MainActivity : ComponentActivity() {
 
             102 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startLocationWorker()
+//                    startLocationWorker()
                 } else {
                     Toast.makeText(
                         this,
@@ -143,23 +146,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startLocationWorker() {
-        Log.d("LocationWorker", "Enqueuing Periodic Work")
-
-        val locationWorkRequest =
-            PeriodicWorkRequestBuilder<LocationWorker>(15, TimeUnit.MINUTES).setConstraints(
-                Constraints.Builder().setRequiresBatteryNotLow(true)
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-                .build()
-
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            "LocationWork",
-            ExistingPeriodicWorkPolicy.KEEP,
-            locationWorkRequest
-        )
-    }
 }
 
 

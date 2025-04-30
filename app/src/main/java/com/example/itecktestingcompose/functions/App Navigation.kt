@@ -22,12 +22,11 @@ fun AppNavigation(version: String,context: android.content.Context) {
     {
         composable("splash") { SplashScreen(navController,version) }
         composable("login") { LoginScreen(context, navController) }
+        composable("NotificationScreen"){ NotificationScreen(navController) }
         composable("mainscreen") { DeviceEntryScreen(context, navController) }
         composable("testingPage") { TestingPage(navController) }
         composable("finalPicturesScreen"){ FinalPicturesScreen(navController) }
         composable("AllahHafizScreen"){ AllahHafiz(navController) }
-        composable("NotificationScreen"){ NotificationScreen(navController) }
-
     }
 }
 

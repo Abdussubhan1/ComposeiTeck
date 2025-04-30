@@ -1,7 +1,6 @@
 package com.example.itecktestingcompose.APIFunctions
 
 import android.util.Log
-import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
@@ -11,15 +10,16 @@ import com.example.itecktestingcompose.Interface.ServiceBuilder
 suspend fun sendTechnicalLocation(
     cnic: String,
     latitude: String,
-    longitude: String
+    longitude: String,
+    gpsstatus: Int
 
 ): String {
 
-    return try {
+     try {
 
 
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
-            .getTechnicianLocation(cnic, latitude.toDouble(), longitude.toDouble())
+            .getTechnicianLocation(cnic, latitude.toDouble(), longitude.toDouble(),gpsstatus)
 
         if (response.isSuccessful && response.body() != null) {
             val responseBody = response.body()!!
