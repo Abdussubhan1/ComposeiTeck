@@ -15,7 +15,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 fun createPartFromString(value: String): RequestBody {
     return value.toRequestBody("text/plain".toMediaTypeOrNull())
 }
-
+//Convert each bitmap to JPEG
 fun convertBitmapToMultipart(bitmap: Bitmap?, index: Int): MultipartBody.Part? {
     if (bitmap == null) return null
 
@@ -48,7 +48,7 @@ suspend fun submitData(
                 createPartFromString(name),
                 createPartFromString(mobileID),
                 createPartFromString(type.toString()),
-                createPartFromString(appLoginID.toString()),
+                createPartFromString(appLoginID),
                 imageParts
             )
 

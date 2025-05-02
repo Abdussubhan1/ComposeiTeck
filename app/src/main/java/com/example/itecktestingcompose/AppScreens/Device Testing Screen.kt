@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -83,7 +85,7 @@ fun TestingPage(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -247,11 +249,9 @@ fun TestingPage(navController: NavHostController) {
             )
 
         }
-
+        Spacer(modifier = Modifier.weight(1f))
         BottomLogo()
-
     }
-
 
 }
 
@@ -295,20 +295,19 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
             )
         )
     }
+
+//Relay result yaha banana
+
 //    var testingCompleted by remember { mutableStateOf(false) }
 
-//    var ignition by remember { mutableStateOf("") }
-//    var relay by remember { mutableStateOf(false) }
+
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 
     if (loc) {
         getLocation()
-//        if (Constants.mobileLocationLat != 0.0 && Constants.mobileLocationLong != 0.0) {
         locResult = checkLocationWithinRange()
-//        }
-        Log.d("TAG", "checkloc: $locResult")
         loc = false
     }
 
@@ -349,7 +348,9 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (locResult in 1.00..100.00) Color(0XFF39B54A) else if (locResult > 100.00 || locResult == 0.0) Color.Red else Color.LightGray,
+                    color = if (locResult in 1.00..100.00) Color(0XFF39B54A)
+                    else if ((locResult > 100.00 || locResult == 0.0) && !deviceLocationResult.isLoading) Color.Red
+                    else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -357,40 +358,40 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                         .height(10.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                if (moveToNextValidationStep == 0 && !deviceLocationResult.isLoading) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(22.dp)
-                            .clickable {
-                                showLocation = true
-                                loc = true
-                                deviceLocationResult =
-                                    ValidateLocationResponse(
-                                        isLoading = true, //Just yeh loader dikhane k lie hy
-                                        Lat = 0.0,
-                                        Lng = 0.0,
-                                        Message = "",
-                                        Success = false
-                                    )
-                                coroutineScope.launch {
-                                    deviceLocationResult = validateLoc(Constants.deviceID)
-                                    Constants.deviceLocationLat = deviceLocationResult.Lat
-                                    Constants.deviceLocationLong = deviceLocationResult.Lng
-                                    Constants.deviceLocation = deviceLocationResult.Message
 
-                                }
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    tint = if (moveToNextValidationStep == 0 && !deviceLocationResult.isLoading) Color.White else Color.Transparent,
+                    modifier = Modifier
+                        .size(22.dp)
+                        .clickable(enabled = moveToNextValidationStep == 0 && !deviceLocationResult.isLoading) {
+                            showLocation = true
+                            loc = true
+                            deviceLocationResult =
+                                ValidateLocationResponse(
+                                    isLoading = true, //Just yeh loader dikhane k lie hy
+                                    Lat = 0.0,
+                                    Lng = 0.0,
+                                    Message = "",
+                                    Success = false
+                                )
+                            coroutineScope.launch {
+                                deviceLocationResult = validateLoc(Constants.deviceID)
+                                Constants.deviceLocationLat = deviceLocationResult.Lat
+                                Constants.deviceLocationLong = deviceLocationResult.Lng
+                                Constants.deviceLocation = deviceLocationResult.Message
 
                             }
 
-                    )
-                    if (locResult in 1.00..100.00 && deviceLocationResult.Success) {
-                        moveToNextValidationStep =
-                            1
-                    }
+                        }
+
+                )
+                if (locResult in 1.00..100.00 && deviceLocationResult.Success) {
+                    moveToNextValidationStep =
+                        1
                 }
+
             }
 
             // BATTERY Wali Row
@@ -400,6 +401,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 horizontalArrangement = Arrangement.Center,
                 modifier = rowModifier
             ) {
+                //THREE STAGES FOR BATTERY VALIDATION
                 var batteryProgress by remember { mutableFloatStateOf(0.0f) }
                 batteryProgress = when {
                     batteryResult.battery == "Connected" && batteryProgress == 0.0f -> 0.30f
@@ -431,23 +433,23 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                         .height(10.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                if (moveToNextValidationStep == 1 && !batteryResult.isLoading) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                batteryResult = batteryResponse(isLoading = true, battery = "")
-                                showBattery = true
-                                showLocation = false
-                                coroutineScope.launch {
-                                    batteryResult = validateBattery(Constants.deviceID)
-                                }
+
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    tint = if (moveToNextValidationStep == 1 && !batteryResult.isLoading) Color.White else Color.Transparent,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable(enabled = moveToNextValidationStep == 1 && !batteryResult.isLoading) {
+                            batteryResult = batteryResponse(isLoading = true, battery = "")
+                            showBattery = true
+                            showLocation = false
+                            coroutineScope.launch {
+                                batteryResult = validateBattery(Constants.deviceID)
                             }
-                    )
-                }
+                        }
+                )
+
             }
 
             // IGNITION Wali Row
@@ -456,8 +458,16 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 horizontalArrangement = Arrangement.Center,
                 modifier = rowModifier
             ) {
-                if (ignitionResult.ignition == "ON") {
-//                    testingCompleted = true
+                //THREE STAGES FOR IGNITION VALIDATION
+                var ignitionProgress by remember { mutableFloatStateOf(0.0f) }
+                ignitionProgress = when {
+                    ignitionResult.ignition == "ON" && ignitionProgress == 0.0f -> 0.30f
+                    ignitionResult.ignition == "OFF" && ignitionProgress == 0.30f -> 0.60f
+                    ignitionResult.ignition == "ON" && ignitionProgress == 0.60f -> 1.0f
+                    else -> ignitionProgress
+                }
+                if (ignitionProgress == 1f) {
+//                    moveToNextValidationStep = 3
                     onTestingCompleted(true)
                 }
                 Text(
@@ -471,8 +481,8 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                         .wrapContentSize(Alignment.CenterStart)
                 )
                 LinearProgressIndicator(
-                    progress = { 1f },
-                    color = if (ignitionResult.ignition == "OFF") Color.Red else if (ignitionResult.ignition == "ON") Color(
+                    progress = { ignitionProgress },
+                    color = if (ignitionResult.ignition == "ON" || ignitionResult.ignition == "OFF") Color(
                         0XFF39B54A
                     ) else Color.LightGray,
                     modifier = Modifier
@@ -483,27 +493,26 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
 
-                if (moveToNextValidationStep == 2 && !batteryResult.isLoading) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                ignitionResult = ignitionResponse(isLoading = true, ignition = "")
-                                showIgnition = true
-                                showBattery = false
-                                coroutineScope.launch {
-                                    ignitionResult = validateIgnition(Constants.deviceID)
-                                }
-
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading) Color.White else Color.Transparent,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading) {
+                            ignitionResult = ignitionResponse(isLoading = true, ignition = "")
+                            showIgnition = true
+                            showBattery = false
+                            coroutineScope.launch {
+                                ignitionResult = validateIgnition(Constants.deviceID)
                             }
-                    )
-                }
+
+                        }
+                )
+
             }
 
-            /* RELAY Wali Row
+            // RELAY Wali Row
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -521,7 +530,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (relay) Color(0xFF00C853) else Color.LightGray,
+                    color = Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -531,21 +540,20 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 Spacer(modifier = Modifier.width(4.dp))
 
 
-                if (moveToNextValidationStep == 3) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                coroutineScope.launch {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    tint = if (moveToNextValidationStep == 3) Color.White else Color.Transparent,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable(enabled = moveToNextValidationStep == 3) {
+                            coroutineScope.launch {
 //                                    relay = validateRelay(Constants.deviceID)
-                                }
                             }
-                    )
-                }
-            }*/
+                        }
+                )
+
+            }
 
         }
         Spacer(modifier = Modifier.height(5.dp))
@@ -556,7 +564,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold, lineHeight = 26.sp
             )
         }
         Spacer(modifier = Modifier.height(10.dp))

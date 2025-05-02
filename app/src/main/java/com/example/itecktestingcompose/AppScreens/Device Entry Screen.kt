@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.AppScreens
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
@@ -24,9 +25,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.NotificationImportant
@@ -43,6 +46,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -68,8 +72,10 @@ import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
+import androidx.core.content.edit
 
 
+@SuppressLint("UseKtx")
 @Composable
 fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
@@ -103,7 +109,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -146,7 +152,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         .size(32.dp)
                         .clickable {
                             navController.navigate("NotificationScreen")
-                            sharedPref.edit().putBoolean("hasNewNotification", false).apply()
+                            sharedPref.edit {putBoolean("hasNewNotification", false)}
                             hasNewNotification.value = false
                         }
                 )
@@ -335,8 +341,8 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
+                    horizontalArrangement = Arrangement.Center, // Center the content
+                    contentPadding = PaddingValues(horizontal = 0.dp) // No extra side padding
                 ) {
                     items(initiallistOfImages.size) { index ->
                         initiallistOfImages[index]?.let { bitmap ->
@@ -344,14 +350,16 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                 bitmap = bitmap.asImageBitmap(),
                                 contentDescription = "Captured Images $index",
                                 modifier = Modifier
-                                    .width(200.dp) // Use fixed width instead of fillMaxWidth
+                                    .width(200.dp)
                                     .height(200.dp)
-                                    .clip(RoundedCornerShape(12.dp)) // Optional: make it prettier
+                                    .clip(RoundedCornerShape(12.dp))
                                     .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 4.dp) // spacing between items
                             )
                         }
                     }
                 }
+
             }
 
             if (initiallistCompleted && !moveToTesting) {
