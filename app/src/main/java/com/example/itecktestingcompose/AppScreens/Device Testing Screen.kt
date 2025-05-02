@@ -76,6 +76,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TestingPage(navController: NavHostController) {
+    getLocation()
+
 
     var comp by remember { mutableStateOf(false) }
 
@@ -113,15 +115,6 @@ fun TestingPage(navController: NavHostController) {
                     )
                 }
             }
-
-
-//            Icon(
-//                imageVector = Icons.Default.Lightbulb,
-//                contentDescription = "Tips",
-//                tint = Color.White,
-//                modifier = Modifier.size(32.dp)
-//            )
-
 
         }
 
@@ -298,12 +291,12 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
 
 //Relay result yaha banana
 
-//    var testingCompleted by remember { mutableStateOf(false) }
 
 
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
+    locResult = checkLocationWithinRange()
 
     if (loc) {
         getLocation()
@@ -349,7 +342,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                 LinearProgressIndicator(
                     progress = { 1f },
                     color = if (locResult in 1.00..100.00) Color(0XFF39B54A)
-                    else if ((locResult > 100.00 || locResult == 0.0) && !deviceLocationResult.isLoading) Color.Red
+                    else if ((locResult > 100.00) && !deviceLocationResult.isLoading) Color.Red
                     else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)

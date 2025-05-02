@@ -109,7 +109,8 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
-            .padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -152,7 +153,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         .size(32.dp)
                         .clickable {
                             navController.navigate("NotificationScreen")
-                            sharedPref.edit {putBoolean("hasNewNotification", false)}
+                            sharedPref.edit { putBoolean("hasNewNotification", false) }
                             hasNewNotification.value = false
                         }
                 )
@@ -165,7 +166,6 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                     )
                 }
             }
-
 
 
         }
@@ -336,30 +336,29 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
             }
 
-            if (initiallistCompleted) {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    horizontalArrangement = Arrangement.Center, // Center the content
-                    contentPadding = PaddingValues(horizontal = 0.dp) // No extra side padding
-                ) {
-                    items(initiallistOfImages.size) { index ->
-                        initiallistOfImages[index]?.let { bitmap ->
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Captured Images $index",
-                                modifier = Modifier
-                                    .width(200.dp)
-                                    .height(200.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
-                                    .padding(horizontal = 4.dp) // spacing between items
-                            )
-                        }
+            Spacer(modifier = Modifier.height(28.dp))
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                horizontalArrangement = Arrangement.Center, // Center the content
+                contentPadding = PaddingValues(horizontal = 0.dp) // No extra side padding
+            ) {
+                items(initiallistOfImages.size) { index ->
+                    initiallistOfImages[index]?.let { bitmap ->
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "Captured Images $index",
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(200.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
+                                .padding(horizontal = 4.dp) // spacing between items
+                        )
                     }
                 }
-
             }
 
             if (initiallistCompleted && !moveToTesting) {
@@ -432,7 +431,7 @@ fun PicConfirm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(15.dp)) // space between text and buttons
+        Spacer(modifier = Modifier.height(28.dp)) // space between text and buttons
 
         Column(
             modifier = Modifier.fillMaxWidth(),
