@@ -1,6 +1,10 @@
 package com.example.itecktestingcompose.AppScreens
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,6 +35,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -65,6 +70,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.StatusResult
@@ -322,7 +329,10 @@ fun FinalPicturesScreen(navController: NavController) {
 
                                 },
                                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                                colors = ButtonDefaults.buttonColors(Color(0xFF122333), disabledContentColor = Color(0XFF122333)),
+                                colors = ButtonDefaults.buttonColors(
+                                    Color(0xFF122333),
+                                    disabledContentColor = Color(0XFF122333)
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp),
@@ -517,8 +527,30 @@ fun FinalPicturesScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Button (enabled = cust_Contact!="",
+            Button(
+                enabled = cust_Contact != "",
                 onClick = {
+
+                    val channelId = "installation"
+                    val channelName = "Installation"
+
+                    val notificationManager =
+                        current.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+
+                    val importance = NotificationManager.IMPORTANCE_HIGH
+                    val channel = NotificationChannel(channelId, channelName, importance)
+                    notificationManager.createNotificationChannel(channel)
+
+                    val notificationBuilder = NotificationCompat.Builder(current, channelId)
+                        .setSmallIcon(R.drawable.icon) // Make sure you have this icon in drawable
+                        .setContentTitle("Installation")
+                        .setContentText("Tracker installation success")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+
+                    notificationManager.notify(0, notificationBuilder.build())
+
                     couroutineScope.launch {
                         val submitSuccess = submitData(
                             Constants.cnic,
