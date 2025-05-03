@@ -531,25 +531,6 @@ fun FinalPicturesScreen(navController: NavController) {
                 enabled = cust_Contact != "",
                 onClick = {
 
-                    val channelId = "installation"
-                    val channelName = "Installation"
-
-                    val notificationManager =
-                        current.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-
-                    val importance = NotificationManager.IMPORTANCE_HIGH
-                    val channel = NotificationChannel(channelId, channelName, importance)
-                    notificationManager.createNotificationChannel(channel)
-
-                    val notificationBuilder = NotificationCompat.Builder(current, channelId)
-                        .setSmallIcon(R.drawable.icon) // Make sure you have this icon in drawable
-                        .setContentTitle("Installation")
-                        .setContentText("Tracker installation success")
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-
-                    notificationManager.notify(0, notificationBuilder.build())
 
                     couroutineScope.launch {
                         val submitSuccess = submitData(
@@ -574,6 +555,27 @@ fun FinalPicturesScreen(navController: NavController) {
                             navController.navigate("AllahHafizScreen") {
                                 popUpTo("finalPicturesScreen") { inclusive = true }
                             }
+
+                            val channelId = "installation"
+                            val channelName = "Installation"
+
+                            val notificationManager =
+                                current.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+
+                            val importance = NotificationManager.IMPORTANCE_HIGH
+                            val channel = NotificationChannel(channelId, channelName, importance)
+                            notificationManager.createNotificationChannel(channel)
+
+                            val notificationBuilder = NotificationCompat.Builder(current, channelId)
+                                .setSmallIcon(R.drawable.icon) // Make sure you have this icon in drawable
+                                .setContentTitle("Installation")
+                                .setContentText("Tracker installation success")
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setAutoCancel(true)
+
+                            notificationManager.notify(0, notificationBuilder.build())
+
 
                         }
                     }
