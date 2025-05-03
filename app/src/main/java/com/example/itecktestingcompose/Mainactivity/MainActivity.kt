@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
@@ -26,12 +28,14 @@ import com.google.firebase.messaging.FirebaseMessaging
 
 val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
 
+
 class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharePref = this.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
         val storedCNIC = sharePref.getString("CNIC", null)
+
         Log.d("TAG", "LoginScreen: $storedCNIC")
 
         enableEdgeToEdge() //FullScreen View of Application
@@ -60,12 +64,9 @@ class MainActivity : ComponentActivity() {
 
         Constants.FCMToken = getSavedToken(this) ?: "" //Saving the updated token
 
-
         setContent {
-            AppNavigation(version, context)
+                AppNavigation(version, context)
         }
-
-
     }
 
     private fun generateFCM() {
@@ -133,7 +134,6 @@ class MainActivity : ComponentActivity() {
 
             102 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    startLocationWorker()
                 } else {
                     Toast.makeText(
                         this,

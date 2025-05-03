@@ -255,8 +255,6 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
     var showIgnition by remember { mutableStateOf(false) }
     var showLocation by remember { mutableStateOf(false) }
 
-//    var battery by remember { mutableStateOf("") }
-
     val coroutineScope = rememberCoroutineScope()
 
     var deviceLocationResult by remember {

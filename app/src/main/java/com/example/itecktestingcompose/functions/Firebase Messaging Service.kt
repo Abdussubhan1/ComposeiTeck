@@ -51,22 +51,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val sharePref =
                 applicationContext.getSharedPreferences("Location", Context.MODE_PRIVATE)
 
-//            if (ContextCompat.checkSelfPermission(
-//                    applicationContext,
-//                    Manifest.permission.ACCESS_FINE_LOCATION
-//                ) == PackageManager.PERMISSION_GRANTED
-//            ) {
-//                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-//                    location?.let {
-//                        sharePref.edit().apply {
-//                            putString("Lat", it.latitude.toString())
-//                            putString("Lng", it.longitude.toString())
-//                            apply()
-//                        }
-//                    }
-//                }
-//
-//            }
 
             val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isLocationEnabled =

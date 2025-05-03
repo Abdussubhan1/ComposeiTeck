@@ -556,6 +556,8 @@ fun FinalPicturesScreen(navController: NavController) {
                                 popUpTo("finalPicturesScreen") { inclusive = true }
                             }
 
+                            //Also showing notification when data is submitted successfully
+
                             val channelId = "installation"
                             val channelName = "Installation"
 
@@ -598,9 +600,7 @@ fun FinalPicturesScreen(navController: NavController) {
                 )
             }
 
-
         }
-
 
     }
 

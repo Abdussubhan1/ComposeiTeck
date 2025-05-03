@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.AppScreens
 
 import android.content.Context
+import android.location.LocationManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,13 +70,13 @@ fun LoginScreen(context: Context, navController: NavHostController) {
 
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
-//    val regex = Regex("^[0-9]{5}-[0-9]{7}-[0-9]$")
     val keyboard = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0XFF122333)).verticalScroll(rememberScrollState()),
+            .background(Color(0XFF122333))
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -127,41 +128,63 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                 .padding(horizontal = 32.dp)
                 .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
                 .clickable(enabled = !validationResult.isLoading && cnic != "") {
-                    keyboard?.hide()
-                    validationResult = CNICValidationResult(
-                        ifUserExist = false,
-                        isLoading = true
-                    )
+                    keyboard?.hide() //hide the keyboard
 
-                    couroutineScope.launch {
-                        validationResult = validateCnic(
-                            cnic,
-                            Constants.mobileID,
-                            Constants.FCMToken,
-                            Constants.appVersion,
-                            Constants.osVersion,
-                            Constants.brand
+                    //On submit, system will check if the location in ON or OFF and ask accordingly
+
+                    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    val isLocationEnabled =
+                        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+                    if (isLocationEnabled) {
+                        validationResult = CNICValidationResult(
+                            ifUserExist = false,
+                            isLoading = true
                         )
 
-                        if (validationResult.ifUserExist) {
-                            Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate("mainscreen") {
-                                popUpTo("login") { inclusive = true }
+                        couroutineScope.launch {
+                            validationResult = validateCnic(
+                                cnic,
+                                Constants.mobileID,
+                                Constants.FCMToken,
+                                Constants.appVersion,
+                                Constants.osVersion,
+                                Constants.brand
+                            )
+
+                            if (validationResult.ifUserExist) {
+                                Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate("mainscreen") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+
+                                //Save cnic in shared preference
+
+                                val sharePref =
+                                    context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+                                sharePref.edit { putString("CNIC", cnic) }
+
+                                //Also saving in RAM
+                                Constants.cnic = cnic
+
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Technician Not Registered",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
                             }
-
-                            //Save cnic in shared preference
-
-                            val sharePref =context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
-                            sharePref.edit { putString("CNIC", cnic) }
-
-                            //Also saving in RAM
-                            Constants.cnic = cnic
-
-                        } else {
-                            Toast.makeText(context, "Technician Not Registered", Toast.LENGTH_SHORT)
-                                .show()
                         }
+                    }else {
+                        Toast.makeText(
+                            context,
+                            "Please Enable Location Services First",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
                     }
                 },
             contentAlignment = Alignment.Center
