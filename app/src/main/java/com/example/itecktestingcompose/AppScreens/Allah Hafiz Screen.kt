@@ -44,7 +44,7 @@ fun AllahHafiz(navController: NavHostController) {
     HandleDoubleBackToExit()
     val scale = remember { Animatable(0f) }
 
-
+//For lottie animation
     val composition by rememberLottieComposition(
         LottieCompositionSpec.Asset("complete_lottie.json")
     )
