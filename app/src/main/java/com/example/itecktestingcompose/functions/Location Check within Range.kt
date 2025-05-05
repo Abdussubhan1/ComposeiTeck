@@ -34,6 +34,4 @@ fun checkLocationWithinRange(): Double {
 
     return distanceInMeters
 
-
-
 }

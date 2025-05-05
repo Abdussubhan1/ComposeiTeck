@@ -87,7 +87,6 @@ fun SplashScreen(navController: NavHostController, version: String) {
         }
     }
 
-
 }
 
 @Composable
