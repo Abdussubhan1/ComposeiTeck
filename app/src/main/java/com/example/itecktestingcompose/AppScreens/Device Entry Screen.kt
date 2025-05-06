@@ -210,7 +210,9 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         CustomTextField(
                             devID,
                             "Device Number",
-                            onValueChange = { devID = it }, isEnabled
+                            onValueChange = { devID = it },
+                            isEnabled,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
 
                     }
@@ -276,7 +278,9 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         CustomTextField(
                             vehicleEngineChassis,
                             "Engine/Chassis",
-                            onValueChange = { vehicleEngineChassis = it }, isEngineEnabled
+                            onValueChange = { vehicleEngineChassis = it },
+                            isEngineEnabled,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                         )
 
                     }
@@ -294,7 +298,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                     if (VehicleDetailsResult.ifDetailsExist) {
                                         testingStart = true
                                         showTicket = true
-                                        isEngineEnabled = false
+
 
                                         Constants.Vehmake = VehicleDetailsResult.data[0].MAKE
                                         Constants.Vehmodel = VehicleDetailsResult.data[0].MODEL
@@ -308,6 +312,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
+                                        showTicket = false
                                         Toast.makeText(
                                             context,
                                             VehicleDetailsResult.message,
@@ -526,7 +531,8 @@ fun CustomTextField(
     value: String,
     placeholder: String,
     onValueChange: (String) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     TextField(
         value = value,
@@ -550,7 +556,7 @@ fun CustomTextField(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = keyboardOptions
     )
 }
 
