@@ -211,8 +211,6 @@ fun LoginScreen(context: Context, navController: NavHostController) {
 
         BottomLogo()
     }
-
-
 }
 
 @Preview
