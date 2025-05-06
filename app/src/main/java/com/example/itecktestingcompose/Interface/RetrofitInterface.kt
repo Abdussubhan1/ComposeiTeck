@@ -8,6 +8,7 @@ import com.example.itecktestingcompose.ModelClasses.NotificationHistory
 import com.example.itecktestingcompose.ModelClasses.Status
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
+import com.example.itecktestingcompose.ModelClasses.VehicleDetails
 import com.example.itecktestingcompose.ModelClasses.postDataResponse
 import com.example.itecktestingcompose.ModelClasses.technicianLocation
 import com.google.gson.GsonBuilder
@@ -80,7 +81,13 @@ interface RetrofitInterface {
         @Field("gpsstatus") gpsstatus: Int
     ): Response<technicianLocation>
 
+    @FormUrlEncoded
+    @POST("get_vehicle_details.php")
+    suspend fun getVehicleDetails(@Field("search") vehicleEngineChassis: String): Response<VehicleDetails>
+
 }
+
+
 
 
 object ServiceBuilder {

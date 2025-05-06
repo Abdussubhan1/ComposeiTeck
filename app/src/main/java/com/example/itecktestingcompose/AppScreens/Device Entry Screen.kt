@@ -36,6 +36,8 @@ import androidx.compose.material.icons.filled.NotificationImportant
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -52,11 +54,14 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +78,8 @@ import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
+import com.example.itecktestingcompose.APIFunctions.VehicleValidationResult
+import com.example.itecktestingcompose.APIFunctions.getVehicleDetails
 
 
 @SuppressLint("UseKtx")
@@ -84,6 +91,8 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         remember { mutableStateOf(sharedPref.getBoolean("hasNewNotification", false)) }
 
     var devID by remember { mutableStateOf("") }
+    var vehicleEngineChassis by remember { mutableStateOf("") }
+
     var validationResult by remember {
         mutableStateOf(
             DevValidationResult(
@@ -92,14 +101,28 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
             )
         )
     }
+
+
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
     var isEnabled by remember { mutableStateOf(true) }
-    var tbEnable by remember { mutableStateOf(false) }
+    var isEngineEnabled by remember { mutableStateOf(true) }
+    var testingStart by remember { mutableStateOf(false) }
+    var showTicket by remember { mutableStateOf(false) }
     var pictureTaking by remember { mutableStateOf(false) }
     var initiallistCompleted by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
     var moveToTesting by remember { mutableStateOf(false) }
+
+    var VehicleDetailsResult by remember {
+        mutableStateOf(
+            VehicleValidationResult(
+                false,
+                "",
+                emptyList()
+            )
+        )
+    }
 
 
 
@@ -186,7 +209,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                     Box(modifier = Modifier.weight(1f)) {
                         CustomTextField(
                             devID,
-                            "ڈیوائس نمبر درج کریں۔",
+                            "Device Number",
                             onValueChange = { devID = it }, isEnabled
                         )
 
@@ -208,7 +231,6 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                     validationResult = validateDev(devID)
 
                                     if (validationResult.ifDeviceExist) {
-                                        tbEnable = true
                                         isEnabled = false
                                         Constants.deviceID = devID
 
@@ -238,13 +260,136 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                 }
             }
         }
+//        Spacer(modifier = Modifier.height(32.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
+                .padding(16.dp)
+        ) {
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
 
-        Spacer(modifier = Modifier.height(32.dp))
+                        CustomTextField(
+                            vehicleEngineChassis,
+                            "Engine/Chassis",
+                            onValueChange = { vehicleEngineChassis = it }, isEngineEnabled
+                        )
+
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color(0XFF39B54A)) // Green search
+                            .clickable(enabled = vehicleEngineChassis != "") {
+                                keyboard?.hide()
+                                couroutineScope.launch {
+                                    VehicleDetailsResult = getVehicleDetails(vehicleEngineChassis)
+
+                                    if (VehicleDetailsResult.ifDetailsExist) {
+                                        testingStart = true
+                                        showTicket = true
+                                        isEngineEnabled = false
+
+                                        Constants.Vehmake = VehicleDetailsResult.data[0].MAKE
+                                        Constants.Vehmodel = VehicleDetailsResult.data[0].MODEL
+                                        Constants.VehColor = VehicleDetailsResult.data[0].COLOR
+                                        Constants.Vehyear = VehicleDetailsResult.data[0].YEAR
+
+
+                                        Toast.makeText(
+                                            context,
+                                            "Vehicle Details Found Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            VehicleDetailsResult.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        }
+        if (showTicket) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.94f)
+                    .height(500.dp),
+                border = BorderStroke(2.dp, Color(0xFFB0BEC5)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "Vehicle Details",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF37474F),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    val textStyle = TextStyle(
+                        fontSize = 16.sp,
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF263238),
+                        textAlign = TextAlign.Center
+                    )
+
+                    listOf(
+                        "Make:\n${Constants.Vehmake}",
+                        "Model:\n${Constants.Vehmodel}",
+                        "Color:\n${Constants.VehColor}",
+                        "Year:\n${Constants.Vehyear}",
+                        "OBD status: INPROGRESS"
+                    ).forEach { label ->
+                        Text(
+                            text = label,
+                            style = textStyle,
+                            modifier = Modifier
+                                .padding(vertical = 8.dp, horizontal = 12.dp)
+                                .fillMaxWidth()
+                                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+
+
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Button
         Button(
             onClick = { pictureTaking = true },
-            enabled = tbEnable,
+            enabled = testingStart && !isEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -392,8 +537,7 @@ fun CustomTextField(
                 placeholder,
                 color = Color.DarkGray,
                 fontSize = 18.sp,
-                textAlign = TextAlign.End,
-                fontFamily = jameelNooriFont,
+                textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
         },
