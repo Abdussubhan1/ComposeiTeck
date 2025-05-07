@@ -189,77 +189,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
 
         }
-
         Spacer(modifier = Modifier.height(40.dp))
-
-        // Rounded card background
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
-                .padding(16.dp)
-        ) {
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        CustomTextField(
-                            devID,
-                            "Device Number",
-                            onValueChange = { devID = it },
-                            isEnabled,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Color(0XFF39B54A)) // Green search
-                            .clickable(enabled = devID != "") {
-                                keyboard?.hide()
-                                validationResult = DevValidationResult(
-                                    ifDeviceExist = false,
-                                    isLoading = true
-                                )
-                                couroutineScope.launch {
-
-                                    validationResult = validateDev(devID)
-
-                                    if (validationResult.ifDeviceExist) {
-                                        isEnabled = false
-                                        Constants.deviceID = devID
-
-                                        Toast.makeText(
-                                            context,
-                                            "Device ID is valid",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Device Not found in Inventory",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
-                        )
-                    }
-                }
-            }
-        }
-//        Spacer(modifier = Modifier.height(32.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -296,7 +226,6 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                         testingStart = true
                                         showTicket = true
 
-
                                         Constants.Vehmake = VehicleDetailsResult.data[0].MAKE
                                         Constants.Vehmodel = VehicleDetailsResult.data[0].MODEL
                                         Constants.VehColor = VehicleDetailsResult.data[0].COLOR
@@ -329,59 +258,137 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         )
                     }
                 }
-            }
-        }
-        if (showTicket) {
-            Card(
-                modifier = Modifier
-                    .wrapContentSize(),
-                border = BorderStroke(2.dp, Color(0xFFB0BEC5)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0XFF182b3c))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .wrapContentSize()
-//                        .verticalScroll(rememberScrollState())
-                        .padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-//
-//                    Text(
-//                        text = "Vehicle Details",
-//                        fontSize = 22.sp,
-//                        fontWeight = FontWeight.Bold,
-//                        color = Color(0xFF37474F),
-//                        modifier = Modifier.padding(bottom = 8.dp)
-//                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        CustomTextField(
+                            devID,
+                            "Device Number",
+                            onValueChange = { devID = it },
+                            showTicket,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
 
-                    val textStyle = TextStyle(
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF263238),
-                        textAlign = TextAlign.Start
-                    )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(if (showTicket) Color(0XFF39B54A) else Color.Gray) // Green search
+                            .clickable(enabled = (devID != "" && showTicket)) {
+                                keyboard?.hide()
+                                validationResult = DevValidationResult(
+                                    ifDeviceExist = false,
+                                    isLoading = true
+                                )
+                                couroutineScope.launch {
 
-                    listOf(
-                        "Make:\t\t${Constants.Vehmake}",
-                        "Model:\t\t${Constants.Vehmodel}",
-                        "Color:\t\t${Constants.VehColor}",
-                        "Year:\t\t${Constants.Vehyear}",
-                        "OBD Status: "
-                    ).forEach { label ->
-                        Text(
-                            text = label,
-                            style = textStyle,
-                            modifier = Modifier
-                                .padding(vertical = 8.dp, horizontal = 12.dp)
-                                .fillMaxWidth()
-                                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp))
-                                .padding(12.dp)
+                                    validationResult = validateDev(devID)
+
+                                    if (validationResult.ifDeviceExist) {
+                                        isEnabled = false
+                                        Constants.deviceID = devID
+
+                                        Toast.makeText(
+                                            context,
+                                            "Device ID is valid",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        isEnabled = true
+                                        Toast.makeText(
+                                            context,
+                                            "Device Not found in Inventory",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color.White
                         )
                     }
                 }
             }
+        }
+
+        if (showTicket) {
+            Card(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, Color(0xFF90A4AE)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF102027)) // darker background for contrast
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Vehicle Details",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFBBDEFB),
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+
+                    val textStyle = TextStyle(
+                        fontSize = 16.sp,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFFFAFAFA),
+                        textAlign = TextAlign.Start
+                    )
+
+                    val values = listOf(
+                        "Make" to Constants.Vehmake,
+                        "Model" to Constants.Vehmodel,
+                        "Color" to Constants.VehColor,
+                        "Year" to Constants.Vehyear,
+                        "OBD Status" to "Pending" // example
+                    )
+
+                    values.forEach { (label, value) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                                .background(Color(0xFF263238), RoundedCornerShape(10.dp))
+                                .padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "$label:",
+                                style = textStyle,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = value,
+                                style = textStyle.copy(
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color(0xFF80D8FF)
+                                ),
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    }
+                }
+            }
+
         }
 
 

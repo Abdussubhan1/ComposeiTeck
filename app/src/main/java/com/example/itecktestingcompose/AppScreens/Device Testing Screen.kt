@@ -29,6 +29,10 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -78,6 +82,7 @@ import kotlinx.coroutines.launch
 fun TestingPage(navController: NavHostController) {
     getLocation()
 
+    var obdType by remember { mutableStateOf("Select OBD Type") }
 
     var comp by remember { mutableStateOf(false) }
 
@@ -87,7 +92,8 @@ fun TestingPage(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
-            .padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -131,28 +137,29 @@ fun TestingPage(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
-                        CustomTextField_screen2(
-                            Constants.deviceID
-                        ) {}
-
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Color(0XFF39B54A))// Green search
-                            .clickable(enabled = false) {
-
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
+                        DropdownField(
+                            selectedOption = obdType,
+                            onOptionSelected = { obdType = it }
                         )
+
                     }
+//                    Spacer(modifier = Modifier.width(8.dp))
+//                    Box(
+//                        modifier = Modifier
+//                            .size(40.dp)
+//                            .clip(CircleShape)
+//                            .background(Color(0XFF39B54A))// Green search
+//                            .clickable(enabled = false) {
+//
+//                            },
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Search,
+//                            contentDescription = "Search",
+//                            tint = Color.White
+//                        )
+//                    }
                 }
 
 
@@ -288,7 +295,6 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
     }
 
 //Relay result yaha banana
-
 
 
     var loc by remember { mutableStateOf(false) }
@@ -593,27 +599,59 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTextField_screen2(
-    value: String,
-    onValueChange: (String) -> Unit,
+fun DropdownField(
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
 ) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        enabled = false,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp),
-        shape = RoundedCornerShape(50),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color(0XFF000000),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
+    val options = listOf("NA", "OBD", "OBD With Wires")
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        TextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            enabled = true, // allow selection
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+                .height(65.dp),
+            shape = RoundedCornerShape(50),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF000000),
+                unfocusedTextColor = Color(0xFF000000),
+                disabledTextColor = Color(0xFF000000),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            }
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { selectionOption ->
+                DropdownMenuItem(
+                    text = { Text(selectionOption) },
+                    onClick = {
+                        onOptionSelected(selectionOption)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
 }
+
 
 @Preview(showBackground = true)
 @Composable
