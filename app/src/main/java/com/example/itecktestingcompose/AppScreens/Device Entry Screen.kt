@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -91,7 +93,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         remember { mutableStateOf(sharedPref.getBoolean("hasNewNotification", false)) }
 
     var devID by remember { mutableStateOf("") }
-    var vehicleEngineChassis by remember { mutableStateOf("") }
+    var vehicleEngineChassis by rememberSaveable { mutableStateOf("") }
 
     var validationResult by remember {
         mutableStateOf(
@@ -108,11 +110,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
     var isEnabled by remember { mutableStateOf(true) }
     var isEngineEnabled by remember { mutableStateOf(true) }
     var testingStart by remember { mutableStateOf(false) }
-    var showTicket by remember { mutableStateOf(false) }
-    var pictureTaking by remember { mutableStateOf(false) }
-    var initiallistCompleted by remember { mutableStateOf(false) }
-    var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
-    var moveToTesting by remember { mutableStateOf(false) }
+    var showTicket by rememberSaveable { mutableStateOf(false) }
 
     var VehicleDetailsResult by remember {
         mutableStateOf(
@@ -125,15 +123,14 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
     }
 
 
-
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(horizontal = 16.dp),
+//            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -313,6 +310,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                         ).show()
                                     } else {
                                         showTicket = false
+                                        testingStart = false
                                         Toast.makeText(
                                             context,
                                             VehicleDetailsResult.message,
@@ -336,42 +334,41 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         if (showTicket) {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(0.94f)
-                    .height(500.dp),
+                    .wrapContentSize(),
                 border = BorderStroke(2.dp, Color(0xFFB0BEC5)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+                colors = CardDefaults.cardColors(containerColor = Color(0XFF182b3c))
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
+                        .wrapContentSize()
+//                        .verticalScroll(rememberScrollState())
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    Text(
-                        text = "Vehicle Details",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF37474F),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+//
+//                    Text(
+//                        text = "Vehicle Details",
+//                        fontSize = 22.sp,
+//                        fontWeight = FontWeight.Bold,
+//                        color = Color(0xFF37474F),
+//                        modifier = Modifier.padding(bottom = 8.dp)
+//                    )
 
                     val textStyle = TextStyle(
                         fontSize = 16.sp,
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF263238),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Start
                     )
 
                     listOf(
-                        "Make:\n${Constants.Vehmake}",
-                        "Model:\n${Constants.Vehmodel}",
-                        "Color:\n${Constants.VehColor}",
-                        "Year:\n${Constants.Vehyear}",
-                        "OBD status: INPROGRESS"
+                        "Make:\t\t${Constants.Vehmake}",
+                        "Model:\t\t${Constants.Vehmodel}",
+                        "Color:\t\t${Constants.VehColor}",
+                        "Year:\t\t${Constants.Vehyear}",
+                        "OBD Status: "
                     ).forEach { label ->
                         Text(
                             text = label,
@@ -393,7 +390,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
         // Button
         Button(
-            onClick = { pictureTaking = true },
+            onClick = { navController.navigate("initialPicturesScreen") },
             enabled = testingStart && !isEnabled,
             modifier = Modifier
                 .fillMaxWidth()
@@ -411,114 +408,6 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                 text = "TESTING START KARO",
                 fontWeight = FontWeight.SemiBold
             )
-        }
-        if (pictureTaking) {
-            val cameraLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.TakePicturePreview()
-            ) { result ->
-                if (result != null) {
-                    val firstNullIndex = initiallistOfImages.indexOfFirst { it == null }
-
-                    if (firstNullIndex != -1) {
-                        initiallistOfImages[firstNullIndex] = result
-                        Constants.initialPictures = initiallistOfImages
-                    }
-                } else {
-                    Toast.makeText(context, "Capture Failed!", Toast.LENGTH_SHORT).show()
-                }
-            }
-            val cameraPermissionLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted ->
-                if (isGranted) {
-                    cameraLauncher.launch(null) // Launch camera
-                } else {
-                    Toast.makeText(context, "Camera Permission Denied!", Toast.LENGTH_SHORT).show()
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (initiallistOfImages[0] == null) {
-                    Icon(
-                        imageVector = Icons.Default.CameraEnhance,
-                        contentDescription = "Camera Icon 1",
-                        tint = Color(0XFF39B54A),
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(start = 14.dp)
-                            .clickable {
-                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            }
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "ڈیوائس کی پہلی تصویر لینے کے لیے کلک کریں",
-                        modifier = Modifier.padding(end = 14.dp),
-                        fontFamily = jameelNooriFont,
-                        maxLines = 2,
-                        fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
-                    )
-                } else if (initiallistOfImages[1] == null) {
-                    Icon(
-                        imageVector = Icons.Default.CameraEnhance,
-                        contentDescription = "Camera Icon 1",
-                        tint = Color(0XFF39B54A),
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(start = 14.dp)
-                            .clickable {
-                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            }
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Text(
-                        text = "ڈیوائس کی دوسری تصویر لینے کے لیے کلک کریں۔",
-                        modifier = Modifier.padding(end = 14.dp),
-                        fontFamily = jameelNooriFont,
-                        fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
-                    )
-                } else
-                    initiallistCompleted = true
-
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                horizontalArrangement = Arrangement.Center, // Center the content
-                contentPadding = PaddingValues(horizontal = 0.dp) // No extra side padding
-            ) {
-                items(initiallistOfImages.size) { index ->
-                    initiallistOfImages[index]?.let { bitmap ->
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = "Captured Images $index",
-                            modifier = Modifier
-                                .width(200.dp)
-                                .height(200.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 4.dp) // spacing between items
-                        )
-                    }
-                }
-            }
-
-            if (initiallistCompleted && !moveToTesting) {
-                PicConfirm(
-                    initiallistOfImages,
-                    onRetakeConfirmed = { initiallistCompleted = false },
-                    navController
-                )
-
-            }
         }
         Spacer(modifier = Modifier.weight(1f))
 
@@ -565,88 +454,5 @@ fun CustomTextField(
 @Composable
 fun MainScreenPreview() {
     DeviceEntryScreen(LocalContext.current, rememberNavController())
-}
-
-
-@Composable
-fun PicConfirm(
-    initiallistOfImages: SnapshotStateList<Bitmap?>,
-    onRetakeConfirmed: () -> Unit,
-    navController: NavHostController
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp), // optional for padding around content
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Spacer(modifier = Modifier.height(28.dp)) // space between text and buttons
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically)
-        ) {
-            Button(
-                onClick = {
-                    initiallistOfImages.clear()
-                    initiallistOfImages.addAll(listOf(null, null))
-                    onRetakeConfirmed()
-                },
-                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-                shape = RoundedCornerShape(50), border = BorderStroke(1.dp, Color.Red),
-                elevation = ButtonDefaults.buttonElevation(15.dp, 10.dp, 10.dp, 10.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                Text(
-                    text = "دونوں تصویریں دوبارہ لیں۔",
-                    fontFamily = jameelNooriFont,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    fontSize = 21.sp
-                )
-            }
-            Button(
-                onClick = {
-                    navController.navigate("testingPage") {
-                        popUpTo("mainscreen") {
-                            inclusive = true
-                        }
-                    }
-                },
-                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(50),
-                border = BorderStroke(1.dp, Color(0XFF39B54A))
-            ) {
-                Text(
-                    text = " آگے بڑھیں۔",
-                    fontFamily = jameelNooriFont,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    fontSize = 21.sp
-                )
-            }
-        }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun PicConfirmPreview() {
-    PicConfirm(
-        remember { mutableStateListOf(null, null) },
-        onRetakeConfirmed = {},
-        rememberNavController()
-    )
 }
 

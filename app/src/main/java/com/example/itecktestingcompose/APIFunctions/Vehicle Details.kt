@@ -18,8 +18,8 @@ suspend fun getVehicleDetails(
 ): VehicleValidationResult {
 
     var data: List<VehData> = emptyList()
-    var message: String = "Vehicle Not Found"
-    var ifDetailsExist: Boolean = false
+    var message = "Vehicle Not Found"
+    var ifDetailsExist = false
 
     return try {
 
