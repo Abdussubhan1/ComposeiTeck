@@ -29,5 +29,6 @@ object Constants {
     var Vehmodel:String=""
     var Vehyear:String=""
     var VehColor:String=""
+    var EngineChassis:String=""
 }
 

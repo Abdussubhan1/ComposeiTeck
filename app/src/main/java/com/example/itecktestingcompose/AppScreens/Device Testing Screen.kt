@@ -137,28 +137,10 @@ fun TestingPage(navController: NavHostController) {
                         )
 
                     }
-//                    Spacer(modifier = Modifier.width(8.dp))
-//                    Box(
-//                        modifier = Modifier
-//                            .size(40.dp)
-//                            .clip(CircleShape)
-//                            .background(Color(0XFF39B54A))// Green search
-//                            .clickable(enabled = false) {
-//
-//                            },
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Search,
-//                            contentDescription = "Search",
-//                            tint = Color.White
-//                        )
-//                    }
+
                 }
 
-
             }
-
         }
         Spacer(modifier = Modifier.height(32.dp))
         if (obdType != "Select OBD Type") {
@@ -257,6 +239,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
     var showBattery by remember { mutableStateOf(false) }
     var showIgnition by remember { mutableStateOf(false) }
     var showLocation by remember { mutableStateOf(false) }
+    var showRelay by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -460,10 +443,9 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     else -> ignitionProgress
                 }
                 if (ignitionProgress == 1f) {
-                    moveToNextValidationStep = 3
                     if (obdType == "OBD" || obdType == "OBD With Wires") {
                         onTestingCompleted(true)
-                    }
+                    } else moveToNextValidationStep = 3
                 }
                 Text(
                     "Ignition",
@@ -543,7 +525,9 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                         modifier = Modifier
                             .size(24.dp)
                             .clickable(enabled = moveToNextValidationStep == 3) {
-                                onTestingCompleted(true)
+//                                onTestingCompleted(true)
+                                showRelay = true
+                                showIgnition = false
                                 coroutineScope.launch {
 //                                    relay = validateRelay(Constants.deviceID)
                                 }
@@ -576,6 +560,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     showLocation -> "Location: ${deviceLocationResult.Message}"
                     showBattery -> "Battery: ${batteryResult.battery}"
                     showIgnition -> "Ignition: ${ignitionResult.ignition}"
+                    showRelay -> "Relay: ${"Connected"}"
                     else -> ""
                 }
 

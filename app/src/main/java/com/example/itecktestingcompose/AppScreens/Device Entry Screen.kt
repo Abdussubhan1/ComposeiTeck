@@ -204,7 +204,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
                         CustomTextField(
                             vehicleEngineChassis,
-                            "Engine/Chassis",
+                            if (Constants.EngineChassis=="") "Engine/Chassis" else Constants.EngineChassis,
                             onValueChange = { vehicleEngineChassis = it },
                             isEngineEnabled,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -223,9 +223,10 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                     VehicleDetailsResult = getVehicleDetails(vehicleEngineChassis)
 
                                     if (VehicleDetailsResult.ifDetailsExist) {
-                                        testingStart = true
+
                                         showTicket = true
 
+                                        Constants.EngineChassis = vehicleEngineChassis
                                         Constants.Vehmake = VehicleDetailsResult.data[0].MAKE
                                         Constants.Vehmodel = VehicleDetailsResult.data[0].MODEL
                                         Constants.VehColor = VehicleDetailsResult.data[0].COLOR
@@ -267,7 +268,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                             devID,
                             "Device Number",
                             onValueChange = { devID = it },
-                            showTicket,
+                            showTicket || Constants.EngineChassis!="",
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
 
@@ -277,8 +278,8 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(if (showTicket) Color(0XFF39B54A) else Color.Gray) // Green search
-                            .clickable(enabled = (devID != "" && showTicket)) {
+                            .background(if (showTicket || Constants.EngineChassis != "") Color(0XFF39B54A) else Color.Gray) // Green search
+                            .clickable(enabled = (devID != "" && showTicket)|| Constants.EngineChassis != "") {
                                 keyboard?.hide()
                                 validationResult = DevValidationResult(
                                     ifDeviceExist = false,
@@ -290,6 +291,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
                                     if (validationResult.ifDeviceExist) {
                                         isEnabled = false
+                                        testingStart=true
                                         Constants.deviceID = devID
 
                                         Toast.makeText(
@@ -320,7 +322,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
             }
         }
 
-        if (showTicket) {
+        if (showTicket || Constants.Vehmake != "") {
             Card(
                 modifier = Modifier
                     .padding(16.dp)
@@ -397,7 +399,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         // Button
         Button(
             onClick = { navController.navigate("initialPicturesScreen") },
-            enabled = testingStart && !isEnabled,
+            enabled = testingStart,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
