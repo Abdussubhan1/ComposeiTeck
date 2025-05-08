@@ -1,7 +1,6 @@
 package com.example.itecktestingcompose.AppScreens
 
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,14 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,7 +51,6 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -167,18 +161,20 @@ fun TestingPage(navController: NavHostController) {
 
         }
         Spacer(modifier = Modifier.height(32.dp))
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
-                .padding(18.dp)
-        ) {
-            ValidationStatusUI(onTestingCompleted = { result ->
-                comp = result
-            })
+        if (obdType != "Select OBD Type") {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
+                    .padding(18.dp)
+            ) {
+                ValidationStatusUI(obdType, onTestingCompleted = { result ->
+                    comp = result
+                })
+            }
         }
+
         Spacer(modifier = Modifier.height(15.dp))
 
         Column(
@@ -257,7 +253,7 @@ fun TestingPage(navController: NavHostController) {
 
 
 @Composable
-fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
+fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
     var showBattery by remember { mutableStateOf(false) }
     var showIgnition by remember { mutableStateOf(false) }
     var showLocation by remember { mutableStateOf(false) }
@@ -300,7 +296,7 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
-    locResult = checkLocationWithinRange()
+    checkLocationWithinRange()
 
     if (loc) {
         getLocation()
@@ -464,8 +460,10 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
                     else -> ignitionProgress
                 }
                 if (ignitionProgress == 1f) {
-//                    moveToNextValidationStep = 3
-                    onTestingCompleted(true)
+                    moveToNextValidationStep = 3
+                    if (obdType == "OBD" || obdType == "OBD With Wires") {
+                        onTestingCompleted(true)
+                    }
                 }
                 Text(
                     "Ignition",
@@ -510,47 +508,51 @@ fun ValidationStatusUI(onTestingCompleted: (Boolean) -> Unit) {
             }
 
             // RELAY Wali Row
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = rowModifier
-            ) {
-                Text(
-                    "Relay",
-                    fontSize = 12.sp,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .weight(0.15f)
-                        .wrapContentSize(Alignment.CenterStart)
-                )
-                LinearProgressIndicator(
-                    progress = { 1f },
-                    color = Color.LightGray,
-                    modifier = Modifier
-                        .weight(0.45f)
-                        .clip(RoundedCornerShape(50))
-                        .wrapContentSize()
-                        .height(10.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+            if (obdType == "NA") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = rowModifier
+                ) {
+                    Text(
+                        "Relay",
+                        fontSize = 12.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(0.15f)
+                            .wrapContentSize(Alignment.CenterStart)
+                    )
+                    LinearProgressIndicator(
+                        progress = { 1f },
+                        color = Color.LightGray,
+                        modifier = Modifier
+                            .weight(0.45f)
+                            .clip(RoundedCornerShape(50))
+                            .wrapContentSize()
+                            .height(10.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
 
 
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh",
-                    tint = if (moveToNextValidationStep == 3) Color.White else Color.Transparent,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable(enabled = moveToNextValidationStep == 3) {
-                            coroutineScope.launch {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = if (moveToNextValidationStep == 3) Color.White else Color.Transparent,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable(enabled = moveToNextValidationStep == 3) {
+                                onTestingCompleted(true)
+                                coroutineScope.launch {
 //                                    relay = validateRelay(Constants.deviceID)
+                                }
                             }
-                        }
-                )
+                    )
 
+                }
             }
+
 
         }
         Spacer(modifier = Modifier.height(5.dp))

@@ -605,6 +605,26 @@ fun FinalPicturesScreen(navController: NavController) {
     }
 
 }
+@Composable
+fun CustomTextField_screen2(
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        enabled = false,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(65.dp),
+        shape = RoundedCornerShape(50),
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = Color(0XFF000000),
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        )
+    )
+}
 
 
 @Preview

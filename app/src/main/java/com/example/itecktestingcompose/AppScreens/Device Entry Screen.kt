@@ -357,8 +357,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         "Make" to Constants.Vehmake,
                         "Model" to Constants.Vehmodel,
                         "Color" to Constants.VehColor,
-                        "Year" to Constants.Vehyear,
-                        "OBD Status" to "Pending" // example
+                        "Year" to Constants.Vehyear
                     )
 
                     values.forEach { (label, value) ->
