@@ -279,7 +279,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(if (showTicket || Constants.EngineChassis != "") Color(0XFF39B54A) else Color.Gray) // Green search
-                            .clickable(enabled = (devID != "" && showTicket)|| Constants.EngineChassis != "") {
+                            .clickable(enabled = (devID != "" && showTicket)) {
                                 keyboard?.hide()
                                 validationResult = DevValidationResult(
                                     ifDeviceExist = false,
@@ -301,6 +301,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                         ).show()
                                     } else {
                                         isEnabled = true
+                                        testingStart=false
                                         Toast.makeText(
                                             context,
                                             "Device Not found in Inventory",

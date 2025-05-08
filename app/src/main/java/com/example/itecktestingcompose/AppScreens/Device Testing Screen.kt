@@ -655,14 +655,14 @@ fun Alert(
 ) {
 
     AlertDialog(
-
         title = {
             Text(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.White,
                 fontFamily = jameelNooriFont,
-                textAlign = TextAlign.End, fontSize = 26.sp
+                textAlign = TextAlign.End,
+                fontSize = 26.sp
             )
         },
         text = {
@@ -671,43 +671,55 @@ fun Alert(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.White,
                 fontFamily = jameelNooriFont,
-                textAlign = TextAlign.End, fontSize = 20.sp
+                textAlign = TextAlign.End,
+                fontSize = 20.sp
             )
         },
         onDismissRequest = { onDismiss() },
         confirmButton = {
-            TextButton(onClick = {
-                navController.navigate("mainscreen")
-                Constants.deviceID = ""
-                Constants.initialPictures = mutableStateListOf(null, null)
-                Constants.deviceLocationLat = 0.0
-                Constants.deviceLocationLong = 0.0
-                Constants.deviceLocation = ""
-            }, elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)) {
+            Button(
+                onClick = {
+                    navController.navigate("mainscreen")
+                    Constants.deviceID = ""
+                    Constants.initialPictures = mutableStateListOf(null, null)
+                    Constants.deviceLocationLat = 0.0
+                    Constants.deviceLocationLong = 0.0
+                    Constants.deviceLocation = ""
+                    Constants.EngineChassis = ""
+                    Constants.Vehmake = ""
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)
+            ) {
                 Text(
                     "جی ہاں",
-                    color = Color.White,
+                    color = Color(0xFF122333), // Text color contrasting with white background
                     fontFamily = jameelNooriFont,
                     fontSize = 20.sp
                 )
             }
         },
         dismissButton = {
-            TextButton(
+            Button(
                 onClick = { onDismiss() },
-                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-                shape = RoundedCornerShape(50)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)
             ) {
                 Text(
                     "نہیں",
-                    color = Color.White,
+                    color = Color(0xFF122333),
                     fontFamily = jameelNooriFont,
                     fontSize = 20.sp
                 )
             }
-        }, containerColor = Color(0xFF122333), titleContentColor = Color.White
-
+        },
+        containerColor = Color(0xFF122333),
+        titleContentColor = Color.White
     )
+
+
 
 }
 
