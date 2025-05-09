@@ -1,7 +1,6 @@
 package com.example.itecktestingcompose.AppScreens
 
 import android.content.Context
-import android.location.LocationManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -28,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,31 +42,14 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.APIFunctions.CNICValidationResult
-import com.example.itecktestingcompose.APIFunctions.validateCnic
 import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
-import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(context: Context, navController: NavHostController) {
+fun OTPScreen(context: Context, navController: NavHostController) {
 
 
-    HandleDoubleBackToExit()
-
-    var validationResult by remember {
-        mutableStateOf(
-            CNICValidationResult(
-                ifUserExist = false,
-                isLoading = false
-            )
-        )
-    }
-
-    var cnic by remember { mutableStateOf("") }
-    val couroutineScope = rememberCoroutineScope()
+    var otp by remember { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
 
     Column(
@@ -92,11 +72,11 @@ fun LoginScreen(context: Context, navController: NavHostController) {
         Spacer(modifier = Modifier.height(10.dp))
 
         TextField(
-            value = cnic,
-            onValueChange = { it -> cnic = it.filter { it.isDigit() } },
+            value = otp,
+            onValueChange = { otp = it },
             placeholder = {
                 Text(
-                    "CNIC #",
+                    "Enter OTP",
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 20.sp
@@ -126,75 +106,34 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
                 .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
-                .clickable(enabled = !validationResult.isLoading && cnic != "") {
-                    keyboard?.hide() //hide the keyboard
+                .clickable {
+                    keyboard?.hide()//hide the keyboard
+                    if (otp.contains("12345")) {
+                        val sharePref =
+                            context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+                        sharePref.edit { putString("CNIC", Constants.cnic) }
 
-                    //On submit, system will check if the location in ON or OFF and ask accordingly
-
-                    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                    val isLocationEnabled =
-                        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-                    if (isLocationEnabled) {
-                        validationResult = CNICValidationResult(
-                            ifUserExist = false,
-                            isLoading = true
-                        )
-
-                        couroutineScope.launch {
-                            validationResult = validateCnic(
-                                cnic,
-                                Constants.mobileID,
-                                Constants.FCMToken,
-                                Constants.appVersion,
-                                Constants.osVersion,
-                                Constants.brand
-                            )
-
-                            if (validationResult.ifUserExist) {
-                                
-                                navController.navigate("OTP Screen")
-
-                                //Also saving in RAM
-                                Constants.cnic = cnic
-
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Technician Not Registered",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
+                        navController.navigate("mainscreen") {
+                            popUpTo("OTP Screen") {
+                                inclusive = true
                             }
                         }
-                    }else {
-                        Toast.makeText(
-                            context,
-                            "Please Enable Location Services First",
-                            Toast.LENGTH_SHORT
-                        )
+                        Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT)
+                            .show()
+                    }else{
+                        Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT)
                             .show()
                     }
+
+
                 },
             contentAlignment = Alignment.Center
         ) {
-            if (!validationResult.isLoading)
-                Image(
-                    painter = painterResource(id = R.drawable.check_double_line),
-                    contentDescription = "Check Icon"
-                )
-            else
-                Text("...", color = Color.Black, fontSize = 16.sp)
-        }
-
-        if (validationResult.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(25.dp)
-                    .size(24.dp),
-                color = Color(0XFF39B54A)
+            Image(
+                painter = painterResource(id = R.drawable.check_double_line),
+                contentDescription = "Check Icon"
             )
+
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -205,8 +144,6 @@ fun LoginScreen(context: Context, navController: NavHostController) {
 
 @Preview
 @Composable
-fun LoginPreview() {
-    LoginScreen(context = LocalContext.current, rememberNavController())
+fun OTPScreenPreview() {
+    OTPScreen(context = LocalContext.current, rememberNavController())
 }
-
-

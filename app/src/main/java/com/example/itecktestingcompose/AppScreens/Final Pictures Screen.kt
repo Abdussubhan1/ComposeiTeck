@@ -528,7 +528,7 @@ fun FinalPicturesScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            val isValidContact = Regex("^03[0-9]{9}$").matches(cust_Contact) //To check the contact number
+            val isValidContact = Regex("^(03[0-9]{9}|0[1-9]{2}[0-9]{7})$").matches(cust_Contact) //To check the contact number
 
             Button(
                 enabled = isValidContact,
