@@ -81,6 +81,7 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
+import com.example.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.launch
 
 @Composable
@@ -414,7 +415,7 @@ fun FinalPicturesScreen(navController: NavController) {
                 ) {
 
                     Text(
-                        text = "Summary of Installation",
+                        text = "Summary",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF37474F),
@@ -527,8 +528,10 @@ fun FinalPicturesScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            val isValidContact = Regex("^03[0-9]{9}$").matches(cust_Contact) //To check the contact number
+
             Button(
-                enabled = cust_Contact != "",
+                enabled = isValidContact,
                 onClick = {
 
 
@@ -543,14 +546,8 @@ fun FinalPicturesScreen(navController: NavController) {
                         )
 
                         if (submitSuccess) {
-                            Constants.deviceID = ""
-                            Constants.initialPictures = mutableStateListOf(null, null)
-                            Constants.deviceLocationLat = 0.0
-                            Constants.deviceLocationLong = 0.0
-                            Constants.mobileLocationLat = 0.0
-                            Constants.mobileLocationLong = 0.0
-                            Constants.deviceLocation = ""
-                            Constants.finalPictures = mutableStateListOf(null, null)
+
+                            resetAllData() //Fun to reset RAM memory
 
                             navController.navigate("AllahHafizScreen") {
                                 popUpTo("finalPicturesScreen") { inclusive = true }
