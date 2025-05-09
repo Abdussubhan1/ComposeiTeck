@@ -1,6 +1,7 @@
 package com.example.itecktestingcompose.AppScreens
 
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,14 +33,23 @@ import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.R
 
 @Composable
-fun SplashScreen(navController: NavHostController, version: String) {
+fun SplashScreen(navController: NavHostController, version: String, context: Context) {
+
 
 
 
     LaunchedEffect(Unit) {
+        val sharePref =
+            context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
         kotlinx.coroutines.delay(1000) // Wait for 2 seconds
-        navController.navigate("login") {
-            popUpTo("splash") { inclusive = true }
+        if (sharePref.getString("CNIC", "") != "") {
+            navController.navigate("mainscreen") {
+                popUpTo("splash") { inclusive = true }
+            }
+        } else {
+            navController.navigate("login"){
+                popUpTo("splash") { inclusive = true }
+            }
         }
     }
 
@@ -115,10 +125,4 @@ fun BottomLogo() {
             modifier = Modifier.padding(top = 4.dp)
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SplashScreenPreview() {
-    SplashScreen(rememberNavController(), "1.1")
 }

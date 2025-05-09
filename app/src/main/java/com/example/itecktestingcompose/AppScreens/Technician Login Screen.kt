@@ -63,7 +63,8 @@ fun LoginScreen(context: Context, navController: NavHostController) {
         mutableStateOf(
             CNICValidationResult(
                 ifUserExist = false,
-                isLoading = false
+                isLoading = false,
+                technicianName = ""
             )
         )
     }
@@ -131,7 +132,8 @@ fun LoginScreen(context: Context, navController: NavHostController) {
 
                     //On submit, system will check if the location in ON or OFF and ask accordingly
 
-                    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    val locationManager =
+                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                     val isLocationEnabled =
                         locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
@@ -139,7 +141,8 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                     if (isLocationEnabled) {
                         validationResult = CNICValidationResult(
                             ifUserExist = false,
-                            isLoading = true
+                            isLoading = true,
+                            technicianName = ""
                         )
 
                         couroutineScope.launch {
@@ -153,7 +156,17 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                             )
 
                             if (validationResult.ifUserExist) {
-                                
+                                val sharePref =
+                                    context.getSharedPreferences(
+                                        "TechnicianName",
+                                        Context.MODE_PRIVATE
+                                    )
+                                sharePref.edit {
+                                    putString(
+                                        "Name",
+                                        validationResult.technicianName
+                                    )
+                                }
                                 navController.navigate("OTP Screen")
 
                                 //Also saving in RAM
@@ -168,7 +181,7 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                                     .show()
                             }
                         }
-                    }else {
+                    } else {
                         Toast.makeText(
                             context,
                             "Please Enable Location Services First",

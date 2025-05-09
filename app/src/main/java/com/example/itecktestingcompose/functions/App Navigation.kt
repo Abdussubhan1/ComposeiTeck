@@ -22,7 +22,7 @@ fun AppNavigation(version: String,context: android.content.Context) {
     NavHost(navController = navController, startDestination = "splash")
 
     {
-        composable("splash") { SplashScreen(navController,version) }
+        composable("splash") { SplashScreen(navController,version,context) }
         composable("login") { LoginScreen(context, navController) }
         composable("OTP Screen") { OTPScreen(context, navController) }
         composable("NotificationScreen"){ NotificationScreen(navController) }
