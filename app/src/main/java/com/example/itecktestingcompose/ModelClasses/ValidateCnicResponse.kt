@@ -5,14 +5,8 @@ data class ValidateCnicResponse(
     val Name: String,
     val Success: Boolean,
     val Id: Int,
+    val otp:String,
     val AppLoginid:String
 
-)
 
-//{
-//    "Success": true,
-//    "Message": "Valid CNIC, new record inserted.",
-//    "Name": "ABDUS SUBHAN",
-//    "Id": 129,
-//    "AppLoginid": "2"
-//}
+)

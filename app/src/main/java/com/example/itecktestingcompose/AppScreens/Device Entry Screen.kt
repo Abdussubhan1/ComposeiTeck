@@ -2,11 +2,14 @@ package com.example.itecktestingcompose.AppScreens
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,6 +38,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.NotificationImportant
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,6 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -82,6 +88,8 @@ import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import com.example.itecktestingcompose.APIFunctions.VehicleValidationResult
 import com.example.itecktestingcompose.APIFunctions.getVehicleDetails
+import com.example.itecktestingcompose.functions.resetAllData
+import kotlinx.coroutines.delay
 
 
 @SuppressLint("UseKtx")
@@ -89,6 +97,18 @@ import com.example.itecktestingcompose.APIFunctions.getVehicleDetails
 fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
     val sharedPref = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val sharePref =
+        context.getSharedPreferences(
+            "TechnicianName",
+            Context.MODE_PRIVATE
+        )
+    val name = sharePref.getString("Name", "")
+
+    val sharePref1 =
+        context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+
+
+
     val hasNewNotification =
         remember { mutableStateOf(sharedPref.getBoolean("hasNewNotification", false)) }
 
@@ -152,7 +172,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        Constants.name,
+                        name.toString(),
                         color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -160,6 +180,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                 }
 
             }
+
             Spacer(modifier = Modifier.weight(1f))
 
             Box(
@@ -186,6 +207,40 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(10.dp))
+            var isLoggingOut by remember { mutableStateOf(false) }
+            val alpha by animateFloatAsState(
+                targetValue = if (isLoggingOut) 0f else 1f,
+                animationSpec = tween(durationMillis = 500),
+                label = "logoutAnimation"
+            )
+            Box(
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PowerSettingsNew,
+                    contentDescription = "Logout",
+                    tint = Color.Red,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .alpha(alpha)
+                        .clickable {
+                            isLoggingOut = true
+                            resetAllData()
+                        }
+                )
+            }
+            if (isLoggingOut) {
+            LaunchedEffect(true) {
+                delay(500) // Wait for animation to finish
+                sharePref1.edit { putString("CNIC", "") }
+                Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
+                navController.navigate("login") {
+                    popUpTo("mainScreen") { inclusive = true }
+                }
+            }
+        }
+
 
 
         }
@@ -204,7 +259,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
                         CustomTextField(
                             vehicleEngineChassis,
-                            if (Constants.EngineChassis=="") "Engine/Chassis" else Constants.EngineChassis,
+                            if (Constants.EngineChassis == "") "Engine/Chassis" else Constants.EngineChassis,
                             onValueChange = { vehicleEngineChassis = it },
                             isEngineEnabled,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -268,7 +323,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                             devID,
                             "Device Number",
                             onValueChange = { devID = it },
-                            showTicket || Constants.EngineChassis!="",
+                            showTicket,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
 
@@ -278,7 +333,11 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(if (showTicket || Constants.EngineChassis != "") Color(0XFF39B54A) else Color.Gray) // Green search
+                            .background(
+                                if (showTicket) Color(
+                                    0XFF39B54A
+                                ) else Color.Gray
+                            ) // Green search
                             .clickable(enabled = (devID != "" && showTicket)) {
                                 keyboard?.hide()
                                 validationResult = DevValidationResult(
@@ -291,7 +350,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
                                     if (validationResult.ifDeviceExist) {
                                         isEnabled = false
-                                        testingStart=true
+                                        testingStart = true
                                         Constants.deviceID = devID
 
                                         Toast.makeText(
@@ -301,7 +360,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                                         ).show()
                                     } else {
                                         isEnabled = true
-                                        testingStart=false
+                                        testingStart = false
                                         Toast.makeText(
                                             context,
                                             "Device Not found in Inventory",
@@ -323,7 +382,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
             }
         }
 
-        if (showTicket || Constants.Vehmake != "") {
+        if (showTicket) {
             Card(
                 modifier = Modifier
                     .padding(16.dp)
@@ -454,7 +513,8 @@ fun CustomTextField(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        singleLine = true
     )
 }
 

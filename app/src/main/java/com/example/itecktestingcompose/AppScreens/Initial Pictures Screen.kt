@@ -6,6 +6,8 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,12 +32,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -54,25 +59,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
-
-
-
-
-
-
-
-
-
-
-
-
-
+import com.example.itecktestingcompose.functions.resetAllData
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -80,10 +75,19 @@ fun initialPicTake(context: Context, navController: NavHostController) {
 
     HandleDoubleBackToExit()
 
+
+    var isLoggingOut by remember { mutableStateOf(false) }
+    val alpha by animateFloatAsState(
+        targetValue = if (isLoggingOut) 0f else 1f,
+        animationSpec = tween(durationMillis = 500),
+        label = "logoutAnimation"
+    )
+
     var initiallistCompleted by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
     var moveToTesting by remember { mutableStateOf(false) }
-
+    val sharePref1 =
+        context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
 
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicturePreview()
@@ -141,8 +145,37 @@ fun initialPicTake(context: Context, navController: NavHostController) {
                         fontWeight = FontWeight.Bold
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew,
+                        contentDescription = "Logout",
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .alpha(alpha)
+                            .clickable {
+                                isLoggingOut = true
+                                resetAllData()
+                            }
+                    )
+                }
+
             }
 
+        }
+
+        if (isLoggingOut) {
+            LaunchedEffect(true) {
+                delay(500) // Wait for animation to finish
+                sharePref1.edit { putString("CNIC", "") }
+                Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
+                navController.navigate("login") {
+                    popUpTo("mainScreen") { inclusive = true }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -316,7 +349,7 @@ fun PicConfirm(
             Button(
                 onClick = {
                     navController.navigate("testingPage") {
-                        popUpTo("mainscreen")
+                        popUpTo("initialPicturesScreen") {inclusive=true}
                     }
                 },
                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),

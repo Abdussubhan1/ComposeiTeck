@@ -1,6 +1,10 @@
 package com.example.itecktestingcompose.AppScreens
 
 
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -31,10 +36,10 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
@@ -46,8 +51,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +63,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.ValidateLocationResponse
@@ -70,12 +78,21 @@ import com.example.itecktestingcompose.functions.checkLocationWithinRange
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.functions.getLocation
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
+import com.example.itecktestingcompose.functions.resetAllData
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun TestingPage(navController: NavHostController) {
+fun TestingPage(navController: NavHostController, context: Context) {
     getLocation()
-
+    var isLoggingOut by remember { mutableStateOf(false) }
+    val alpha by animateFloatAsState(
+        targetValue = if (isLoggingOut) 0f else 1f,
+        animationSpec = tween(durationMillis = 500),
+        label = "logoutAnimation"
+    )
+    val sharePref1 =
+        context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
     var obdType by remember { mutableStateOf("Select OBD Type") }
 
     var comp by remember { mutableStateOf(false) }
@@ -113,8 +130,37 @@ fun TestingPage(navController: NavHostController) {
                         fontWeight = FontWeight.Bold
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew,
+                        contentDescription = "Logout",
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .alpha(alpha)
+                            .clickable {
+                                isLoggingOut = true
+                                resetAllData()
+                            }
+                    )
+                }
+
             }
 
+        }
+
+        if (isLoggingOut) {
+            LaunchedEffect(true) {
+                delay(500) // Wait for animation to finish
+                sharePref1.edit { putString("CNIC", "") }
+                Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
+                navController.navigate("login") {
+                    popUpTo("mainScreen") { inclusive = true }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -642,7 +688,7 @@ fun DropdownField(
 @Preview(showBackground = true)
 @Composable
 fun TestingPagePreview() {
-    TestingPage(rememberNavController())
+    TestingPage(rememberNavController(), LocalContext.current)
 }
 
 @Composable

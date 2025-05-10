@@ -108,7 +108,7 @@ fun OTPScreen(context: Context, navController: NavHostController) {
                 .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
                 .clickable {
                     keyboard?.hide()//hide the keyboard
-                    if (otp.contains("12345")) {
+                    if (otp == Constants.otp) {
                         val sharePref =
                             context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
                         sharePref.edit { putString("CNIC", Constants.cnic) }
@@ -124,7 +124,6 @@ fun OTPScreen(context: Context, navController: NavHostController) {
                         Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT)
                             .show()
                     }
-
 
                 },
             contentAlignment = Alignment.Center

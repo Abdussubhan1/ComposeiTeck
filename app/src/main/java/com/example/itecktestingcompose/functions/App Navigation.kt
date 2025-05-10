@@ -28,7 +28,7 @@ fun AppNavigation(version: String,context: android.content.Context) {
         composable("NotificationScreen"){ NotificationScreen(navController) }
         composable("mainscreen") { DeviceEntryScreen(context, navController) }
         composable("initialPicturesScreen") { initialPicTake(context, navController) }
-        composable("testingPage") { TestingPage(navController) }
+        composable("testingPage") { TestingPage(navController,context) }
         composable("finalPicturesScreen"){ FinalPicturesScreen(navController) }
         composable("AllahHafizScreen"){ AllahHafiz(navController) }
     }
