@@ -105,8 +105,8 @@ fun OTPScreen(context: Context, navController: NavHostController) {
                 .width(200.dp)
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
-                .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
-                .clickable {
+                .background(if (otp==""||otp.length<6||otp.length>6) Color.Gray else Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
+                .clickable (enabled= otp != "" && otp.length == 6){
                     keyboard?.hide()//hide the keyboard
                     if (otp == Constants.otp) {
                         val sharePref =

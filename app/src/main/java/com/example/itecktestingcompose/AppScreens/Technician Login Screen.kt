@@ -126,8 +126,8 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                 .width(200.dp)
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
-                .background(Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
-                .clickable(enabled = !validationResult.isLoading && cnic != "") {
+                .background(if (cnic==""||cnic.length<13||cnic.length>13) Color.Gray else Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
+                .clickable(enabled = !validationResult.isLoading && cnic != "" && cnic.length == 13) {
                     keyboard?.hide() //hide the keyboard
 
                     //On submit, system will check if the location in ON or OFF and ask accordingly
