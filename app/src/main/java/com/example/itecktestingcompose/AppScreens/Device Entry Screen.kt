@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.NotificationImportant
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.NotificationImportant
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -187,7 +189,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                 contentAlignment = Alignment.TopEnd
             ) {
                 Icon(
-                    imageVector = Icons.Default.NotificationImportant,
+                    imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Tips",
                     tint = Color.White,
                     modifier = Modifier
@@ -259,7 +261,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
 
                         CustomTextField(
                             vehicleEngineChassis,
-                            if (Constants.EngineChassis == "") "Engine/Chassis" else Constants.EngineChassis,
+                            "Engine/Chassis",
                             onValueChange = { vehicleEngineChassis = it },
                             isEngineEnabled,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
