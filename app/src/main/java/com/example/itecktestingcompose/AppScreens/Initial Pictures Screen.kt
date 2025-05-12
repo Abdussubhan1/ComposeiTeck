@@ -174,7 +174,7 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 prefs.setTechnicianName(name = "")
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("mainScreen") { inclusive = true }
+                    popUpTo("initialPicturesScreen") { inclusive = true }
                 }
             }
         }

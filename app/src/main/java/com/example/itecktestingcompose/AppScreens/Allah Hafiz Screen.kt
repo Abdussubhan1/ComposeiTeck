@@ -89,17 +89,7 @@ fun AllahHafiz(navController: NavHostController) {
             fontFamily = FontFamily.Serif,
             modifier = Modifier.graphicsLayer(scaleX = scale.value, scaleY = scale.value)
         )
-//
-//        Spacer(modifier = Modifier.height(48.dp))
-//
-//        // Sub text
-//        Text(
-//            text = "Installation ka data kamiyabi se submit hogaya hai.\n\nAllah Hafiz ❤️",
-//            color = Color(0xFFDDDDDD),
-//            fontSize = 18.sp,
-//            textAlign = TextAlign.Center
-//        )
-//
+
         Spacer(modifier = Modifier.height(40.dp))
 
 

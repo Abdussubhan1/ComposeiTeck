@@ -160,7 +160,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                 prefs.setTechnicianName(name = "")
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("mainScreen") { inclusive = true }
+                    popUpTo("testingPage") { inclusive = true }
                 }
             }
         }

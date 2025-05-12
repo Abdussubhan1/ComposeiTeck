@@ -177,7 +177,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                 prefs.setTechnicianName(name = "")
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("mainScreen") { inclusive = true }
+                    popUpTo("finalPicturesScreen") { inclusive = true }
                 }
             }
         }

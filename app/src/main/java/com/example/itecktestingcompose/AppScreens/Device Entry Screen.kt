@@ -209,6 +209,8 @@ fun DeviceEntryScreen(
                     delay(500) // Wait for animation to finish
                     prefs.setUserCNIC(cnic = "")
                     prefs.setTechnicianName(name = "")
+                    prefs.setAppLoginID(id = "")
+
                     Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                     navController.navigate("login") {
                         popUpTo("mainScreen") { inclusive = true }
