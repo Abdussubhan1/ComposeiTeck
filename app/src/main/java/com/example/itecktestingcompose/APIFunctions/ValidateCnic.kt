@@ -36,14 +36,13 @@ suspend fun validateCnic(
         if (response.isSuccessful && response.body() != null) {
             val responseBody = response.body()!!
             ifUserExist = responseBody.Success
-            Constants.name = responseBody.Name
             name = responseBody.Name
             Constants.appLoginID = responseBody.AppLoginid
             Constants.otp = responseBody.otp
 
         }
 
-        CNICValidationResult(ifUserExist, false, name)
+        CNICValidationResult(ifUserExist, false, name,)
     } catch (e: Exception) {
         Log.d("cnicV", "Exception: $e")
         CNICValidationResult(ifUserExist = false, isLoading = false, name)

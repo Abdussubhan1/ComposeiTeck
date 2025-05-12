@@ -1,8 +1,6 @@
 package com.example.itecktestingcompose.AppScreens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,15 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,19 +39,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.notificationHistory
-import com.example.itecktestingcompose.Constants.Constants
-import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import com.example.itecktestingcompose.ModelClasses.NotificationHistoryItem
-import kotlinx.coroutines.launch
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 
 @Composable
-fun NotificationScreen(navController: NavHostController) {
+fun NotificationScreen(navController: NavHostController, prefs: PreferenceManager) {
     var notifications by remember { mutableStateOf<List<NotificationHistoryItem>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        notifications = notificationHistory(Constants.cnic)
+        notifications = notificationHistory(prefs.getUserCNIC())
         isLoading = false
     }
 
@@ -171,11 +161,4 @@ fun NotificationCard(item: NotificationHistoryItem) {
             Text(text = "Date: ${item.entrydate.date}", color = Color.DarkGray, fontSize = 12.sp)
         }
     }
-}
-
-
-@Preview
-@Composable
-fun NotificationScreenPreview() {
-    NotificationScreen(rememberNavController())
 }

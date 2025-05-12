@@ -29,7 +29,7 @@ fun AppNavigation( context: Context, prefs: PreferenceManager) {
         composable("splash") { SplashScreen(navController, version, prefs) }
         composable("login") { LoginScreen(context, navController, prefs) }
         composable("OTP Screen") { OTPScreen(context, navController, prefs) }
-        composable("NotificationScreen") { NotificationScreen(navController) }
+        composable("NotificationScreen") { NotificationScreen(navController,prefs) }
         composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }

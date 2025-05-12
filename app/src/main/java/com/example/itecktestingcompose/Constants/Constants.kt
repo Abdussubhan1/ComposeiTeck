@@ -17,7 +17,6 @@ object Constants {
     var mobileID: String = ""
     var osVersion: String = ""
     var finalPictures=mutableStateListOf<Bitmap?>(null, null)
-    var name:String=""
     var baseURL:String="https://api.itecknologi.com/automated_testing/"
     var deviceID:String=""
     var initialPictures=mutableStateListOf<Bitmap?>(null, null)

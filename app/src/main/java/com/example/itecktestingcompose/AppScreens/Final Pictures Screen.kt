@@ -117,6 +117,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
         label = "logoutAnimation"
     )
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -575,11 +576,11 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
 
                     couroutineScope.launch {
                         val submitSuccess = submitData(
-                            Constants.cnic,
-                            Constants.name,
+                            prefs.getUserCNIC(),
+                            prefs.getTechnicianName(),
                             Constants.deviceID,
                             1,
-                            Constants.appLoginID,
+                            prefs.getAppLoginID(),
                             allPictures
                         )
 

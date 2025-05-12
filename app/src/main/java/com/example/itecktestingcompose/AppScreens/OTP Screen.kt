@@ -115,7 +115,8 @@ fun OTPScreen(context: Context, navController: NavHostController, prefs: Prefere
                     keyboard?.hide()//hide the keyboard
                     if (otp == Constants.otp) {
 
-                        prefs.setUserCNIC(cnic = Constants.cnic)
+                        prefs.setUserCNIC(Constants.cnic)
+                        prefs.setAppLoginID(Constants.appLoginID)
 
                         navController.navigate("mainscreen") {
                             popUpTo("OTP Screen") {

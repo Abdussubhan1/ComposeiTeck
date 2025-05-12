@@ -22,20 +22,19 @@ import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import androidx.core.content.edit
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     @SuppressLint("ServiceCast")
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
+        val prefs = PreferenceManager(this)
 
         if (remoteMessage.data.isNotEmpty() && remoteMessage.data["title"] != "Location Update") {
 
             val title = remoteMessage.data["title"] ?: "Default Title"
             val body = remoteMessage.data["body"] ?: "Default Body"
-            val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
-            sharedPref.edit { putBoolean("hasNewNotification", true) }
+            prefs.setHasNewNotification(value = true)
 
             showNotification(title, body)
 
@@ -46,10 +45,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(applicationContext)
 
-            val sharePref1 =
-                applicationContext.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
-            val sharePref =
-                applicationContext.getSharedPreferences("Location", Context.MODE_PRIVATE)
 
 
             val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -64,42 +59,31 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             ) {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                     location?.let {
-                        sharePref.edit().apply {
-                            putString("Lat", it.latitude.toString())
-                            putString("Lng", it.longitude.toString())
-                            apply()
-                        }
+                        prefs.setLatitude(latitude = it.latitude.toString())
+                        prefs.setLongitude(longitude = it.longitude.toString())
                     }
                 }
             } else {
                 Log.e("Location", "Permission denied or location is disabled")
             }
 
-            val storedCNIC = sharePref1.getString("CNIC", null)
-            val lat = sharePref.getString("Lat", null)
-            val lng = sharePref.getString("Lng", null)
-
-            if (storedCNIC != null && lat != null && lng != null) {
-                //Check location is enabled or not
-                if(isLocationEnabled) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            sendTechnicalLocation(storedCNIC, lat, lng, 1)
-                        } catch (e: Exception) {
-                            Log.e("LocationWorker", "API call failed: ${e.message}")
-                        }
+            //Check location is enabled or not
+            if (isLocationEnabled) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        sendTechnicalLocation(prefs.getUserCNIC(), prefs.getLatitude(),prefs.getLongitude(), 1)
+                    } catch (e: Exception) {
+                        Log.e("LocationWorker", "API call failed: ${e.message}")
                     }
                 }
-                else{
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            sendTechnicalLocation(storedCNIC, lat, lng, 0)
-                        } catch (e: Exception) {
-                            Log.e("LocationWorker", "API call failed: ${e.message}")
-                        }
+            } else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        sendTechnicalLocation(prefs.getUserCNIC(), prefs.getLatitude(),prefs.getLongitude(), 0)
+                    } catch (e: Exception) {
+                        Log.e("LocationWorker", "API call failed: ${e.message}")
                     }
                 }
-
             }
 
 

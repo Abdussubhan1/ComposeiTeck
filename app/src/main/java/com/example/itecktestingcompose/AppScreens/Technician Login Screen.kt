@@ -126,7 +126,11 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                 .width(200.dp)
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
-                .background(if (cnic==""||cnic.length<13||cnic.length>13) Color.Gray else Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
+                .background(
+                    if (cnic == "" || cnic.length < 13 || cnic.length > 13) Color.Gray else Color(
+                        0XFF39B54A
+                    ), shape = RoundedCornerShape(17.dp)
+                )
                 .clickable(enabled = !validationResult.isLoading && cnic != "" && cnic.length == 13) {
                     keyboard?.hide() //hide the keyboard
 
@@ -156,7 +160,8 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                             )
 
                             if (validationResult.ifUserExist) {
-                                prefs.setTechnicianName(name = validationResult.technicianName) //Saving Technician Name in Shared Prefs
+                                prefs.setTechnicianName(validationResult.technicianName) //Saving Technician Name in Shared Prefs
+
                                 navController.navigate("OTP Screen")
 
                                 //Also saving in RAM
@@ -209,7 +214,11 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
 @Preview
 @Composable
 fun LoginPreview() {
-    LoginScreen(context = LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current))
+    LoginScreen(
+        context = LocalContext.current,
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
+    )
 }
 
 
