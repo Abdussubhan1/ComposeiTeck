@@ -65,16 +65,17 @@ import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
 
 @Composable
-fun initialPicTake(context: Context, navController: NavHostController) {
+fun initialPicTake(context: Context, navController: NavHostController, prefs: PreferenceManager) {
 
     HandleDoubleBackToExit()
-
+    val name = prefs.getTechnicianName()
 
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
@@ -86,8 +87,7 @@ fun initialPicTake(context: Context, navController: NavHostController) {
     var initiallistCompleted by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
     var moveToTesting by remember { mutableStateOf(false) }
-    val sharePref1 =
-        context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+
 
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicturePreview()
@@ -139,7 +139,7 @@ fun initialPicTake(context: Context, navController: NavHostController) {
                 Column {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Text(
-                        Constants.name,
+                        name,
                         color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -170,7 +170,8 @@ fun initialPicTake(context: Context, navController: NavHostController) {
         if (isLoggingOut) {
             LaunchedEffect(true) {
                 delay(500) // Wait for animation to finish
-                sharePref1.edit { putString("CNIC", "") }
+                prefs.setUserCNIC(cnic = "")
+                prefs.setTechnicianName(name = "")
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
                     popUpTo("mainScreen") { inclusive = true }
@@ -376,7 +377,7 @@ fun PicConfirm(
 @Preview
 @Composable
 fun initialPicTakePreview() {
-    initialPicTake(LocalContext.current, rememberNavController())
+    initialPicTake(LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current))
 }
 
 @Preview(showBackground = true)

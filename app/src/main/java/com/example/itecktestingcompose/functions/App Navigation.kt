@@ -1,5 +1,6 @@
 package com.example.itecktestingcompose.functions
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,24 +14,25 @@ import com.example.itecktestingcompose.AppScreens.OTPScreen
 import com.example.itecktestingcompose.AppScreens.SplashScreen
 import com.example.itecktestingcompose.AppScreens.TestingPage
 import com.example.itecktestingcompose.AppScreens.initialPicTake
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 
 @Composable
-fun AppNavigation(version: String,context: android.content.Context) {
+fun AppNavigation(version: String, context: Context, prefs: PreferenceManager) {
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "splash")
 
     {
-        composable("splash") { SplashScreen(navController,version,context) }
-        composable("login") { LoginScreen(context, navController) }
-        composable("OTP Screen") { OTPScreen(context, navController) }
-        composable("NotificationScreen"){ NotificationScreen(navController) }
-        composable("mainscreen") { DeviceEntryScreen(context, navController) }
-        composable("initialPicturesScreen") { initialPicTake(context, navController) }
-        composable("testingPage") { TestingPage(navController,context) }
-        composable("finalPicturesScreen"){ FinalPicturesScreen(navController) }
-        composable("AllahHafizScreen"){ AllahHafiz(navController) }
+        composable("splash") { SplashScreen(navController, version, prefs) }
+        composable("login") { LoginScreen(context, navController, prefs) }
+        composable("OTP Screen") { OTPScreen(context, navController, prefs) }
+        composable("NotificationScreen") { NotificationScreen(navController) }
+        composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
+        composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
+        composable("testingPage") { TestingPage(navController, context, prefs) }
+        composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }
+        composable("AllahHafizScreen") { AllahHafiz(navController) }
     }
 }
 

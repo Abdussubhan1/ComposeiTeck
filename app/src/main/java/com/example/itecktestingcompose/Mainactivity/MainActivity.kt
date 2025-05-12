@@ -2,9 +2,7 @@ package com.example.itecktestingcompose.Mainactivity
 
 import android.Manifest
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,27 +14,26 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
 import com.example.itecktestingcompose.functions.getSavedToken
 import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.getAppVersion
 import com.google.firebase.messaging.FirebaseMessaging
 
 
+
 val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
+
 
 
 class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val sharePref = this.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
-        val storedCNIC = sharePref.getString("CNIC", null)
-
-        Log.d("TAG", "LoginScreen: $storedCNIC")
+        val prefs = PreferenceManager(this)
 
         enableEdgeToEdge() //FullScreen View of Application
         super.onCreate(savedInstanceState)
@@ -65,7 +62,7 @@ class MainActivity : ComponentActivity() {
         Constants.FCMToken = getSavedToken(this) ?: "" //Saving the updated token
 
         setContent {
-                AppNavigation(version, context)
+                AppNavigation(version,context,prefs)
         }
     }
 

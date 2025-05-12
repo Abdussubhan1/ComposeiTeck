@@ -50,11 +50,11 @@ import com.example.itecktestingcompose.APIFunctions.validateCnic
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(context: Context, navController: NavHostController) {
+fun LoginScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
 
 
     HandleDoubleBackToExit()
@@ -156,17 +156,7 @@ fun LoginScreen(context: Context, navController: NavHostController) {
                             )
 
                             if (validationResult.ifUserExist) {
-                                val sharePref =
-                                    context.getSharedPreferences(
-                                        "TechnicianName",
-                                        Context.MODE_PRIVATE
-                                    )
-                                sharePref.edit {
-                                    putString(
-                                        "Name",
-                                        validationResult.technicianName
-                                    )
-                                }
+                                prefs.setTechnicianName(name = validationResult.technicianName) //Saving Technician Name in Shared Prefs
                                 navController.navigate("OTP Screen")
 
                                 //Also saving in RAM
@@ -219,7 +209,7 @@ fun LoginScreen(context: Context, navController: NavHostController) {
 @Preview
 @Composable
 fun LoginPreview() {
-    LoginScreen(context = LocalContext.current, rememberNavController())
+    LoginScreen(context = LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current))
 }
 
 

@@ -44,9 +44,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 @Composable
-fun OTPScreen(context: Context, navController: NavHostController) {
+fun OTPScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
 
 
     var otp by remember { mutableStateOf("") }
@@ -105,13 +106,16 @@ fun OTPScreen(context: Context, navController: NavHostController) {
                 .width(200.dp)
                 .height(42.dp)
                 .padding(horizontal = 32.dp)
-                .background(if (otp==""||otp.length<6||otp.length>6) Color.Gray else Color(0XFF39B54A), shape = RoundedCornerShape(17.dp))
-                .clickable (enabled= otp != "" && otp.length == 6){
+                .background(
+                    if (otp == "" || otp.length < 6 || otp.length > 6) Color.Gray else Color(
+                        0XFF39B54A
+                    ), shape = RoundedCornerShape(17.dp)
+                )
+                .clickable(enabled = otp != "" && otp.length == 6) {
                     keyboard?.hide()//hide the keyboard
                     if (otp == Constants.otp) {
-                        val sharePref =
-                            context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
-                        sharePref.edit { putString("CNIC", Constants.cnic) }
+
+                        prefs.setUserCNIC(cnic = Constants.cnic)
 
                         navController.navigate("mainscreen") {
                             popUpTo("OTP Screen") {
@@ -120,7 +124,7 @@ fun OTPScreen(context: Context, navController: NavHostController) {
                         }
                         Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT)
                             .show()
-                    }else{
+                    } else {
                         Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT)
                             .show()
                     }
@@ -144,5 +148,5 @@ fun OTPScreen(context: Context, navController: NavHostController) {
 @Preview
 @Composable
 fun OTPScreenPreview() {
-    OTPScreen(context = LocalContext.current, rememberNavController())
+    OTPScreen(context = LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current))
 }

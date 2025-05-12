@@ -1,21 +1,13 @@
 package com.example.itecktestingcompose.AppScreens
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.graphics.Bitmap
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,20 +19,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraEnhance
-import androidx.compose.material.icons.filled.NotificationImportant
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.NotificationImportant
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,20 +37,16 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -85,34 +65,27 @@ import com.example.itecktestingcompose.APIFunctions.validateDev
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import com.example.itecktestingcompose.APIFunctions.VehicleValidationResult
 import com.example.itecktestingcompose.APIFunctions.getVehicleDetails
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
 
 @SuppressLint("UseKtx")
 @Composable
-fun DeviceEntryScreen(context: Context, navController: NavHostController) {
+fun DeviceEntryScreen(
+    context: Context,
+    navController: NavHostController,
+    prefs: PreferenceManager
+) {
 
-    val sharedPref = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-    val sharePref =
-        context.getSharedPreferences(
-            "TechnicianName",
-            Context.MODE_PRIVATE
-        )
-    val name = sharePref.getString("Name", "")
-
-    val sharePref1 =
-        context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
-
-
+    val name = prefs.getTechnicianName()
 
     val hasNewNotification =
-        remember { mutableStateOf(sharedPref.getBoolean("hasNewNotification", false)) }
+        remember { mutableStateOf(prefs.getHasNewNotification()) }
 
     var devID by remember { mutableStateOf("") }
     var vehicleEngineChassis by rememberSaveable { mutableStateOf("") }
@@ -144,7 +117,6 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
         )
     }
 
-
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     Column(
@@ -174,7 +146,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        name.toString(),
+                        name,
                         color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -196,7 +168,7 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                         .size(32.dp)
                         .clickable {
                             navController.navigate("NotificationScreen")
-                            sharedPref.edit { putBoolean("hasNewNotification", false) }
+                            prefs.setHasNewNotification(value = false)
                             hasNewNotification.value = false
                         }
                 )
@@ -233,16 +205,16 @@ fun DeviceEntryScreen(context: Context, navController: NavHostController) {
                 )
             }
             if (isLoggingOut) {
-            LaunchedEffect(true) {
-                delay(500) // Wait for animation to finish
-                sharePref1.edit { putString("CNIC", "") }
-                Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
-                navController.navigate("login") {
-                    popUpTo("mainScreen") { inclusive = true }
+                LaunchedEffect(true) {
+                    delay(500) // Wait for animation to finish
+                    prefs.setUserCNIC(cnic = "")
+                    prefs.setTechnicianName(name = "")
+                    Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
+                    navController.navigate("login") {
+                        popUpTo("mainScreen") { inclusive = true }
+                    }
                 }
             }
-        }
-
 
 
         }
@@ -524,6 +496,10 @@ fun CustomTextField(
 @Preview
 @Composable
 fun MainScreenPreview() {
-    DeviceEntryScreen(LocalContext.current, rememberNavController())
+    DeviceEntryScreen(
+        LocalContext.current,
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
+    )
 }
 

@@ -9,6 +9,8 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +22,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,8 +36,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
-import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,10 +57,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -71,7 +73,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.StatusResult
@@ -81,14 +82,17 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun FinalPicturesScreen(navController: NavController) {
+fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, context: Context) {
 
     HandleDoubleBackToExit()
-
+    val name = prefs.getTechnicianName()
+    var isLoggingOut by remember { mutableStateOf(false) }
     var cust_Contact by remember { mutableStateOf("") }
     val current = LocalContext.current
     var FinallistCompleted by remember { mutableStateOf(false) }
@@ -107,6 +111,11 @@ fun FinalPicturesScreen(navController: NavController) {
         )
     }
     val scroll = rememberScrollState()
+    val alpha by animateFloatAsState(
+        targetValue = if (isLoggingOut) 0f else 1f,
+        animationSpec = tween(durationMillis = 500),
+        label = "logoutAnimation"
+    )
 
     Column(
         modifier = Modifier
@@ -134,14 +143,42 @@ fun FinalPicturesScreen(navController: NavController) {
                 Column {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Text(
-                        Constants.name,
+                        name,
                         color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew,
+                        contentDescription = "Logout",
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .alpha(alpha)
+                            .clickable {
+                                isLoggingOut = true
+                                resetAllData()
+                            }
+                    )
+                }
             }
 
+        }
+        if (isLoggingOut) {
+            LaunchedEffect(true) {
+                delay(500) // Wait for animation to finish
+                prefs.setUserCNIC(cnic = "")
+                prefs.setTechnicianName(name = "")
+                Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
+                navController.navigate("login") {
+                    popUpTo("mainScreen") { inclusive = true }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -528,7 +565,8 @@ fun FinalPicturesScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            val isValidContact = Regex("^(03[0-9]{9}|0[1-9]{2}[0-9]{7})$").matches(cust_Contact) //To check the contact number
+            val isValidContact =
+                Regex("^(03[0-9]{9}|0[1-9]{2}[0-9]{7})$").matches(cust_Contact) //To check the contact number
 
             Button(
                 enabled = isValidContact,
@@ -602,6 +640,7 @@ fun FinalPicturesScreen(navController: NavController) {
     }
 
 }
+
 @Composable
 fun CustomTextField_screen2(
     value: String,
@@ -627,5 +666,5 @@ fun CustomTextField_screen2(
 @Preview
 @Composable
 fun FinalPicturesScreenPreview() {
-    FinalPicturesScreen(rememberNavController())
+    FinalPicturesScreen(rememberNavController(), PreferenceManager(LocalContext.current), LocalContext.current)
 }

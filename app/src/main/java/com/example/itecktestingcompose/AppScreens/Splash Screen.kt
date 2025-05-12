@@ -25,24 +25,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 @Composable
-fun SplashScreen(navController: NavHostController, version: String, context: Context) {
-
-
-
-
+fun SplashScreen(
+    navController: NavHostController,
+    version: String,
+    prefs: PreferenceManager
+) {
     LaunchedEffect(Unit) {
-        val sharePref =
-            context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+
         kotlinx.coroutines.delay(1000) // Wait for 2 seconds
-        if (sharePref.getString("CNIC", "") != "") {
+        if (prefs.getUserCNIC() != "") {
             navController.navigate("mainscreen") {
                 popUpTo("splash") { inclusive = true }
             }

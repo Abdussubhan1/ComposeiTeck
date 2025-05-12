@@ -78,21 +78,22 @@ import com.example.itecktestingcompose.functions.checkLocationWithinRange
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.functions.getLocation
 import com.example.itecktestingcompose.Mainactivity.jameelNooriFont
+import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun TestingPage(navController: NavHostController, context: Context) {
+fun TestingPage(navController: NavHostController, context: Context, prefs: PreferenceManager) {
     getLocation()
+    val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
         animationSpec = tween(durationMillis = 500),
         label = "logoutAnimation"
     )
-    val sharePref1 =
-        context.getSharedPreferences("UserCNIC", Context.MODE_PRIVATE)
+
     var obdType by remember { mutableStateOf("Select OBD Type") }
 
     var comp by remember { mutableStateOf(false) }
@@ -124,7 +125,7 @@ fun TestingPage(navController: NavHostController, context: Context) {
                 Column {
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Text(
-                        Constants.name,
+                        name,
                         color = Color(0XFF39B54A),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -155,7 +156,8 @@ fun TestingPage(navController: NavHostController, context: Context) {
         if (isLoggingOut) {
             LaunchedEffect(true) {
                 delay(500) // Wait for animation to finish
-                sharePref1.edit { putString("CNIC", "") }
+                prefs.setUserCNIC(cnic = "")
+                prefs.setTechnicianName(name = "")
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
                     popUpTo("mainScreen") { inclusive = true }
@@ -688,7 +690,7 @@ fun DropdownField(
 @Preview(showBackground = true)
 @Composable
 fun TestingPagePreview() {
-    TestingPage(rememberNavController(), LocalContext.current)
+    TestingPage(rememberNavController(), LocalContext.current,PreferenceManager(LocalContext.current))
 }
 
 @Composable
