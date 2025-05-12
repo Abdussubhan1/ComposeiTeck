@@ -24,7 +24,7 @@ suspend fun validateCnic(
     Brand: String
 ): CNICValidationResult {
 
-    var ifUserExist = false
+    var ifUserExist: Boolean
     var name = ""
 
     return try {
@@ -41,10 +41,12 @@ suspend fun validateCnic(
                 Constants.appLoginID = responseBody.AppLoginid
                 Constants.otp = responseBody.otp
             }
-            CNICValidationResult(ifUserExist, false, name)
+            return CNICValidationResult(ifUserExist, false, name)
+        } else {
+            CNICValidationResult(ifUserExist = false, isLoading = false, technicianName = "")
         }
 
-        CNICValidationResult(ifUserExist = false, isLoading = false, technicianName = "")
+
     } catch (e: Exception) {
         Log.d("cnicV", "Exception: $e")
         CNICValidationResult(ifUserExist = false, isLoading = false, name)
