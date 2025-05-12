@@ -18,7 +18,9 @@ import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 
 @Composable
-fun AppNavigation(version: String, context: Context, prefs: PreferenceManager) {
+fun AppNavigation( context: Context, prefs: PreferenceManager) {
+
+    val version = getAppVersion(context)
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "splash")

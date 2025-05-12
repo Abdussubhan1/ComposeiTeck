@@ -33,7 +33,8 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val prefs = PreferenceManager(this)
+
+        val prefs = PreferenceManager(this) //Created object for class PreferenceManager
 
         enableEdgeToEdge() //FullScreen View of Application
         super.onCreate(savedInstanceState)
@@ -52,17 +53,12 @@ class MainActivity : ComponentActivity() {
 
         generateFCM()
 
-
-        val context = this
-
-        val version = getAppVersion(this) //Function to get App Version
-
         getDeviceInfo(this) //Function to get Mobile related Information
 
         Constants.FCMToken = getSavedToken(this) ?: "" //Saving the updated token
 
         setContent {
-                AppNavigation(version,context,prefs)
+                AppNavigation(this,prefs)
         }
     }
 
