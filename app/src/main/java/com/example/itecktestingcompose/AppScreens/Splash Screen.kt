@@ -47,7 +47,7 @@ fun SplashScreen(
 
         kotlinx.coroutines.delay(2000) // Wait for 2 seconds
         if (prefs.getUserCNIC() != "") {
-            val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
+            val check = FCMUpdate(prefs.getAppLoginID(), Constants.fcm)
             Log.d("FCM at Splash", "SplashScreen: $check")
             if (check) {
                 navController.navigate("mainscreen") {

@@ -17,9 +17,9 @@ import androidx.core.content.ContextCompat
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
-import com.example.itecktestingcompose.functions.getSavedToken
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.example.itecktestingcompose.functions.getSavedToken
 import com.google.firebase.messaging.FirebaseMessaging
 
 
@@ -30,11 +30,11 @@ val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
 
 class MainActivity : ComponentActivity() {
 
-    val prefs = PreferenceManager(this) //Created object for class PreferenceManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-
+        val prefs = PreferenceManager(this) //Created object for class PreferenceManager
 
         enableEdgeToEdge() //FullScreen View of Application
         super.onCreate(savedInstanceState)
@@ -55,7 +55,8 @@ class MainActivity : ComponentActivity() {
 
         getDeviceInfo(this) //Function to get Mobile related Information
 
-        prefs.setFCM(getSavedToken(prefs))
+        Constants.fcm=getSavedToken(prefs) //Function to get Saved Token
+
 
         setContent {
                 AppNavigation(this,prefs)
@@ -66,7 +67,7 @@ class MainActivity : ComponentActivity() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val fcmToken = task.result
-                prefs.setFCM(fcmToken)
+                Constants.fcm=fcmToken
 
             } else {
                 Log.e(TAG, "Error getting FCM token: ${task.exception}")
