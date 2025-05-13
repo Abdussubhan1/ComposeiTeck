@@ -153,7 +153,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                             validationResult = validateCnic(
                                 cnic,
                                 Constants.mobileID,
-                                Constants.FCMToken,
+                                prefs.getFCM(),
                                 Constants.appVersion,
                                 Constants.osVersion,
                                 Constants.brand

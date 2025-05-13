@@ -14,6 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.airbnb.lottie.parser.moshi.JsonReader.Token
 import com.example.itecktestingcompose.APIFunctions.sendTechnicalLocation
 import com.example.itecktestingcompose.Mainactivity.MainActivity
 import com.example.itecktestingcompose.R
@@ -143,11 +144,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-
-        saveTokenLocally(
-            token,
-            prefs
-        ) //Any new refreshed token will be saved here
+        prefs.setFCM(token)
 
     }
 }

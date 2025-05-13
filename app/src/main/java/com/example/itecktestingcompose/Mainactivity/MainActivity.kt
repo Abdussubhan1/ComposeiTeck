@@ -30,10 +30,11 @@ val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
 
 class MainActivity : ComponentActivity() {
 
+    val prefs = PreferenceManager(this) //Created object for class PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val prefs = PreferenceManager(this) //Created object for class PreferenceManager
+
 
         enableEdgeToEdge() //FullScreen View of Application
         super.onCreate(savedInstanceState)
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
         getDeviceInfo(this) //Function to get Mobile related Information
 
-        Constants.FCMToken = getSavedToken(prefs) ?: "" //Saving the updated token
+        prefs.setFCM(getSavedToken(prefs))
 
         setContent {
                 AppNavigation(this,prefs)
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val fcmToken = task.result
-                Constants.FCMToken = fcmToken
+                prefs.setFCM(fcmToken)
 
             } else {
                 Log.e(TAG, "Error getting FCM token: ${task.exception}")

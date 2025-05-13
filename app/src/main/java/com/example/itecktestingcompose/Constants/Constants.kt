@@ -10,7 +10,6 @@ object Constants {
     var cust_Contact: String=""
     var cnic: String=""
     var appLoginID: String=""
-    var FCMToken: String=""
     var appVersion: String=""
     var model: String=""
     var brand: String=""
