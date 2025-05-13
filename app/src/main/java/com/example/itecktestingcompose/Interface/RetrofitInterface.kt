@@ -6,6 +6,7 @@ import com.example.itecktestingcompose.ModelClasses.GetLocation
 import com.example.itecktestingcompose.ModelClasses.Ignition
 import com.example.itecktestingcompose.ModelClasses.NotificationHistory
 import com.example.itecktestingcompose.ModelClasses.Status
+import com.example.itecktestingcompose.ModelClasses.UpdateFCM_API
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.example.itecktestingcompose.ModelClasses.VehicleDetails
@@ -85,9 +86,14 @@ interface RetrofitInterface {
     @POST("get_vehicle_details.php")
     suspend fun getVehicleDetails(@Field("search") vehicleEngineChassis: String): Response<VehicleDetails>
 
+    @FormUrlEncoded
+    @POST("update_FCM.php")
+    suspend fun FCMUpdated(
+        @Field("appid") appID: String,
+        @Field("FcmToken") fcmtoken: String
+    ): Response<UpdateFCM_API>
+
 }
-
-
 
 
 object ServiceBuilder {

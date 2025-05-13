@@ -20,7 +20,6 @@ import com.example.itecktestingcompose.functions.getDeviceInfo
 import com.example.itecktestingcompose.functions.getSavedToken
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.functions.getAppVersion
 import com.google.firebase.messaging.FirebaseMessaging
 
 
@@ -55,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
         getDeviceInfo(this) //Function to get Mobile related Information
 
-        Constants.FCMToken = getSavedToken(this) ?: "" //Saving the updated token
+        Constants.FCMToken = getSavedToken(prefs) ?: "" //Saving the updated token
 
         setContent {
                 AppNavigation(this,prefs)

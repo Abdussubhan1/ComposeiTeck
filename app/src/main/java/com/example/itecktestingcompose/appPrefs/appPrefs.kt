@@ -1,6 +1,9 @@
 package com.example.itecktestingcompose.appPrefs
 
 import android.content.Context
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab.PhotosTab
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab.PhotosTab.value
 import androidx.core.content.edit
 
 class PreferenceManager(context: Context) {
@@ -9,6 +12,7 @@ class PreferenceManager(context: Context) {
 
     fun setHasNewNotification(value: Boolean) {
         sharedPref.edit { putBoolean("hasNewNotification", value) }
+        Log.d("PreferenceManager", "setHasNewNotification called with value: $value")
     }
 
     fun getHasNewNotification(): Boolean {
@@ -16,6 +20,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun setTechnicianName(name: String) {
+        Log.d("PreferenceManager", "setTechnicianName called with name: $name")
         sharedPref.edit { putString("TechnicianName", name) }
     }
 
@@ -24,6 +29,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun setUserCNIC(cnic: String) {
+        Log.d("PreferenceManager", "setUserCNIC called with cnic: $cnic")
         sharedPref.edit { putString("UserCNIC", cnic) }
     }
 
@@ -32,6 +38,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun setLatitude(latitude: String) {
+        Log.d("PreferenceManager", "setLatitude called with latitude: $latitude")
         sharedPref.edit { putString("latitude", latitude) }
     }
 
@@ -40,6 +47,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun setLongitude(longitude: String) {
+        Log.d("PreferenceManager", "setLongitude called with longitude: $longitude")
         sharedPref.edit { putString("longitude", longitude) }
     }
 
@@ -48,11 +56,21 @@ class PreferenceManager(context: Context) {
     }
 
     fun setAppLoginID(id: String) {
+        Log.d("PreferenceManager", "setAppLoginID called with id: $id")
         sharedPref.edit { putString("AppLoginID", id) }
     }
 
     fun getAppLoginID(): String {
         return sharedPref.getString("AppLoginID", "") ?: ""
+    }
+
+    fun setFCM(fcm: String) {
+        Log.d("PreferenceManager", "setAppLoginID called with id: $fcm")
+        sharedPref.edit { putString("FCM", fcm) }
+    }
+
+    fun getFCM(): String {
+        return sharedPref.getString("FCM", "") ?: ""
     }
 
 }

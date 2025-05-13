@@ -27,8 +27,9 @@ import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     @SuppressLint("ServiceCast")
+    val prefs = PreferenceManager(this)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        val prefs = PreferenceManager(this)
+
 
         if (remoteMessage.data.isNotEmpty() && remoteMessage.data["title"] != "Location Update") {
 
@@ -142,11 +143,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("FCM_TOKEN", "New token: $token")
 
         saveTokenLocally(
-            applicationContext,
-            token
+            token,
+            prefs
         ) //Any new refreshed token will be saved here
 
     }

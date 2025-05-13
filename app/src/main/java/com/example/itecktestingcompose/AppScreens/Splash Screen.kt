@@ -2,6 +2,7 @@ package com.example.itecktestingcompose.AppScreens
 
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,8 +30,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.itecktestingcompose.APIFunctions.FCMUpdate
+import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(
@@ -37,15 +42,25 @@ fun SplashScreen(
     version: String,
     prefs: PreferenceManager
 ) {
+
     LaunchedEffect(Unit) {
 
-        kotlinx.coroutines.delay(1000) // Wait for 2 seconds
+        kotlinx.coroutines.delay(2000) // Wait for 2 seconds
         if (prefs.getUserCNIC() != "") {
-            navController.navigate("mainscreen") {
-                popUpTo("splash") { inclusive = true }
+            var check = FCMUpdate(prefs.getAppLoginID(), Constants.FCMToken)
+            Log.d("FCM at Splash", "SplashScreen: $check")
+            if (check) {
+                navController.navigate("mainscreen") {
+                    popUpTo("splash") { inclusive = true }
+                }
+            } else {
+                navController.navigate("login") {
+                    popUpTo("splash") { inclusive = true }
+                }
             }
+
         } else {
-            navController.navigate("login"){
+            navController.navigate("login") {
                 popUpTo("splash") { inclusive = true }
             }
         }
