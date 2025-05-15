@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 
 object Constants {
-    var fcm: String = ""
+
     var otp: String = ""
     var cust_Contact: String = ""
     var cnic: String = ""

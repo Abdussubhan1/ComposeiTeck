@@ -19,7 +19,6 @@ import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.functions.getSavedToken
 import com.google.firebase.messaging.FirebaseMessaging
 
 
@@ -55,7 +54,8 @@ class MainActivity : ComponentActivity() {
 
         getDeviceInfo(this) //Function to get Mobile related Information
 
-        Constants.fcm=getSavedToken(prefs) //Function to get Saved Token
+//        Constants.fcm=getSavedToken(prefs) //Function to get Saved Token
+//        Log.d("FCM token", "FCM Token 2: ${Constants.fcm}")
 
 
         setContent {
@@ -64,10 +64,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun generateFCM() {
+        val prefs = PreferenceManager(this)
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val fcmToken = task.result
-                Constants.fcm=fcmToken
+                prefs.setFCM(task.result)
+                Log.d("FCM token", "FCM Token 1: ${task.result}")
 
             } else {
                 Log.e(TAG, "Error getting FCM token: ${task.exception}")

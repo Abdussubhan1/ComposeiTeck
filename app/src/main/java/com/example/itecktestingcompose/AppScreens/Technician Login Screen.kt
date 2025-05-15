@@ -2,6 +2,7 @@ package com.example.itecktestingcompose.AppScreens
 
 import android.content.Context
 import android.location.LocationManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -148,12 +149,12 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                             isLoading = true,
                             technicianName = ""
                         )
-
+                        Log.d("FCM token", "At the login time: ${prefs.getFCM()}")
                         couroutineScope.launch {
                             validationResult = validateCnic(
                                 cnic,
                                 Constants.mobileID,
-                                Constants.fcm,
+                                prefs.getFCM(),
                                 Constants.appVersion,
                                 Constants.osVersion,
                                 Constants.brand

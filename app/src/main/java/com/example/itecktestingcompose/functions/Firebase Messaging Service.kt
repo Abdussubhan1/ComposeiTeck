@@ -14,7 +14,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.airbnb.lottie.parser.moshi.JsonReader.Token
 import com.example.itecktestingcompose.APIFunctions.sendTechnicalLocation
 import com.example.itecktestingcompose.Mainactivity.MainActivity
 import com.example.itecktestingcompose.R
@@ -74,7 +73,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             if (isLocationEnabled) {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        sendTechnicalLocation(prefs.getUserCNIC(), prefs.getLatitude(),prefs.getLongitude(), 1)
+                        val locationApiCalled=sendTechnicalLocation(prefs.getUserCNIC(), prefs.getLatitude(),prefs.getLongitude(), 1)
+                        Log.d("PreferenceManager", "API call successful: $locationApiCalled")
                     } catch (e: Exception) {
                         Log.e("LocationWorker", "API call failed: ${e.message}")
                     }
@@ -92,7 +92,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         }
 
-        Log.d("FCM Message for auto task", "Received message: ${remoteMessage.data}")
+        Log.d("PreferenceManager", "Received message: ${remoteMessage.data}")
     }
 
 
