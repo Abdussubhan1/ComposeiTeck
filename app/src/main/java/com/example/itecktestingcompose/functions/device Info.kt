@@ -19,6 +19,10 @@ fun getDeviceInfo(context: Context) {
     Constants.brand = brand
     Constants.model = model
 
-    Log.d(TAG, "DEVICEID: $deviceId")
+    Log.d("Dinfo", "DEVICEID: $deviceId")
+    Log.d("Dinfo", "OSVERSION: $osVersion")
+    Log.d("Dinfo", "BRAND: $brand")
+    Log.d("Dinfo", "MODEL: $model")
+
 
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
 import com.example.itecktestingcompose.R
@@ -22,13 +21,10 @@ import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.google.firebase.messaging.FirebaseMessaging
 
 
-
 val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
 
 
-
 class MainActivity : ComponentActivity() {
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-                AppNavigation(this,prefs)
+            AppNavigation(this, prefs)
         }
     }
 
@@ -116,6 +112,7 @@ class MainActivity : ComponentActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
 
         when (requestCode) {
             101 -> {
