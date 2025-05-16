@@ -31,8 +31,11 @@ suspend fun getVehicleDetails(
             val responseBody = response.body()!!
             ifDetailsExist=responseBody.Success
             message=responseBody.Message
-            data = responseBody.Data ?: emptyList()
-        }
+            if (ifDetailsExist){data = responseBody.Data}
+
+
+            return VehicleValidationResult(ifDetailsExist,message,data)
+        }else
         VehicleValidationResult(
             ifDetailsExist,
             message,
