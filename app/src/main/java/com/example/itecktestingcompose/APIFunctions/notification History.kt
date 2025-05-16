@@ -1,6 +1,5 @@
 package com.example.itecktestingcompose.APIFunctions
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
