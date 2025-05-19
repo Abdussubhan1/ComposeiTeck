@@ -3,6 +3,7 @@ package com.example.itecktestingcompose.Interface
 import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.ModelClasses.Battery
 import com.example.itecktestingcompose.ModelClasses.GetLocation
+import com.example.itecktestingcompose.ModelClasses.GetRelay
 import com.example.itecktestingcompose.ModelClasses.Ignition
 import com.example.itecktestingcompose.ModelClasses.NotificationHistory
 import com.example.itecktestingcompose.ModelClasses.Status
@@ -10,6 +11,7 @@ import com.example.itecktestingcompose.ModelClasses.UpdateFCM_API
 import com.example.itecktestingcompose.ModelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.ModelClasses.ValidateDeviceResponse
 import com.example.itecktestingcompose.ModelClasses.VehicleDetails
+import com.example.itecktestingcompose.ModelClasses.cmdQueueCheck
 import com.example.itecktestingcompose.ModelClasses.postDataResponse
 import com.example.itecktestingcompose.ModelClasses.technicianLocation
 import com.google.gson.GsonBuilder
@@ -92,6 +94,21 @@ interface RetrofitInterface {
         @Field("appid") appID: String,
         @Field("FcmToken") fcmtoken: String
     ): Response<UpdateFCM_API>
+
+    @FormUrlEncoded
+    @POST("get_relay.php")
+    suspend fun getRelay(
+        @Field("devid") devID: String,
+        @Field("cmd") cmd: String
+    ): Response<GetRelay>
+
+    @FormUrlEncoded
+    @POST("cmd_queue.php")
+    suspend fun getCmdQueueStatus(
+        @Field("devid") devID: String,
+        @Field("cmd") cmd: String
+    ): Response<cmdQueueCheck>
+
 
 }
 

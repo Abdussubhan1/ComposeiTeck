@@ -277,7 +277,7 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 .fillMaxWidth()
                 .height(200.dp),
             horizontalArrangement = Arrangement.Center, // Center the content
-            contentPadding = PaddingValues(horizontal = 0.dp) // No extra side padding
+            contentPadding = PaddingValues(horizontal = 8.dp) // No extra side padding
         ) {
             items(initiallistOfImages.size) { index ->
                 initiallistOfImages[index]?.let { bitmap ->

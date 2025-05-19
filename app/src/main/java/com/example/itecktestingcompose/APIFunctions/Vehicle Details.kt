@@ -29,18 +29,18 @@ suspend fun getVehicleDetails(
 
         if (response.isSuccessful && response.body() != null) {
             val responseBody = response.body()!!
-            ifDetailsExist=responseBody.Success
-            message=responseBody.Message
-            if (ifDetailsExist){data = responseBody.Data}
-
-
-            return VehicleValidationResult(ifDetailsExist,message,data)
-        }else
-        VehicleValidationResult(
-            ifDetailsExist,
-            message,
-            data
-        )
+            ifDetailsExist = responseBody.Success
+            message = responseBody.Message
+            if (ifDetailsExist) {
+                data = responseBody.Data
+            }
+            return VehicleValidationResult(ifDetailsExist, message, data)
+        } else
+            VehicleValidationResult(
+                ifDetailsExist,
+                message,
+                data
+            )
 
     } catch (e: Exception) {
         Log.d("cnicV", "Exception: $e")

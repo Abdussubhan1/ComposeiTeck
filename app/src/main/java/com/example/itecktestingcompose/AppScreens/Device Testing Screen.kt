@@ -68,7 +68,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.ValidateLocationResponse
 import com.example.itecktestingcompose.APIFunctions.batteryResponse
+import com.example.itecktestingcompose.APIFunctions.cmdQueueCheck
 import com.example.itecktestingcompose.APIFunctions.ignitionResponse
+import com.example.itecktestingcompose.APIFunctions.relayResponse
+import com.example.itecktestingcompose.APIFunctions.setRelayStatus
 import com.example.itecktestingcompose.APIFunctions.validateBattery
 import com.example.itecktestingcompose.APIFunctions.validateIgnition
 import com.example.itecktestingcompose.APIFunctions.validateLoc
@@ -320,7 +323,17 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
         )
     }
 
-//Relay result yaha banana
+    var relayResult by remember {
+        mutableStateOf(
+            relayResponse(
+                success = false,
+                isLoading = false,
+                message = ""
+            )
+        )
+    }
+
+    var cmdQueueResult by remember { mutableStateOf("") }
 
 
     var loc by remember { mutableStateOf(false) }
@@ -543,6 +556,17 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     horizontalArrangement = Arrangement.Center,
                     modifier = rowModifier
                 ) {
+
+                    var relayProgress by remember { mutableFloatStateOf(0.0f) }
+                    relayProgress = when {
+                        cmdQueueResult == "Command Not in queue" && relayProgress == 0.0f -> 0.50f
+                        cmdQueueResult == "Command Not in queue" && relayProgress == 0.50f -> 1.0f
+                        else -> relayProgress
+                    }
+                    if (relayProgress == 1f) {
+                        onTestingCompleted(true)
+                    }
+
                     Text(
                         "Relay",
                         fontSize = 12.sp,
@@ -554,8 +578,10 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                             .wrapContentSize(Alignment.CenterStart)
                     )
                     LinearProgressIndicator(
-                        progress = { 1f },
-                        color = Color.LightGray,
+                        progress = { relayProgress },
+                        color = if (cmdQueueResult == "Command Not in queue") Color(
+                            0XFF39B54A
+                        ) else Color.LightGray,
                         modifier = Modifier
                             .weight(0.45f)
                             .clip(RoundedCornerShape(50))
@@ -568,15 +594,16 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
-                        tint = if (moveToNextValidationStep == 3) Color.White else Color.Transparent,
+                        tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading) Color.White else Color.Transparent,
                         modifier = Modifier
                             .size(24.dp)
-                            .clickable(enabled = moveToNextValidationStep == 3) {
-//                                onTestingCompleted(true)
+                            .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading) {
                                 showRelay = true
                                 showIgnition = false
+                                relayResult =
+                                    relayResponse(success = false, isLoading = true, message = "")
                                 coroutineScope.launch {
-//                                    relay = validateRelay(Constants.deviceID)
+
                                 }
                             }
                     )
@@ -587,7 +614,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
         }
         Spacer(modifier = Modifier.height(5.dp))
-        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading) {
+        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading || relayResult.isLoading) {
             Text(
                 "Please Wait..",
                 modifier = Modifier.fillMaxWidth(),
@@ -607,14 +634,14 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     showLocation -> "Location: ${deviceLocationResult.Message}"
                     showBattery -> "Battery: ${batteryResult.battery}"
                     showIgnition -> "Ignition: ${ignitionResult.ignition}"
-                    showRelay -> "Relay: ${"Connected"}"
+                    showRelay -> relayResult.message
                     else -> ""
                 }
 
-                if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading) {
+                if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading && !relayResult.isLoading) {
                     Text(
                         text = text,
-                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed") Color.Red else Color(
+                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!") Color.Red else Color(
                             0XFF39B54A
                         ),
                         fontWeight = FontWeight.SemiBold,
@@ -690,7 +717,11 @@ fun DropdownField(
 @Preview(showBackground = true)
 @Composable
 fun TestingPagePreview() {
-    TestingPage(rememberNavController(), LocalContext.current,PreferenceManager(LocalContext.current))
+    TestingPage(
+        rememberNavController(),
+        LocalContext.current,
+        PreferenceManager(LocalContext.current)
+    )
 }
 
 @Composable
@@ -767,11 +798,10 @@ fun Alert(
     )
 
 
-
 }
 
-@Preview
-@Composable
-fun AlertPreview() {
-    Alert("Title", "Text", {}, rememberNavController())
-}
+//@Preview
+//@Composable
+//fun AlertPreview() {
+//    Alert("Title", "Text", {}, rememberNavController())
+//}
