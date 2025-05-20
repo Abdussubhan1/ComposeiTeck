@@ -52,11 +52,11 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.example.itecktestingcompose.functions.isInternetAvailable
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
-
 
     HandleDoubleBackToExit()
 
@@ -142,45 +142,47 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                     val isLocationEnabled =
                         locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-                    if (isLocationEnabled) {
-                        validationResult = CNICValidationResult(
-                            ifUserExist = false,
-                            isLoading = true,
-                            technicianName = ""
-                        )
-                        Log.d("FCM token", "At the login time: ${prefs.getFCM()}")
-                        couroutineScope.launch {
-                            validationResult = validateCnic(
-                                cnic,
-                                Constants.mobileID,
-                                prefs.getFCM(),
-                                Constants.appVersion,
-                                Constants.osVersion,
-                                Constants.brand
+                    if (isInternetAvailable(context)) {
+                        if (isLocationEnabled) {
+                            validationResult = CNICValidationResult(
+                                ifUserExist = false,
+                                isLoading = true,
+                                technicianName = ""
                             )
-
-                            if (validationResult.ifUserExist) {
-                                prefs.setTechnicianName(validationResult.technicianName) //Saving Technician Name in Shared Prefs
-
-                                navController.navigate("OTP Screen")
-
-                                //Also saving in RAM
-                                Constants.cnic = cnic
-
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Technician Not Registered",
-                                    Toast.LENGTH_SHORT
+                            Log.d("FCM token", "At the login time: ${prefs.getFCM()}")
+                            couroutineScope.launch {
+                                validationResult = validateCnic(
+                                    cnic,
+                                    Constants.mobileID,
+                                    prefs.getFCM(),
+                                    Constants.appVersion,
+                                    Constants.osVersion,
+                                    Constants.brand
                                 )
-                                    .show()
+
+                                if (validationResult.ifUserExist) {
+                                    prefs.setTechnicianName(validationResult.technicianName) //Saving Technician Name in Shared Prefs
+
+                                    navController.navigate("OTP Screen")
+
+                                    //Also saving in RAM
+                                    Constants.cnic = cnic
+
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Technician Not Registered",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
                             }
                         }
+                        else Toast.makeText(context,"Location is OFF",Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "Please Enable Location Services First",
+                            "No Network Connection",
                             Toast.LENGTH_SHORT
                         )
                             .show()
