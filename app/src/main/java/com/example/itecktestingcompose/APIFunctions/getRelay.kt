@@ -11,7 +11,6 @@ data class relayResponse(
 
 
 suspend fun setRelayStatus(
-
     devID: String,
     cmd: String
 ): relayResponse {

@@ -36,6 +36,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
+import androidx.compose.material.icons.filled.CloudDone
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
@@ -391,252 +393,262 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
 
 
         }
-    }
+        if (showFinalTicket) {
 
-    if (showFinalTicket) {
+            //Now all 4 pictures are contained in a Array
+            val isValidContact =
+                Regex("^(03[0-9]{9}|0[1-9]{2}[0-9]{7})$").matches(cust_Contact)
+            val allPictures = ArrayList<Bitmap?>()
+            allPictures.addAll(Constants.initialPictures)
+            allPictures.addAll(Constants.finalPictures)
 
-        //Now all 4 pictures are contained in a Array
-
-        val allPictures = ArrayList<Bitmap?>()
-        allPictures.addAll(Constants.initialPictures)
-        allPictures.addAll(Constants.finalPictures)
-
-        //For customer Contact Number
-        TextField(
-            trailingIcon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null) },
-            value = cust_Contact, onValueChange = {
-                cust_Contact = it
-                Constants.cust_Contact = cust_Contact
-            },
-            placeholder = {
-                Text(
-                    "Enter Customer Contact Number",
-                    color = Color.DarkGray,
-                    fontSize = 16.sp,
-                    fontFamily = jameelNooriFont,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            shape = RoundedCornerShape(50),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color(0XFF000000),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.94f)
-                .height(500.dp),
-            border = BorderStroke(2.dp, Color(0xFFB0BEC5)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Text(
-                    text = "Summary",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF37474F),
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                val textStyle = TextStyle(
-                    fontSize = 16.sp,
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF263238),
-                    textAlign = TextAlign.Center
-                )
-
-                listOf(
-                    "Device Number:\n\n${Constants.deviceID}",
-                    "Location:\n\n${statusResult.Location}",
-                    "GPS Time:\n\n${statusResult.GPSTime}",
-                    "Main Voltages:\n\n${statusResult.PowerVoltages}",
-                    "GSM Signals:\n\n${statusResult.GSMSignal} Volts",
-                    "Ignition:\n\n${statusResult.Ignition}"
-                ).forEach { label ->
+            //For customer Contact Number
+            TextField(
+                trailingIcon = {
+                    if (!isValidContact) Icon(
+                        Icons.Default.PhoneAndroid,
+                        contentDescription = null,
+                        tint = Color.Red
+                    ) else Icon(
+                        Icons.Filled.DoneAll,
+                        contentDescription = null,
+                        tint = Color.Green
+                    )
+                },
+                value = cust_Contact, onValueChange = {
+                    cust_Contact = it
+                    Constants.cust_Contact = cust_Contact
+                },
+                placeholder = {
                     Text(
-                        text = label,
-                        style = textStyle,
-                        modifier = Modifier
-                            .padding(vertical = 8.dp, horizontal = 12.dp)
-                            .fillMaxWidth()
-                            .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp))
-                            .padding(12.dp)
+                        "Enter Customer Contact Number",
+                        color = Color.DarkGray,
+                        fontSize = 16.sp,
+                        fontFamily = jameelNooriFont,
+                        modifier = Modifier.fillMaxWidth()
                     )
-                }
-                Text(
-                    text = "Captured Images",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF546E7A),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-
-                Text(
-                    text = "Initial Pictures",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF546E7A),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    items(Constants.initialPictures.size) { index ->
-                        Constants.initialPictures[index]?.let { bitmap ->
-
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Initial Picture $index",
-                                modifier = Modifier
-                                    .width(180.dp)
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
-                                    .shadow(4.dp, RoundedCornerShape(16.dp))
-                            )
-
-
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Final Pictures",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF546E7A),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    items(FinallistOfImages.size) { index ->
-                        FinallistOfImages[index]?.let { bitmap ->
-
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Captured Image $index",
-                                modifier = Modifier
-                                    .width(180.dp)
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
-                                    .shadow(4.dp, RoundedCornerShape(16.dp))
-                            )
-
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        val isValidContact =
-            Regex("^(03[0-9]{9}|0[1-9]{2}[0-9]{7})$").matches(cust_Contact) //To check the contact number
-
-        Button(
-            enabled = isValidContact,
-            onClick = {
-
-
-                couroutineScope.launch {
-                    val submitSuccess = submitData(
-                        prefs.getUserCNIC(),
-                        prefs.getTechnicianName(),
-                        Constants.deviceID,
-                        1,
-                        prefs.getAppLoginID(),
-                        allPictures
-                    )
-
-                    if (submitSuccess) {
-
-                        resetAllData() //Fun to reset RAM memory
-
-                        navController.navigate("AllahHafizScreen") {
-                            popUpTo("finalPicturesScreen") { inclusive = true }
-                        }
-
-                        //Also showing notification when data is submitted successfully
-
-                        val channelId = "installation"
-                        val channelName = "Installation"
-
-                        val notificationManager =
-                            current.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-
-                        val importance = NotificationManager.IMPORTANCE_HIGH
-                        val channel = NotificationChannel(channelId, channelName, importance)
-                        notificationManager.createNotificationChannel(channel)
-
-                        val notificationBuilder = NotificationCompat.Builder(current, channelId)
-                            .setSmallIcon(R.drawable.icon) // Make sure you have this icon in drawable
-                            .setContentTitle("Installation")
-                            .setContentText("Tracker installation success")
-                            .setPriority(NotificationCompat.PRIORITY_HIGH)
-                            .setAutoCancel(true)
-
-                        notificationManager.notify(0, notificationBuilder.build())
-
-
-                    }
-                }
-            },
-            elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(50),
-            border = BorderStroke(1.5.dp, Color(0XFF39B54A))
-        ) {
-            Text(
-                text = " کام مکمل ہو گیا ہے۔",
-                fontFamily = jameelNooriFont,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                fontSize = 17.sp
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(50),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color(0XFF000000),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-        }
 
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.94f)
+                    .height(500.dp),
+                border = BorderStroke(2.dp, Color(0xFFB0BEC5)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "Summary",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF37474F),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    val textStyle = TextStyle(
+                        fontSize = 16.sp,
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF263238),
+                        textAlign = TextAlign.Center
+                    )
+
+                    listOf(
+                        "Device Number:\n\n${Constants.deviceID}",
+                        "Location:\n\n${statusResult.Location}",
+                        "GPS Time:\n\n${statusResult.GPSTime}",
+                        "Main Voltages:\n\n${statusResult.PowerVoltages}",
+                        "GSM Signals:\n\n${statusResult.GSMSignal} Volts",
+                        "Ignition:\n\n${statusResult.Ignition}"
+                    ).forEach { label ->
+                        Text(
+                            text = label,
+                            style = textStyle,
+                            modifier = Modifier
+                                .padding(vertical = 8.dp, horizontal = 12.dp)
+                                .fillMaxWidth()
+                                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        )
+                    }
+                    Text(
+                        text = "Captured Images",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF546E7A),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    Text(
+                        text = "Initial Pictures",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF546E7A),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp)
+                    ) {
+                        items(Constants.initialPictures.size) { index ->
+                            Constants.initialPictures[index]?.let { bitmap ->
+
+                                Image(
+                                    bitmap = bitmap.asImageBitmap(),
+                                    contentDescription = "Initial Picture $index",
+                                    modifier = Modifier
+                                        .width(180.dp)
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                                        .shadow(4.dp, RoundedCornerShape(16.dp))
+                                )
+
+
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Final Pictures",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF546E7A),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp)
+                    ) {
+                        items(FinallistOfImages.size) { index ->
+                            FinallistOfImages[index]?.let { bitmap ->
+
+                                Image(
+                                    bitmap = bitmap.asImageBitmap(),
+                                    contentDescription = "Captured Image $index",
+                                    modifier = Modifier
+                                        .width(180.dp)
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                                        .shadow(4.dp, RoundedCornerShape(16.dp))
+                                )
+
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            //To check the contact number
+            if (isValidContact) {
+                Button(
+                    onClick = {
+                        couroutineScope.launch {
+                            val submitSuccess = submitData(
+                                prefs.getUserCNIC(),
+                                prefs.getTechnicianName(),
+                                Constants.deviceID,
+                                1,
+                                prefs.getAppLoginID(),
+                                allPictures
+                            )
+
+                            if (submitSuccess) {
+
+                                resetAllData() //Fun to reset RAM memory
+
+                                navController.navigate("AllahHafizScreen") {
+                                    popUpTo("finalPicturesScreen") { inclusive = true }
+                                }
+
+                                //Also showing notification when data is submitted successfully
+
+                                val channelId = "installation"
+                                val channelName = "Installation"
+
+                                val notificationManager =
+                                    current.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+
+                                val importance = NotificationManager.IMPORTANCE_HIGH
+                                val channel =
+                                    NotificationChannel(channelId, channelName, importance)
+                                notificationManager.createNotificationChannel(channel)
+
+                                val notificationBuilder =
+                                    NotificationCompat.Builder(current, channelId)
+                                        .setSmallIcon(R.drawable.icon) // Make sure you have this icon in drawable
+                                        .setContentTitle("Installation")
+                                        .setContentText("Tracker installation success")
+                                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                        .setAutoCancel(true)
+
+                                notificationManager.notify(0, notificationBuilder.build())
+
+
+                            }
+                        }
+                    },
+                    elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(50),
+                    border = BorderStroke(1.5.dp, Color(0XFF39B54A))
+                ) {
+                    Text(
+                        text = " کام مکمل ہو گیا ہے۔",
+                        fontFamily = jameelNooriFont,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        fontSize = 17.sp
+                    )
+                }
+            }
+
+
+        }
     }
+
 
 }
-
 
 
 @Composable

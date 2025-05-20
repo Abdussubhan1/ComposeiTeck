@@ -6,11 +6,11 @@ import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
 
 data class StatusResult(
-    val GPSTime: String,
+    val GPSTime: String?,
     val GSMSignal: Int,
-    val Ignition: String,
-    val Location: String,
-    val PowerVoltages: String
+    val Ignition: String?,
+    val Location: String?,
+    val PowerVoltages: String?
 )
 
 suspend fun getStatus(devID: String): StatusResult {
@@ -34,7 +34,7 @@ var p_voltages=""
             gsm_Signals=responseBody.GSMSignal
             ignition_status=responseBody.Ignition
             location_status=responseBody.Location
-            p_voltages=responseBody.PowerVoltages
+            p_voltages= responseBody.PowerVoltages
         }
 
         StatusResult(gps_time,gsm_Signals,ignition_status,location_status,p_voltages)

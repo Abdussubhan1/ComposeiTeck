@@ -332,14 +332,14 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
             )
         )
     }
-
+    var startTimer by remember { mutableStateOf(false) }
     var cmdQueueResult by remember { mutableStateOf("") }
 
 
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
-    var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
-    checkLocationWithinRange()
+    var moveToNextValidationStep by remember { mutableIntStateOf(3) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
+//    checkLocationWithinRange()
 
     if (loc) {
         getLocation()
@@ -551,22 +551,46 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
             // RELAY Wali Row
             if (obdType == "NA") {
+
+                var relayProgress by remember { mutableFloatStateOf(0.0f) }
+                var timerStarted by remember { mutableStateOf(false) }
+
+                LaunchedEffect(cmdQueueResult) {
+                    when {
+                        cmdQueueResult == "Command Not in queue" && relayProgress == 0.0f -> {
+                            relayProgress = 0.5f
+                        }
+
+                        cmdQueueResult == "Command Not in queue" && relayProgress == 0.5f -> {
+                            relayProgress = 1.0f
+                            moveToNextValidationStep=4
+                            onTestingCompleted(true)
+                        }
+                    }
+                }
+
+                // Timer coroutine
+                LaunchedEffect(startTimer) {
+                    if (startTimer && !timerStarted) {
+                        timerStarted = true
+                        while (true) {
+                            delay(5000)
+                            cmdQueueResult = cmdQueueCheck(
+                                Constants.deviceID,
+                                if (relayProgress == 0.0f) "kill" else "release"
+                            )
+                            if (cmdQueueResult == "Command Not in queue") break
+                        }
+                        timerStarted = false
+                        startTimer = false
+                    }
+                }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = rowModifier
                 ) {
-
-                    var relayProgress by remember { mutableFloatStateOf(0.0f) }
-                    relayProgress = when {
-                        cmdQueueResult == "Command Not in queue" && relayProgress == 0.0f -> 0.50f
-                        cmdQueueResult == "Command Not in queue" && relayProgress == 0.50f -> 1.0f
-                        else -> relayProgress
-                    }
-                    if (relayProgress == 1f) {
-                        onTestingCompleted(true)
-                    }
-
                     Text(
                         "Relay",
                         fontSize = 12.sp,
@@ -579,9 +603,9 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     )
                     LinearProgressIndicator(
                         progress = { relayProgress },
-                        color = if (cmdQueueResult == "Command Not in queue") Color(
+                        color = Color(
                             0XFF39B54A
-                        ) else Color.LightGray,
+                        ),
                         modifier = Modifier
                             .weight(0.45f)
                             .clip(RoundedCornerShape(50))
@@ -590,23 +614,35 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     )
                     Spacer(modifier = Modifier.width(4.dp))
 
-
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
-                        tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading) Color.White else Color.Transparent,
+                        tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) Color.White else Color.Transparent,
                         modifier = Modifier
                             .size(24.dp)
-                            .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading) {
+                            .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer){
                                 showRelay = true
                                 showIgnition = false
                                 relayResult =
-                                    relayResponse(success = false, isLoading = true, message = "")
+                                    relayResponse(
+                                        success = false,
+                                        isLoading = true,
+                                        message = ""
+                                    )
                                 coroutineScope.launch {
+                                    if (relayProgress == 0.0f) {
+                                        relayResult = setRelayStatus(Constants.deviceID, "kill")
+                                        startTimer = true
+                                    } else if (relayProgress == 0.5f) {
+                                        relayResult =
+                                            setRelayStatus(Constants.deviceID, cmd = "release")
+                                        startTimer = true
+                                    }
 
                                 }
                             }
                     )
+
 
                 }
             }
