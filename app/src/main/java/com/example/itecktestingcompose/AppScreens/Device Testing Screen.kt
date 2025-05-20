@@ -563,7 +563,6 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.5f -> {
                             relayProgress = 1.0f
-                            moveToNextValidationStep=4
                             onTestingCompleted(true)
                         }
                     }
@@ -613,44 +612,45 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                             .height(10.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
+                    if (relayProgress < 1f) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh",
+                            tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) Color.White else Color.Transparent,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) {
+                                    showRelay = true
+                                    showIgnition = false
+                                    relayResult =
+                                        relayResponse(
+                                            success = false,
+                                            isLoading = true,
+                                            message = ""
+                                        )
+                                    coroutineScope.launch {
+                                        if (relayProgress == 0.0f) {
+                                            relayResult = setRelayStatus(Constants.deviceID, "kill")
+                                            startTimer = true
+                                        } else if (relayProgress == 0.5f) {
+                                            relayResult =
+                                                setRelayStatus(Constants.deviceID, cmd = "release")
+                                            startTimer = true
+                                        }
 
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
-                        tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) Color.White else Color.Transparent,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer){
-                                showRelay = true
-                                showIgnition = false
-                                relayResult =
-                                    relayResponse(
-                                        success = false,
-                                        isLoading = true,
-                                        message = ""
-                                    )
-                                coroutineScope.launch {
-                                    if (relayProgress == 0.0f) {
-                                        relayResult = setRelayStatus(Constants.deviceID, "kill")
-                                        startTimer = true
-                                    } else if (relayProgress == 0.5f) {
-                                        relayResult =
-                                            setRelayStatus(Constants.deviceID, cmd = "release")
-                                        startTimer = true
                                     }
-
                                 }
-                            }
-                    )
-
-
+                        )
+                    }
+                    else
+                        Spacer(modifier = Modifier.width(24.dp))
                 }
             }
 
 
         }
         Spacer(modifier = Modifier.height(5.dp))
-        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading || relayResult.isLoading) {
+        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading || relayResult.isLoading|| startTimer) {
             Text(
                 "Please Wait..",
                 modifier = Modifier.fillMaxWidth(),
