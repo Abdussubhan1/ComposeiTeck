@@ -338,7 +338,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
     var loc by remember { mutableStateOf(false) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
-    var moveToNextValidationStep by remember { mutableIntStateOf(3) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
+    var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 //    checkLocationWithinRange()
 
     if (loc) {
