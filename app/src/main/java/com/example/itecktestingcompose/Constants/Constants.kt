@@ -26,5 +26,7 @@ object Constants {
     var deviceLocation: String = ""
     var vehicleID: String = ""
 
+
 }
+
 

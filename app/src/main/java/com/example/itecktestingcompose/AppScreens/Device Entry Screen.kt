@@ -494,6 +494,7 @@ fun VehicleCard(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Color: ${vehicle.COLOR}", color = Color.White)
                 Text(text = "Engine: ${vehicle.ENGINE}", color = Color.White)
                 Text(text = "Chassis: ${vehicle.CHASSIS}", color = Color.White)

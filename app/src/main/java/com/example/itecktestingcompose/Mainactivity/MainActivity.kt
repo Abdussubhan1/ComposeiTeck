@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val prefs = PreferenceManager(this) //Created object for class PreferenceManager
+        Log.d("CheckAppLoginID", "AppLoginID: ${prefs.getAppLoginID()}")
 
         enableEdgeToEdge() //FullScreen View of Application
         super.onCreate(savedInstanceState)
