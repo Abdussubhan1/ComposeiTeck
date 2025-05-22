@@ -9,7 +9,8 @@ import com.example.itecktestingcompose.ModelClasses.VehData
 data class VehicleValidationResult(
     val ifDetailsExist: Boolean,
     var message: String,
-    var data: List<VehData>
+    var data: List<VehData>,
+    var isLoading: Boolean
 )
 
 
@@ -34,12 +35,13 @@ suspend fun getVehicleDetails(
             if (ifDetailsExist) {
                 data = responseBody.Data
             }
-            return VehicleValidationResult(ifDetailsExist, message, data)
+            return VehicleValidationResult(ifDetailsExist, message, data,false)
         } else
             VehicleValidationResult(
                 ifDetailsExist,
                 message,
-                data
+                data,
+                false
             )
 
     } catch (e: Exception) {
@@ -47,7 +49,8 @@ suspend fun getVehicleDetails(
         VehicleValidationResult(
             ifDetailsExist,
             message,
-            data
+            data,
+            false
         )
     }
 

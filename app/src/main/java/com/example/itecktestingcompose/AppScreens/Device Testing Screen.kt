@@ -799,8 +799,6 @@ fun Alert(
                     Constants.deviceLocationLat = 0.0
                     Constants.deviceLocationLong = 0.0
                     Constants.deviceLocation = ""
-                    Constants.EngineChassis = ""
-                    Constants.Vehmake = ""
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 shape = RoundedCornerShape(12.dp),

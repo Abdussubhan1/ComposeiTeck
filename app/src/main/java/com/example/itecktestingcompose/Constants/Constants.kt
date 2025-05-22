@@ -24,10 +24,7 @@ object Constants {
     var deviceLocationLat: Double = 0.0
     var deviceLocationLong: Double = 0.0
     var deviceLocation: String = ""
-    var Vehmake: String = ""
-    var Vehmodel: String = ""
-    var Vehyear: String = ""
-    var VehColor: String = ""
-    var EngineChassis: String = ""
+    var vehicleID: String = ""
+
 }
 

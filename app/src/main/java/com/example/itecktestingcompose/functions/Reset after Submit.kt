@@ -15,10 +15,6 @@ fun resetAllData() {
         mobileLocationLong = 0.0
         deviceLocation = ""
         cust_Contact = ""
-        Vehmake = ""
-        Vehmodel = ""
-        Vehyear = ""
-        VehColor = ""
-        EngineChassis = ""
+        vehicleID=""
     }
 }

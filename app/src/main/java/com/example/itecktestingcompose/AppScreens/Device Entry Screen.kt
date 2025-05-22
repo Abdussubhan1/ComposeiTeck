@@ -7,21 +7,28 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
@@ -30,6 +37,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -66,9 +74,9 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import kotlinx.coroutines.launch
-import androidx.core.content.edit
 import com.example.itecktestingcompose.APIFunctions.VehicleValidationResult
 import com.example.itecktestingcompose.APIFunctions.getVehicleDetails
+import com.example.itecktestingcompose.ModelClasses.VehData
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
@@ -103,16 +111,17 @@ fun DeviceEntryScreen(
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
     var isEnabled by remember { mutableStateOf(true) }
-    var isEngineEnabled by remember { mutableStateOf(true) }
     var testingStart by remember { mutableStateOf(false) }
-    var showTicket by rememberSaveable { mutableStateOf(false) }
+    var showVehicleCards by rememberSaveable { mutableStateOf(false) }
+    var enableDeviceNumberEntry by remember { mutableStateOf(false) }
 
     var VehicleDetailsResult by remember {
         mutableStateOf(
             VehicleValidationResult(
                 false,
                 "",
-                emptyList()
+                data = emptyList(),
+                false
             )
         )
     }
@@ -237,7 +246,7 @@ fun DeviceEntryScreen(
                             vehicleEngineChassis,
                             "Engine/Chassis",
                             onValueChange = { vehicleEngineChassis = it },
-                            isEngineEnabled,
+                            true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                         )
 
@@ -250,19 +259,20 @@ fun DeviceEntryScreen(
                             .background(Color(0XFF39B54A)) // Green search
                             .clickable(enabled = vehicleEngineChassis != "") {
                                 keyboard?.hide()
+                                VehicleDetailsResult = VehicleValidationResult(
+                                    false,
+                                    "",
+                                    data = emptyList(),
+                                    true
+                                )
+
                                 couroutineScope.launch {
-                                    VehicleDetailsResult = getVehicleDetails(vehicleEngineChassis)
+                                    VehicleDetailsResult =
+                                        getVehicleDetails(vehicleEngineChassis)
 
                                     if (VehicleDetailsResult.ifDetailsExist) {
 
-                                        showTicket = true
-
-                                        Constants.EngineChassis = vehicleEngineChassis
-                                        Constants.Vehmake = VehicleDetailsResult.data[0].MAKE
-                                        Constants.Vehmodel = VehicleDetailsResult.data[0].MODEL
-                                        Constants.VehColor = VehicleDetailsResult.data[0].COLOR
-                                        Constants.Vehyear = VehicleDetailsResult.data[0].YEAR
-
+                                        showVehicleCards = true
 
                                         Toast.makeText(
                                             context,
@@ -270,7 +280,7 @@ fun DeviceEntryScreen(
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
-                                        showTicket = false
+                                        showVehicleCards = false
                                         testingStart = false
                                         Toast.makeText(
                                             context,
@@ -299,7 +309,7 @@ fun DeviceEntryScreen(
                             devID,
                             "Device Number",
                             onValueChange = { devID = it },
-                            showTicket,
+                            enableDeviceNumberEntry,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
 
@@ -310,11 +320,11 @@ fun DeviceEntryScreen(
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(
-                                if (showTicket) Color(
+                                if (enableDeviceNumberEntry) Color(
                                     0XFF39B54A
                                 ) else Color.Gray
                             ) // Green search
-                            .clickable(enabled = (devID != "" && showTicket)) {
+                            .clickable(enabled = (devID != "" && showVehicleCards)) {
                                 keyboard?.hide()
                                 validationResult = DevValidationResult(
                                     ifDeviceExist = false,
@@ -357,80 +367,33 @@ fun DeviceEntryScreen(
                 }
             }
         }
-
-        if (showTicket) {
-            Card(
+        Spacer(modifier = Modifier.height(12.dp))
+        if (showVehicleCards) {
+            Box(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, Color(0xFF90A4AE)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF102027)) // darker background for contrast
+                    .fillMaxWidth()
+                    .height(370.dp)
+                    .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
+                    .padding(10.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = "Vehicle Details",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFBBDEFB),
-                        modifier = Modifier
-                            .padding(bottom = 12.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    val textStyle = TextStyle(
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFFAFAFA),
-                        textAlign = TextAlign.Start
-                    )
-
-                    val values = listOf(
-                        "Make" to Constants.Vehmake,
-                        "Model" to Constants.Vehmodel,
-                        "Color" to Constants.VehColor,
-                        "Year" to Constants.Vehyear
-                    )
-
-                    values.forEach { (label, value) ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                                .background(Color(0xFF263238), RoundedCornerShape(10.dp))
-                                .padding(horizontal = 12.dp, vertical = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "$label:",
-                                style = textStyle,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text(
-                                text = value,
-                                style = textStyle.copy(
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color(0xFF80D8FF)
-                                ),
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.End
-                            )
-                        }
-                    }
-                }
+                VehicleListScreen(
+                    vehicleList = VehicleDetailsResult.data,
+                    onSelectionChanged = { isSelected, vehicleID ->
+                        enableDeviceNumberEntry = isSelected
+                        Constants.vehicleID = vehicleID ?: ""
+                    })
             }
 
         }
+        if (VehicleDetailsResult.isLoading) {
+            CircularProgressIndicator(
+                color = Color.Green,
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp
+            )
+        }
 
-
-
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Button
         Button(
@@ -456,6 +419,8 @@ fun DeviceEntryScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         BottomLogo()
+
+
     }
 }
 
@@ -487,11 +452,90 @@ fun CustomTextField(
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color(0XFF000000),
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledContainerColor = Color.Gray
         ),
         keyboardOptions = keyboardOptions,
         singleLine = true
     )
+}
+
+
+@Composable
+fun VehicleCard(
+    vehicle: VehData,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (isSelected) Color(0xFF90A4AE) else Color(0xFF102027)
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, Color(0xFF90A4AE)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "${vehicle.MAKE} ${vehicle.MODEL}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                Text(text = "Color: ${vehicle.COLOR}", color = Color.White)
+                Text(text = "Engine: ${vehicle.ENGINE}", color = Color.White)
+                Text(text = "Chassis: ${vehicle.CHASSIS}", color = Color.White)
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(16.dp)
+                    .background(
+                        color = if (isSelected) Color(0xFF39B54A) else Color.Transparent,
+                        shape = CircleShape
+                    )
+                    .border(
+                        width = 2.dp,
+                        color = if (isSelected) Color.White else Color.Gray,
+                        shape = CircleShape
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun VehicleListScreen(
+    vehicleList: List<VehData>,
+    onSelectionChanged: (Boolean, String?) -> Unit
+) {
+    var selectedVehicle by rememberSaveable { mutableStateOf<VehData?>(null) }
+
+    LazyColumn {
+        items(vehicleList) { vehicle ->
+            VehicleCard(
+                vehicle = vehicle,
+                isSelected = vehicle == selectedVehicle,
+                onClick = {
+                    val isSame = vehicle == selectedVehicle
+                    selectedVehicle = if (isSame) null else vehicle
+                    onSelectionChanged(!isSame, if (!isSame) vehicle.V_ID else null)
+                }
+            )
+        }
+    }
 }
 
 
