@@ -368,6 +368,13 @@ fun DeviceEntryScreen(
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
+        if (VehicleDetailsResult.isLoading) {
+            CircularProgressIndicator(
+                color = Color.Green,
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp
+            )
+        }
         if (showVehicleCards) {
             Box(
                 modifier = Modifier
@@ -384,13 +391,6 @@ fun DeviceEntryScreen(
                     })
             }
 
-        }
-        if (VehicleDetailsResult.isLoading) {
-            CircularProgressIndicator(
-                color = Color.Green,
-                modifier = Modifier.size(24.dp),
-                strokeWidth = 2.dp
-            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
