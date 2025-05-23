@@ -6,7 +6,8 @@ data class ValidateCnicResponse(
     val Success: Boolean,
     val Id: Int,
     val otp:String,
-    val AppLoginid:String
+    val AppLoginid:String,
+    val T_ID:Int
 
 
 )

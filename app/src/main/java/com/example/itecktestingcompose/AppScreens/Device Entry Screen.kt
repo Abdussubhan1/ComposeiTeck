@@ -74,11 +74,11 @@ import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import kotlinx.coroutines.launch
-import com.example.itecktestingcompose.APIFunctions.VehicleValidationResult
 import com.example.itecktestingcompose.APIFunctions.getVehicleDetails
 import com.example.itecktestingcompose.ModelClasses.VehData
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
+import com.example.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 
 
@@ -107,26 +107,20 @@ fun DeviceEntryScreen(
         )
     }
 
-
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
     var isEnabled by remember { mutableStateOf(true) }
     var testingStart by remember { mutableStateOf(false) }
     var showVehicleCards by rememberSaveable { mutableStateOf(false) }
     var enableDeviceNumberEntry by remember { mutableStateOf(false) }
-
-    var VehicleDetailsResult by remember {
-        mutableStateOf(
-            VehicleValidationResult(
-                ifDetailsExist = false,
-                message = "",
-                data = emptyList(),
-                isLoading = false
-            )
-        )
-    }
+    var vehList by remember { mutableStateOf(emptyList<VehData>()) }
+    var success by remember { mutableStateOf(false) }
 
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
+
+    LaunchedEffect(Unit) {
+        success = getVehicleDetails("")
+    }
 
     Column(
         modifier = Modifier
@@ -219,6 +213,7 @@ fun DeviceEntryScreen(
                     prefs.setUserCNIC(cnic = "")
                     prefs.setTechnicianName(name = "")
                     prefs.setAppLoginID(id = "")
+                    prefs.setTechnicianID(T_ID=0)
 
                     Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                     navController.navigate("login") {
@@ -226,7 +221,6 @@ fun DeviceEntryScreen(
                     }
                 }
             }
-
 
         }
         Spacer(modifier = Modifier.height(40.dp))
@@ -256,40 +250,27 @@ fun DeviceEntryScreen(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(Color(0XFF39B54A)) // Green search
-                            .clickable(enabled = vehicleEngineChassis != "") {
+                            .background(if (vehicleEngineChassis.length >= 3) Color(0XFF39B54A) else Color.Gray) // Green search
+                            .clickable(enabled = vehicleEngineChassis.length >= 3) {
                                 keyboard?.hide()
-                                VehicleDetailsResult = VehicleValidationResult(
-                                    false,
-                                    "",
-                                    data = emptyList(),
-                                    true
-                                )
-
-                                couroutineScope.launch {
-                                    VehicleDetailsResult =
-                                        getVehicleDetails(vehicleEngineChassis)
-
-                                    if (VehicleDetailsResult.ifDetailsExist) {
-
-                                        showVehicleCards = true //This will enable the list view
-
-                                        Toast.makeText(
-                                            context,
-                                            "Vehicle Details Found Successfully",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                if (success) {
+                                    vehList = searchInMemory(vehicleEngineChassis)
+                                    if (vehList.isNotEmpty()) {
+                                        showVehicleCards = true
                                     } else {
-                                        showVehicleCards = false
-                                        testingStart = false
                                         Toast.makeText(
                                             context,
-                                            VehicleDetailsResult.message,
+                                            "Vehicle Not Found",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                        showVehicleCards = false
                                     }
-                                }
-
+                                } else
+                                    Toast.makeText(
+                                        context,
+                                        "Something went wrong",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -320,11 +301,11 @@ fun DeviceEntryScreen(
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(
-                                if (enableDeviceNumberEntry) Color(
+                                if (enableDeviceNumberEntry && devID.length >= 4) Color(
                                     0XFF39B54A
                                 ) else Color.Gray
                             ) // Green search
-                            .clickable(enabled = (devID != "" && showVehicleCards)) {
+                            .clickable(enabled = (devID.length >= 4 && showVehicleCards)) {
                                 keyboard?.hide()
                                 validationResult = DevValidationResult(
                                     ifDeviceExist = false,
@@ -368,13 +349,7 @@ fun DeviceEntryScreen(
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
-        if (VehicleDetailsResult.isLoading) {
-            CircularProgressIndicator(
-                color = Color.Green,
-                modifier = Modifier.size(24.dp),
-                strokeWidth = 2.dp
-            )
-        }
+
         if (showVehicleCards) {
             Box(
                 modifier = Modifier
@@ -383,12 +358,12 @@ fun DeviceEntryScreen(
                     .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
                     .padding(10.dp)
             ) {
-                    VehicleListScreen(
-                        vehicleList = VehicleDetailsResult.data,
-                        onSelectionChanged = { isSelected, vehicleID ->
-                            enableDeviceNumberEntry = isSelected
-                            Constants.vehicleID = vehicleID ?: ""
-                        })
+                VehicleListScreen(
+                    vehicleList = vehList,
+                    onSelectionChanged = { isSelected, vehicleID ->
+                        enableDeviceNumberEntry = isSelected
+                        Constants.vehicleID = vehicleID ?: ""
+                    })
             }
 
         }
@@ -522,7 +497,7 @@ fun VehicleListScreen(
     vehicleList: List<VehData>,
     onSelectionChanged: (Boolean, String?) -> Unit
 ) {
-    var selectedVehicle by rememberSaveable { mutableStateOf<VehData?>(null) }
+    var selectedVehicle by remember { mutableStateOf<VehData?>(null) }
 
     LazyColumn {
         items(vehicleList) { vehicle ->
@@ -530,12 +505,23 @@ fun VehicleListScreen(
                 vehicle = vehicle,
                 isSelected = vehicle == selectedVehicle,
                 onClick = {
-                    val isSame = vehicle == selectedVehicle
+                    val isSame =
+                        vehicle == selectedVehicle // isSame is true if the same vehicle is selected
                     selectedVehicle = if (isSame) null else vehicle //toggle selection
-                    onSelectionChanged(!isSame, if (!isSame) vehicle.V_ID else null) //Passes vehicle.V_ID if selected, or null if deselected.
+                    onSelectionChanged(
+                        !isSame,
+                        if (!isSame) vehicle.V_ID else null
+                    ) //Passes vehicle.V_ID if selected, or null if deselected.
                 }
             )
         }
+    }
+}
+
+fun searchInMemory(keyword: String): List<VehData> {
+    return vehicle_details.dataList.filter { data ->
+        data.CHASSIS.contains(keyword, ignoreCase = true) ||
+                data.ENGINE.contains(keyword, ignoreCase = true)
     }
 }
 

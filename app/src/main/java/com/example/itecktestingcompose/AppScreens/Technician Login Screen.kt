@@ -161,7 +161,6 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                                 )
 
                                 if (validationResult.ifUserExist) {
-                                    prefs.setTechnicianName(validationResult.technicianName) //Saving Technician Name in Shared Prefs
 
                                     navController.navigate("OTP Screen")
 

@@ -172,6 +172,8 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 delay(500) // Wait for animation to finish
                 prefs.setUserCNIC(cnic = "")
                 prefs.setTechnicianName(name = "")
+                prefs.setAppLoginID(id = "")
+                prefs.setTechnicianID(T_ID=0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
                     popUpTo("initialPicturesScreen") { inclusive = true }

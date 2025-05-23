@@ -37,8 +37,9 @@ suspend fun validateCnic(
             val responseBody = response.body()!!
             ifUserExist = responseBody.Success
             if (ifUserExist) {
-                name = responseBody.Name
+                Constants.TechnicianName = responseBody.Name
                 Constants.appLoginID = responseBody.AppLoginid
+                Constants.technicianID=responseBody.T_ID
                 Constants.otp = responseBody.otp
             }
             return CNICValidationResult(ifUserExist, false, name)

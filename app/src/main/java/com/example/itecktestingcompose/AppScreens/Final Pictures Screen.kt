@@ -177,6 +177,8 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                 delay(500) // Wait for animation to finish
                 prefs.setUserCNIC(cnic = "")
                 prefs.setTechnicianName(name = "")
+                prefs.setAppLoginID(id = "")
+                prefs.setTechnicianID(T_ID = 0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
                     popUpTo("finalPicturesScreen") { inclusive = true }
@@ -621,7 +623,8 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                                 notificationManager.notify(0, notificationBuilder.build())
 
 
-                            }
+                            } else
+                                Toast.makeText(current, "Something went wrong!", Toast.LENGTH_SHORT).show()
                         }
                     },
                     elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),

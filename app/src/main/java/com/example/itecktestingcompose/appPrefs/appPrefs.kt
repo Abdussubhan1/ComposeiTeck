@@ -2,8 +2,6 @@ package com.example.itecktestingcompose.appPrefs
 
 import android.content.Context
 import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab.PhotosTab
-import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab.PhotosTab.value
 import androidx.core.content.edit
 
 class PreferenceManager(context: Context) {
@@ -71,6 +69,15 @@ class PreferenceManager(context: Context) {
 
     fun getFCM(): String {
         return sharedPref.getString("FCM", "") ?: ""
+    }
+
+    fun setTechnicianID(T_ID: Int) {
+        Log.d("PreferenceManager", "setTechnicianID called with id: $T_ID")
+        sharedPref.edit { putInt("TechnicianID", T_ID) }
+    }
+
+    fun getTechnicianID(): Int {
+        return sharedPref.getInt("TechnicianID", 0)
     }
 
 }

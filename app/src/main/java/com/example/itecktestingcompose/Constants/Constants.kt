@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 object Constants {
 
+    var TechnicianName: String = ""
     var otp: String = ""
     var cust_Contact: String = ""
     var cnic: String = ""
@@ -25,8 +26,7 @@ object Constants {
     var deviceLocationLong: Double = 0.0
     var deviceLocation: String = ""
     var vehicleID: String = ""
-
-
+    var technicianID: Int = 0
 }
 
 

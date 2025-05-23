@@ -4,54 +4,25 @@ import android.util.Log
 
 import com.example.itecktestingcompose.Interface.RetrofitInterface
 import com.example.itecktestingcompose.Interface.ServiceBuilder
-import com.example.itecktestingcompose.ModelClasses.VehData
+import com.example.itecktestingcompose.objects.vehicle_details
 
-data class VehicleValidationResult(
-    val ifDetailsExist: Boolean,
-    var message: String,
-    var data: List<VehData>,
-    var isLoading: Boolean
-)
-
-
-suspend fun getVehicleDetails(
-    vehicleEngineChassis: String
-): VehicleValidationResult {
-
-    var data: List<VehData> = emptyList()
-    var message = "Vehicle Not Found"
-    var ifDetailsExist = false
-
+suspend fun getVehicleDetails(vehicleEngineChassis: String): Boolean {
     return try {
-
-
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
             .getVehicleDetails(vehicleEngineChassis)
 
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            ifDetailsExist = responseBody.Success
-            message = responseBody.Message
-            if (ifDetailsExist) {
-                data = responseBody.Data
+        if (response.isSuccessful) {
+            response.body()?.let { responseBody ->
+                if (responseBody.Success) {
+                    vehicle_details.dataList = responseBody.Data
+                    return true
+                }
             }
-            return VehicleValidationResult(ifDetailsExist, message, data,false)
-        } else
-            VehicleValidationResult(
-                ifDetailsExist,
-                message,
-                data,
-                false
-            )
-
+        }
+        false
     } catch (e: Exception) {
-        Log.d("cnicV", "Exception: $e")
-        VehicleValidationResult(
-            ifDetailsExist,
-            message,
-            data,
-            false
-        )
+        Log.d("cnicV", "Exception: ${e.localizedMessage ?: e}")
+        false
     }
-
 }
+
