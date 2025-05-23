@@ -37,6 +37,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.example.itecktestingcompose.functions.resetAllData
 
 
 @Composable
@@ -100,7 +101,7 @@ fun AllahHafiz(navController: NavHostController) {
                         inclusive = true
                     }
                 }
-            },
+                resetAllData()},
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
             shape = RoundedCornerShape(12.dp)
         ) {

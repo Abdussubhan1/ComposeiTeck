@@ -118,10 +118,10 @@ fun DeviceEntryScreen(
     var VehicleDetailsResult by remember {
         mutableStateOf(
             VehicleValidationResult(
-                false,
-                "",
+                ifDetailsExist = false,
+                message = "",
                 data = emptyList(),
-                false
+                isLoading = false
             )
         )
     }
@@ -272,7 +272,7 @@ fun DeviceEntryScreen(
 
                                     if (VehicleDetailsResult.ifDetailsExist) {
 
-                                        showVehicleCards = true
+                                        showVehicleCards = true //This will enable the list view
 
                                         Toast.makeText(
                                             context,
@@ -383,12 +383,12 @@ fun DeviceEntryScreen(
                     .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
                     .padding(10.dp)
             ) {
-                VehicleListScreen(
-                    vehicleList = VehicleDetailsResult.data,
-                    onSelectionChanged = { isSelected, vehicleID ->
-                        enableDeviceNumberEntry = isSelected
-                        Constants.vehicleID = vehicleID ?: ""
-                    })
+                    VehicleListScreen(
+                        vehicleList = VehicleDetailsResult.data,
+                        onSelectionChanged = { isSelected, vehicleID ->
+                            enableDeviceNumberEntry = isSelected
+                            Constants.vehicleID = vehicleID ?: ""
+                        })
             }
 
         }
@@ -531,8 +531,8 @@ fun VehicleListScreen(
                 isSelected = vehicle == selectedVehicle,
                 onClick = {
                     val isSame = vehicle == selectedVehicle
-                    selectedVehicle = if (isSame) null else vehicle
-                    onSelectionChanged(!isSame, if (!isSame) vehicle.V_ID else null)
+                    selectedVehicle = if (isSame) null else vehicle //toggle selection
+                    onSelectionChanged(!isSame, if (!isSame) vehicle.V_ID else null) //Passes vehicle.V_ID if selected, or null if deselected.
                 }
             )
         }
