@@ -12,7 +12,6 @@ object Constants {
     var cnic: String = ""
     var appLoginID: String = ""
     var appVersion: String = ""
-    var model: String = ""
     var brand: String = ""
     var mobileID: String = ""
     var osVersion: String = ""
@@ -27,6 +26,7 @@ object Constants {
     var deviceLocation: String = ""
     var vehicleID: String = ""
     var technicianID: Int = 0
+    var authKey:String=""
 }
 
 

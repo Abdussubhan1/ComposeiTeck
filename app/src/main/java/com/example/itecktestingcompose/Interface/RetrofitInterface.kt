@@ -16,6 +16,7 @@ import com.example.itecktestingcompose.ModelClasses.postDataResponse
 import com.example.itecktestingcompose.ModelClasses.technicianLocation
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -114,9 +115,13 @@ interface RetrofitInterface {
 
 
 object ServiceBuilder {
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor())
+        .build()
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(Constants.baseURL)
+        .client(client)
         .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
         .build()
 

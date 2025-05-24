@@ -40,6 +40,7 @@ suspend fun validateCnic(
                 Constants.TechnicianName = responseBody.Name
                 Constants.appLoginID = responseBody.AppLoginid
                 Constants.technicianID=responseBody.T_ID
+                Constants.authKey=responseBody.Authkey
                 Constants.otp = responseBody.otp
             }
             return CNICValidationResult(ifUserExist, false, name)

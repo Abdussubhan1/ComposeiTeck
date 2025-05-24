@@ -17,7 +17,7 @@ fun getDeviceInfo(context: Context) {
     Constants.mobileID = deviceId
     Constants.osVersion = osVersion
     Constants.brand = brand
-    Constants.model = model
+
 
     Log.d("Dinfo", "DEVICEID: $deviceId")
     Log.d("Dinfo", "OSVERSION: $osVersion")

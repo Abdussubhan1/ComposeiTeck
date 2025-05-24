@@ -7,7 +7,8 @@ data class ValidateCnicResponse(
     val Id: Int,
     val otp:String,
     val AppLoginid:String,
-    val T_ID:Int
+    val T_ID:Int,
+    val Authkey:String
 
 
 )

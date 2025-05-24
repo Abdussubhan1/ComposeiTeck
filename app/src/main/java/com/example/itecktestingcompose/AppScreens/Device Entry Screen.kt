@@ -63,6 +63,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -149,10 +150,13 @@ fun DeviceEntryScreen(
                     Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        name,
+                        text = name,
                         color = Color(0XFF39B54A),
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(.6f),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
 
@@ -354,7 +358,7 @@ fun DeviceEntryScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(370.dp)
+                    .fillMaxHeight(0.70f)
                     .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
                     .padding(10.dp)
             ) {
