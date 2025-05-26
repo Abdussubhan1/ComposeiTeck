@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.APIFunctions.CNICValidationResult
@@ -142,6 +141,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                     val isLocationEnabled =
                         locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
                     if (isInternetAvailable(context)) {
                         if (isLocationEnabled) {
                             validationResult = CNICValidationResult(

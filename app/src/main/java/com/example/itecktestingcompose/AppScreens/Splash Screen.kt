@@ -1,7 +1,7 @@
 package com.example.itecktestingcompose.AppScreens
 
 
-import android.content.Context
+
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.itecktestingcompose.APIFunctions.FCMUpdate
-import com.example.itecktestingcompose.Constants.Constants
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun SplashScreen(
