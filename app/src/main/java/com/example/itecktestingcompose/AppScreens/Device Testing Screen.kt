@@ -2,6 +2,7 @@ package com.example.itecktestingcompose.AppScreens
 
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -162,7 +163,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                 prefs.setUserCNIC(cnic = "")
                 prefs.setTechnicianName(name = "")
                 prefs.setAppLoginID(id = "")
-                prefs.setTechnicianID(T_ID=0)
+                prefs.setTechnicianID(T_ID = 0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
                     popUpTo("testingPage") { inclusive = true }
@@ -386,9 +387,11 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
-                    color = if (locResult in 1.00..100.00) Color(0XFF39B54A)
-                    else if ((locResult > 100.00) && !deviceLocationResult.isLoading) Color.Red
-                    else Color.LightGray,
+                    color = when {
+                        locResult in 1.00..100.00 -> Color(0xFF39B54A) // Green
+                        locResult in 101.00..100000.00 && !deviceLocationResult.isLoading -> Color.Red
+                        else -> Color.LightGray
+                    },
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -552,7 +555,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
             }
 
             // RELAY Wali Row
-            if (obdType == "NA") {
+            if (obdType == "Non OBD") {
 
                 var relayProgress by remember { mutableFloatStateOf(0.0f) }
                 var timerStarted by remember { mutableStateOf(false) }
@@ -643,8 +646,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                                     }
                                 }
                         )
-                    }
-                    else
+                    } else
                         Spacer(modifier = Modifier.width(24.dp))
                 }
             }
@@ -652,7 +654,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
         }
         Spacer(modifier = Modifier.height(5.dp))
-        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading || relayResult.isLoading|| startTimer) {
+        if (deviceLocationResult.isLoading || batteryResult.isLoading || ignitionResult.isLoading || relayResult.isLoading || startTimer) {
             Text(
                 "Please Wait..",
                 modifier = Modifier.fillMaxWidth(),
@@ -704,7 +706,7 @@ fun DropdownField(
     selectedOption: String,
     onOptionSelected: (String) -> Unit
 ) {
-    val options = listOf("NA", "OBD", "OBD With Wires")
+    val options = listOf("Non OBD", "OBD", "OBD With Wires")
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -743,6 +745,15 @@ fun DropdownField(
                     text = { Text(selectionOption) },
                     onClick = {
                         onOptionSelected(selectionOption)
+                        Constants.immobilizer = when (selectionOption) {
+                            "Non OBD" -> 1
+                            else -> 0
+                        }
+                        Constants.installedDeviceType = when (selectionOption) {
+                            "OBD" -> 1
+                            "OBD With Wires" -> 2
+                            else -> 0
+                        }
                         expanded = false
                     }
                 )

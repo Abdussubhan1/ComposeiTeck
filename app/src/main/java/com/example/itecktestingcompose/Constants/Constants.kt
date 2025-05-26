@@ -27,6 +27,8 @@ object Constants {
     var vehicleID: String = ""
     var technicianID: Int = 0
     var authKey:String=""
+    var installedDeviceType:Int=0
+    var immobilizer:Int=0
 }
 
 

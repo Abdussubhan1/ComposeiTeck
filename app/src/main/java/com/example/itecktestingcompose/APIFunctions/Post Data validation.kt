@@ -35,8 +35,6 @@ suspend fun submitData(
     appLoginID: String,
     images: ArrayList<Bitmap?>
 ): Boolean {
-    var message = false
-
     return try {
         val imageParts = images.mapIndexedNotNull { index, bitmap ->
             convertBitmapToMultipart(bitmap, index)
@@ -52,15 +50,11 @@ suspend fun submitData(
                 imageParts
             )
 
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            message = responseBody.Success
-        }
-
-        message
+        response.isSuccessful && response.body()?.Success == true
     } catch (e: Exception) {
-        Log.d("cnicV", "Exception: $e")
-        message
+        Log.e("submitData", "Exception: ${e.localizedMessage}", e)
+        false
     }
 }
+
 
