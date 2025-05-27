@@ -5,15 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.AppScreens.AllahHafiz
-import com.example.itecktestingcompose.AppScreens.DeviceEntryScreen
-import com.example.itecktestingcompose.AppScreens.FinalPicturesScreen
-import com.example.itecktestingcompose.AppScreens.LoginScreen
-import com.example.itecktestingcompose.AppScreens.NotificationScreen
-import com.example.itecktestingcompose.AppScreens.OTPScreen
-import com.example.itecktestingcompose.AppScreens.SplashScreen
-import com.example.itecktestingcompose.AppScreens.TestingPage
-import com.example.itecktestingcompose.AppScreens.initialPicTake
+import com.example.itecktestingcompose.appScreens.AllahHafiz
+import com.example.itecktestingcompose.appScreens.DeviceEntryScreen
+import com.example.itecktestingcompose.appScreens.FinalPicturesScreen
+import com.example.itecktestingcompose.appScreens.LoginScreen
+import com.example.itecktestingcompose.appScreens.NotificationScreen
+import com.example.itecktestingcompose.appScreens.OTPScreen
+import com.example.itecktestingcompose.appScreens.SplashScreen
+import com.example.itecktestingcompose.appScreens.TestingPage
+import com.example.itecktestingcompose.appScreens.initialPicTake
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 

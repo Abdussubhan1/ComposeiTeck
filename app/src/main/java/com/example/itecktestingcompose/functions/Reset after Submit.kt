@@ -1,7 +1,7 @@
 package com.example.itecktestingcompose.functions
 
 import androidx.compose.runtime.mutableStateListOf
-import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.constants.Constants
 
 
 fun resetAllData() {

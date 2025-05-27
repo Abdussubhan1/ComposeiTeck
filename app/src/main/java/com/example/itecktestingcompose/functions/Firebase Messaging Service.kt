@@ -14,8 +14,8 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.example.itecktestingcompose.APIFunctions.sendTechnicalLocation
-import com.example.itecktestingcompose.Mainactivity.MainActivity
+import com.example.itecktestingcompose.apiFunctions.sendTechnicalLocation
+import com.example.itecktestingcompose.mainActivity.MainActivity
 import com.example.itecktestingcompose.R
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.messaging.RemoteMessage

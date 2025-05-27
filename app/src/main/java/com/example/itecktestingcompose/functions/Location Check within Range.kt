@@ -2,7 +2,7 @@ package com.example.itecktestingcompose.functions
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.example.itecktestingcompose.Constants.Constants
+import com.example.itecktestingcompose.constants.Constants
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
