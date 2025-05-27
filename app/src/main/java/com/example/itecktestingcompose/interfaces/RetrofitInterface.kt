@@ -109,23 +109,6 @@ interface RetrofitInterface {
         @Field("devid") devID: String,
         @Field("cmd") cmd: String
     ): Response<cmdQueueCheck>
-
-
 }
 
 
-object ServiceBuilder {
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(AuthInterceptor())
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(Constants.baseURL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-        .build()
-
-    fun <T> buildService(service: Class<T>): T {
-        return retrofit.create(service)
-    }
-}

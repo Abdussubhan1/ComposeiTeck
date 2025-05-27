@@ -1,7 +1,7 @@
 package com.example.itecktestingcompose.apiFunctions
 
 import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.interfaces.ServiceBuilder
+import com.example.itecktestingcompose.objects.ServiceBuilder
 
 data class relayResponse(
     var success: Boolean,

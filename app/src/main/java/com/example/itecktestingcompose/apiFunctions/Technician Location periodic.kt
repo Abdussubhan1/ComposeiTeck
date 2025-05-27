@@ -2,9 +2,7 @@ package com.example.itecktestingcompose.apiFunctions
 
 import android.util.Log
 import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.interfaces.ServiceBuilder
-
-
+import com.example.itecktestingcompose.objects.ServiceBuilder
 
 
 suspend fun sendTechnicalLocation(
