@@ -1,6 +1,6 @@
 package com.example.itecktestingcompose.interfaces
 
-import com.example.itecktestingcompose.constants.Constants
+
 import com.example.itecktestingcompose.modelClasses.Battery
 import com.example.itecktestingcompose.modelClasses.GetLocation
 import com.example.itecktestingcompose.modelClasses.GetRelay
@@ -14,13 +14,9 @@ import com.example.itecktestingcompose.modelClasses.VehicleDetails
 import com.example.itecktestingcompose.modelClasses.cmdQueueCheck
 import com.example.itecktestingcompose.modelClasses.postDataResponse
 import com.example.itecktestingcompose.modelClasses.technicianLocation
-import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Multipart

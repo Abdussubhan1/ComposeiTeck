@@ -2,7 +2,9 @@ package com.example.itecktestingcompose.appScreens
 
 
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +40,8 @@ import com.example.itecktestingcompose.appPrefs.PreferenceManager
 fun SplashScreen(
     navController: NavHostController,
     version: String,
-    prefs: PreferenceManager
+    prefs: PreferenceManager,
+    context: Context
 ) {
 
     LaunchedEffect(Unit) {
@@ -56,6 +59,7 @@ fun SplashScreen(
                 navController.navigate("login") {
                     popUpTo("splash") { inclusive = true }
                 }
+                Toast.makeText(context,"No Network Connection",Toast.LENGTH_SHORT).show()
             }
 
         } else {

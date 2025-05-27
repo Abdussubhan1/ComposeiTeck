@@ -26,7 +26,7 @@ fun AppNavigation( context: Context, prefs: PreferenceManager) {
     NavHost(navController = navController, startDestination = "splash")
 
     {
-        composable("splash") { SplashScreen(navController, version, prefs) }
+        composable("splash") { SplashScreen(navController, version, prefs,context) }
         composable("login") { LoginScreen(context, navController, prefs) }
         composable("OTP Screen") { OTPScreen(context, navController, prefs) }
         composable("NotificationScreen") { NotificationScreen(navController,prefs) }

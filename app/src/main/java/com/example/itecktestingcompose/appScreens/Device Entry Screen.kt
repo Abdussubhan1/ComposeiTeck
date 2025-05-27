@@ -72,6 +72,7 @@ import kotlinx.coroutines.launch
 import com.example.itecktestingcompose.apiFunctions.getVehicleDetails
 import com.example.itecktestingcompose.modelClasses.VehData
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.example.itecktestingcompose.functions.isInternetAvailable
 import com.example.itecktestingcompose.functions.resetAllData
 import com.example.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
@@ -114,7 +115,7 @@ fun DeviceEntryScreen(
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     LaunchedEffect(Unit) {
-        success = getVehicleDetails("")
+        success = getVehicleDetails("") //Saving all vehicle details in memory
     }
 
     Column(
@@ -211,7 +212,7 @@ fun DeviceEntryScreen(
                     prefs.setUserCNIC(cnic = "")
                     prefs.setTechnicianName(name = "")
                     prefs.setAppLoginID(id = "")
-                    prefs.setTechnicianID(T_ID=0)
+                    prefs.setTechnicianID(T_ID = 0)
 
                     Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                     navController.navigate("login") {
@@ -251,24 +252,32 @@ fun DeviceEntryScreen(
                             .background(if (vehicleEngineChassis.length >= 3) Color(0XFF39B54A) else Color.Gray) // Green search
                             .clickable(enabled = vehicleEngineChassis.length >= 3) {
                                 keyboard?.hide()
-                                if (success) {
-                                    vehList = searchInMemory(vehicleEngineChassis)
-                                    if (vehList.isNotEmpty()) {
-                                        showVehicleCards = true
-                                    } else {
+                                if (isInternetAvailable(context)) {
+                                    if (success) {
+                                        vehList = searchInMemory(vehicleEngineChassis)
+                                        if (vehList.isNotEmpty()) {
+                                            showVehicleCards = true
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Vehicle Not Found",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            showVehicleCards = false
+                                        }
+                                    } else
                                         Toast.makeText(
                                             context,
-                                            "Vehicle Not Found",
+                                            "Something went wrong",
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        showVehicleCards = false
-                                    }
                                 } else
                                     Toast.makeText(
                                         context,
-                                        "Something went wrong",
+                                        "No Internet Connection",
                                         Toast.LENGTH_SHORT
                                     ).show()
+
                             },
                         contentAlignment = Alignment.Center
                     ) {
