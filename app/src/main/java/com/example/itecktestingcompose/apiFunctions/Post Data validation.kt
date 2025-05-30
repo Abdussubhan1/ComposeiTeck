@@ -33,7 +33,13 @@ suspend fun submitData(
     mobileID: String,
     type: Int,
     appLoginID: String,
-    images: ArrayList<Bitmap?>
+    images: ArrayList<Bitmap?>,
+    vehicleID: String,
+    technicianID: Int,
+    obd: Int,
+    immo: Int,
+    customerNumber: String,
+    trackerLocation: Int
 ): Boolean {
     return try {
         val imageParts = images.mapIndexedNotNull { index, bitmap ->
@@ -47,7 +53,13 @@ suspend fun submitData(
                 createPartFromString(mobileID),
                 createPartFromString(type.toString()),
                 createPartFromString(appLoginID),
-                imageParts
+                imageParts,
+                createPartFromString(vehicleID),
+                createPartFromString(cnic),
+                createPartFromString(cnic),
+                createPartFromString(cnic),
+                createPartFromString(cnic),
+                createPartFromString(cnic)
             )
 
         response.isSuccessful && response.body()?.Success == true

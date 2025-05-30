@@ -44,6 +44,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -82,15 +86,21 @@ import com.example.itecktestingcompose.apiFunctions.submitData
 import com.example.itecktestingcompose.constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.apiFunctions.getTrackerInstallLocation
 import com.example.itecktestingcompose.mainActivity.jameelNooriFont
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
+import com.example.itecktestingcompose.modelClasses.TrackerLocation
+import com.example.itecktestingcompose.modelClasses.TrackerLocationItem
+import com.example.itecktestingcompose.objects.deviceInstallationPlaces
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, context: Context) {
-
+    LaunchedEffect(Unit) {
+        getTrackerInstallLocation()
+    }
     HandleDoubleBackToExit()
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
@@ -117,7 +127,8 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
         animationSpec = tween(durationMillis = 500),
         label = "logoutAnimation"
     )
-
+    var isValidLocation by remember { mutableStateOf(false) }
+    var trackerInstallationLocation by remember { mutableStateOf("Select Tracker Installation Location") }
 
     Column(
         modifier = Modifier
@@ -366,7 +377,6 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                             showFinalTicket = true
                             couroutineScope.launch {
                                 statusResult = getStatus(Constants.deviceID)
-                                //todo (API call to here)
                             }
 
                         },
@@ -411,49 +421,71 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                 Constants.cust_Contact = ""
 
             //For customer Contact Number
-            TextField(
-                trailingIcon = {
-                    if (!isValidContact) Icon(
-                        Icons.Default.PhoneAndroid,
-                        contentDescription = null,
-                        tint = Color.Red
-                    ) else Icon(
-                        Icons.Filled.DoneAll,
-                        contentDescription = null,
-                        tint = Color.Green
-                    )
-                },
-                value = custContact, onValueChange = { eachDigit->
-                    custContact = eachDigit
-                },
-                placeholder = {
-                    Text(
-                        "Enter Customer Contact Number",
-                        color = Color.DarkGray,
-                        fontSize = 16.sp,
-                        fontFamily = jameelNooriFont,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp),
-                shape = RoundedCornerShape(50),
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color(0XFF000000),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
+                    .padding(16.dp)
+            ) {
+                TextField(
+                    trailingIcon = {
+                        if (!isValidContact) Icon(
+                            Icons.Default.PhoneAndroid,
+                            contentDescription = null,
+                            tint = Color.Red
+                        ) else Icon(
+                            Icons.Filled.DoneAll,
+                            contentDescription = null,
+                            tint = Color.Green
+                        )
+                    },
+                    value = custContact, onValueChange = { eachDigit ->
+                        custContact = eachDigit
+                    },
+                    placeholder = {
+                        Text(
+                            "Enter Customer Contact Number",
+                            color = Color.DarkGray,
+                            fontSize = 16.sp,
+                            fontFamily = jameelNooriFont,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color(0XFF000000),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
-            )
+                )
+            }
 
+            Spacer(modifier = Modifier.height(12.dp))
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
+                    .padding(16.dp)
+            ) {
 
-            Spacer(modifier = Modifier.height(20.dp))
+                DropdownField_forDeviceInstallationLocation(
+                    options = deviceInstallationPlaces.places,
+                    selectedOption = trackerInstallationLocation,
+                    onOptionSelected = { selected ->
+                        trackerInstallationLocation = selected
+                    }
+                )
+                if (Constants.TLocID!=0)
+                    isValidLocation = true
 
-//todo(Yaha p wo drop down show krwana hai)
-
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -589,7 +621,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
             Spacer(modifier = Modifier.height(10.dp))
 
             //To check the contact number
-            if (isValidContact) {
+            if (isValidContact && isValidLocation) {
                 Button(
                     onClick = {
                         couroutineScope.launch {
@@ -599,7 +631,13 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                                 Constants.deviceID,
                                 1,
                                 prefs.getAppLoginID(),
-                                allPictures
+                                allPictures,
+                                Constants.vehicleID,
+                                prefs.getTechnicianID(),
+                                Constants.installedDeviceType,
+                                Constants.immobilizer,
+                                Constants.cust_Contact,
+                                Constants.TLocID
                             )
 
                             if (submitSuccess) {
@@ -664,6 +702,59 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
     }
 
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownField_forDeviceInstallationLocation(
+    options: List<TrackerLocationItem>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        TextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+                .height(65.dp),
+            shape = RoundedCornerShape(50),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF000000),
+                unfocusedTextColor = Color(0xFF000000),
+                disabledTextColor = Color(0xFF000000),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            }
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item.TLocName) },
+                    onClick = {
+                        onOptionSelected(item.TLocName)
+                        Constants.TLocID = item.TLocId
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
 }
 
 

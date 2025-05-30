@@ -29,6 +29,7 @@ object Constants {
     var authKey:String=""
     var installedDeviceType:Int=0
     var immobilizer:Int=0
+    var TLocID:Int=0
 }
 
 

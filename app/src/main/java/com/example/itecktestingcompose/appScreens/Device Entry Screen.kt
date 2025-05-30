@@ -531,7 +531,7 @@ fun searchInMemory(keyword: String): List<VehData> {
     return vehicle_details.dataList.filter { data ->
         data.CHASSIS.contains(keyword, ignoreCase = true) ||
                 data.ENGINE.contains(keyword, ignoreCase = true)
-    }
+    } //this will match the entered keyword and provide results accordingly in List form
 }
 
 

@@ -82,6 +82,7 @@ import com.example.itecktestingcompose.functions.getLocation
 import com.example.itecktestingcompose.mainActivity.jameelNooriFont
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -101,6 +102,8 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
     var comp by remember { mutableStateOf(false) }
 
     var showDialogueReset by remember { mutableStateOf(false) }
+
+
     HandleDoubleBackToExit()
     Column(
         modifier = Modifier
@@ -182,7 +185,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
-                        DropdownField(
+                        DropdownField_forDeviceTypeSelection(
                             selectedOption = obdType,
                             onOptionSelected = { obdType = it }
                         )
@@ -700,7 +703,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownField(
+fun DropdownField_forDeviceTypeSelection(
     selectedOption: String,
     onOptionSelected: (String) -> Unit
 ) {

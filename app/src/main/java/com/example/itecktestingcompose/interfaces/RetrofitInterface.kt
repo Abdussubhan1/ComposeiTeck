@@ -7,6 +7,7 @@ import com.example.itecktestingcompose.modelClasses.GetRelay
 import com.example.itecktestingcompose.modelClasses.Ignition
 import com.example.itecktestingcompose.modelClasses.NotificationHistory
 import com.example.itecktestingcompose.modelClasses.Status
+import com.example.itecktestingcompose.modelClasses.TrackerLocation
 import com.example.itecktestingcompose.modelClasses.UpdateFCM_API
 import com.example.itecktestingcompose.modelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.modelClasses.ValidateDeviceResponse
@@ -65,7 +66,13 @@ interface RetrofitInterface {
         @Part("dev_id") mobileID: RequestBody,
         @Part("type") type: RequestBody,
         @Part("applogin") appLoginID: RequestBody,
-        @Part images: List<MultipartBody.Part>
+        @Part images: List<MultipartBody.Part>,
+        @Part("V_ID") vehicleID: RequestBody,
+        @Part("TECH_ID") technicianID: RequestBody,
+        @Part("OBD") obd: RequestBody,
+        @Part("IMMOBILIZER") immo: RequestBody,
+        @Part("Customernumber") customerNumber: RequestBody,
+        @Part("TLocID") trackerLocation: RequestBody,
     ): Response<postDataResponse>
 
     @FormUrlEncoded
@@ -105,6 +112,10 @@ interface RetrofitInterface {
         @Field("devid") devID: String,
         @Field("cmd") cmd: String
     ): Response<cmdQueueCheck>
+
+    @FormUrlEncoded
+    @POST("TrackerLocation.php")
+    suspend fun getTrackerInstallLocation(): Response<TrackerLocation>
 }
 
 
