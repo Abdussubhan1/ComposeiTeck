@@ -2,6 +2,7 @@ package com.example.itecktestingcompose.apiFunctions
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.itecktestingcompose.constants.Constants
 import com.example.itecktestingcompose.interfaces.RetrofitInterface
 import com.example.itecktestingcompose.objects.ServiceBuilder
 
@@ -15,6 +16,7 @@ suspend fun FCMUpdate(appID: String,fcm: String): Boolean{
 
             var responseBody = response.body()!!
             if (responseBody.Success) {
+                Constants.authKey=responseBody.Authkey
                 return true
             }
         }
