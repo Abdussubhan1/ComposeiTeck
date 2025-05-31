@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -28,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,6 +70,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
     var statusResult by remember {
         mutableStateOf(
             StatusResult(
+                isLoading = true,
                 GPSTime = "",
                 GSMSignal = 0,
                 Ignition = "",
@@ -83,10 +86,13 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
 
     val couroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {statusResult = getStatus(Constants.deviceID) }
+    LaunchedEffect(Unit) { statusResult = getStatus(Constants.deviceID) }
 
-    Box(modifier = Modifier.fillMaxSize()
-        .background(Color(0xFF122333))) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF122333))
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,8 +105,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
@@ -118,25 +123,34 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                     color = Color(0xFF263238),
                     textAlign = TextAlign.Center
                 )
-
-                listOf(
-                    "Device Number:\n\n${Constants.deviceID}",
-                    "Location:\n\n${statusResult.Location}",
-                    "GPS Time:\n\n${statusResult.GPSTime}",
-                    "Main Power:\n\n${statusResult.PowerVoltages}",
-                    "GSM Signals:\n\n${statusResult.GSMSignal}",
-                    "Ignition:\n\n${statusResult.Ignition}"
-                ).forEach { label ->
-                    Text(
-                        text = label,
-                        style = textStyle,
+                if (statusResult.isLoading) {
+                    CircularProgressIndicator(
                         modifier = Modifier
-                            .padding(vertical = 8.dp, horizontal = 12.dp)
-                            .fillMaxWidth()
-                            .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp))
-                            .padding(12.dp)
+                            .padding(16.dp)
+                            .size(24.dp),
+                        color = Color.Black
                     )
+                } else {
+                    listOf(
+                        "Device Number:\n\n ${Constants.deviceID}",
+                        "Location:\n\n ${statusResult.Location}",
+                        "GPS Time:\n\n${statusResult.GPSTime}",
+                        "Main Power:\n\n${statusResult.PowerVoltages}",
+                        "GSM Signals:\n\n${statusResult.GSMSignal}",
+                        "Ignition:\n\n${statusResult.Ignition}"
+                    ).forEach { label ->
+                        Text(
+                            text = label,
+                            style = textStyle,
+                            modifier = Modifier
+                                .padding(vertical = 8.dp, horizontal = 12.dp)
+                                .fillMaxWidth()
+                                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        )
+                    }
                 }
+
                 Text(
                     text = "Captured Images",
                     fontSize = 22.sp,
@@ -171,9 +185,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                                     .height(180.dp)
                                     .clip(RoundedCornerShape(16.dp))
                                     .border(
-                                        1.dp,
-                                        Color.LightGray,
-                                        RoundedCornerShape(16.dp)
+                                        1.dp, Color.LightGray, RoundedCornerShape(16.dp)
                                     )
                                     .shadow(4.dp, RoundedCornerShape(16.dp))
                             )
@@ -208,9 +220,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                                     .height(180.dp)
                                     .clip(RoundedCornerShape(16.dp))
                                     .border(
-                                        1.dp,
-                                        Color.LightGray,
-                                        RoundedCornerShape(16.dp)
+                                        1.dp, Color.LightGray, RoundedCornerShape(16.dp)
                                     )
                                     .shadow(4.dp, RoundedCornerShape(16.dp))
                             )
@@ -272,9 +282,11 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                                 notificationManager.notify(0, notificationBuilder.build())
 
 
-                            } else
-                                Toast.makeText(current, "Something went wrong!", Toast.LENGTH_SHORT)
-                                    .show()
+                            } else Toast.makeText(
+                                current,
+                                "Something went wrong!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     },
                     elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),

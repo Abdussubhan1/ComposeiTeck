@@ -6,6 +6,7 @@ import com.example.itecktestingcompose.interfaces.RetrofitInterface
 import com.example.itecktestingcompose.objects.ServiceBuilder
 
 data class StatusResult(
+    val isLoading: Boolean,
     val GPSTime: String?,
     val GSMSignal: Int,
     val Ignition: String?,
@@ -37,11 +38,11 @@ var p_voltages=""
             p_voltages= responseBody.PowerVoltages
         }
 
-        StatusResult(gps_time,gsm_Signals,ignition_status,location_status,p_voltages)
+        StatusResult(false,gps_time,gsm_Signals,ignition_status,location_status,p_voltages)
 
 
     } catch (e: Exception) {
         Log.d(TAG, "validateDevice: $e")
-        StatusResult(gps_time,gsm_Signals,ignition_status,location_status,p_voltages)
+        StatusResult(false,gps_time,gsm_Signals,ignition_status,location_status,p_voltages)
     }
 }
