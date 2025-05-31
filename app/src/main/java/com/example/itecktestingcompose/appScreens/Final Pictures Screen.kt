@@ -44,7 +44,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -54,7 +53,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,8 +70,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.apiFunctions.StatusResult
-import com.example.itecktestingcompose.apiFunctions.getStatus
 import com.example.itecktestingcompose.constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
@@ -84,7 +80,6 @@ import com.example.itecktestingcompose.interfaces.RetrofitInterface
 import com.example.itecktestingcompose.modelClasses.TrackerLocationItem
 import com.example.itecktestingcompose.objects.ServiceBuilder
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @Composable
