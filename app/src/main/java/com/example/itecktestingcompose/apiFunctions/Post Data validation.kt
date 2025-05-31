@@ -55,14 +55,19 @@ suspend fun submitData(
                 createPartFromString(appLoginID),
                 imageParts,
                 createPartFromString(vehicleID),
-                createPartFromString(cnic),
-                createPartFromString(cnic),
-                createPartFromString(cnic),
-                createPartFromString(cnic),
-                createPartFromString(cnic)
+                createPartFromString(technicianID.toString()),
+                createPartFromString(obd.toString()),
+                createPartFromString(immo.toString()),
+                createPartFromString(customerNumber),
+                createPartFromString(trackerLocation.toString())
             )
+        if (!response.isSuccessful) {
+            Log.e("submitData", "API Error: ${response.code()} ${response.errorBody()?.string()}")
+        }
 
         response.isSuccessful && response.body()?.Success == true
+
+
     } catch (e: Exception) {
         Log.e("submitData", "Exception: ${e.localizedMessage}", e)
         false

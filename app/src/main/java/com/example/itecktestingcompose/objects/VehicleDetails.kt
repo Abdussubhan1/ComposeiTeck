@@ -8,5 +8,5 @@ object vehicle_details {
     var dataList: List<VehData> = emptyList()
 }
 object deviceInstallationPlaces {
-    var places = ArrayList<TrackerLocationItem>()
+    var places: ArrayList<TrackerLocationItem> = ArrayList()
 }

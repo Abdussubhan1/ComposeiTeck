@@ -15,6 +15,7 @@ import com.example.itecktestingcompose.appScreens.SplashScreen
 import com.example.itecktestingcompose.appScreens.TestingPage
 import com.example.itecktestingcompose.appScreens.initialPicTake
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.example.itecktestingcompose.appScreens.finalTicket
 
 
 @Composable
@@ -34,6 +35,7 @@ fun AppNavigation( context: Context, prefs: PreferenceManager) {
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }
         composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }
+        composable("finalTicketScreen") { finalTicket(navController, prefs, context) }
         composable("AllahHafizScreen") { AllahHafiz(navController) }
     }
 }

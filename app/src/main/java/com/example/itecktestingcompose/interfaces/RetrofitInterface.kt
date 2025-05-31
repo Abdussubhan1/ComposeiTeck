@@ -72,7 +72,7 @@ interface RetrofitInterface {
         @Part("OBD") obd: RequestBody,
         @Part("IMMOBILIZER") immo: RequestBody,
         @Part("Customernumber") customerNumber: RequestBody,
-        @Part("TLocID") trackerLocation: RequestBody,
+        @Part("TLocId") trackerLocation: RequestBody
     ): Response<postDataResponse>
 
     @FormUrlEncoded
@@ -113,8 +113,7 @@ interface RetrofitInterface {
         @Field("cmd") cmd: String
     ): Response<cmdQueueCheck>
 
-    @FormUrlEncoded
-    @POST("TrackerLocation.php")
+   @POST("TrackerLocation.php")
     suspend fun getTrackerInstallLocation(): Response<TrackerLocation>
 }
 
