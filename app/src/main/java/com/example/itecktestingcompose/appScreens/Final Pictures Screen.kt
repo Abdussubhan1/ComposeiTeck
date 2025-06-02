@@ -424,10 +424,9 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                     },
                     placeholder = {
                         Text(
-                            "Enter Customer Contact Number",
+                            "Enter Customer Mobile Number",
                             color = Color.DarkGray,
                             fontSize = 16.sp,
-                            fontFamily = jameelNooriFont,
                             modifier = Modifier.fillMaxWidth()
                         )
                     },
@@ -490,7 +489,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                     border = BorderStroke(1.5.dp, Color(0XFF39B54A))
                 ) {
                     Text(
-                        text = "Generat Ticket",
+                        text = "Generate Ticket",
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         textAlign = TextAlign.Center,
