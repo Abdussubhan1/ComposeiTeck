@@ -51,13 +51,8 @@ fun SplashScreen(
         if (prefs.getUserCNIC() != "") {
             Log.d("FCM token", "FCM submitted at splash ${prefs.getFCM()}")
             val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
-            val locationManager =
-                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            val isLocationEnabled =
-                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                        locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
             Log.d("FCM at Splash", "SplashScreen: $check")
-            if (check && isLocationEnabled) {
+            if (check) {
                 navController.navigate("mainscreen") {
                     popUpTo("splash") { inclusive = true }
                 }
@@ -65,7 +60,7 @@ fun SplashScreen(
                 navController.navigate("login") {
                     popUpTo("splash") { inclusive = true }
                 }
-                Toast.makeText(context,"No Network or Location",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,"No Network",Toast.LENGTH_SHORT).show()
             }
 
         } else {

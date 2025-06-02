@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -113,6 +112,11 @@ fun DeviceEntryScreen(
     var enableDeviceNumberEntry by remember { mutableStateOf(false) }
     var vehList by remember { mutableStateOf(emptyList<VehData>()) }
     var success by remember { mutableStateOf(false) }
+    val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled =
+        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
@@ -258,12 +262,6 @@ fun DeviceEntryScreen(
                             .clickable(enabled = vehicleEngineChassis.length >= 3) {
                                 keyboard?.hide()
 
-                                val locationManager =
-                                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                                val isLocationEnabled =
-                                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                                            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
                                 if (isInternetAvailable(context)) {
                                     if (isLocationEnabled) {
                                         if (success) {
@@ -278,25 +276,31 @@ fun DeviceEntryScreen(
                                                 ).show()
                                                 showVehicleCards = false
                                             }
-                                        } else
+                                        } else {
+                                            showVehicleCards = false
                                             Toast.makeText(
                                                 context,
                                                 "Something went wrong",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                    } else
+                                        }
+                                    } else {
+                                        showVehicleCards = false
                                         Toast.makeText(
                                             context,
                                             "Location is OFF",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                    }
 
-                                } else
+                                } else {
+                                    showVehicleCards = false
                                     Toast.makeText(
                                         context,
                                         "No Internet Connection",
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                }
 
                             },
                         contentAlignment = Alignment.Center
@@ -338,30 +342,35 @@ fun DeviceEntryScreen(
                                     ifDeviceExist = false,
                                     isLoading = true
                                 )
-                                couroutineScope.launch {
+                                if (isLocationEnabled && isInternetAvailable(context)) {
+                                    couroutineScope.launch {
 
-                                    validationResult = validateDev(devID)
+                                        validationResult = validateDev(devID)
 
-                                    if (validationResult.ifDeviceExist) {
-                                        isEnabled = false
-                                        testingStart = true
-                                        Constants.deviceID = devID
+                                        if (validationResult.ifDeviceExist) {
+                                            isEnabled = false
+                                            testingStart = true
+                                            Constants.deviceID = devID
 
-                                        Toast.makeText(
-                                            context,
-                                            "Device ID is valid",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        isEnabled = true
-                                        testingStart = false
-                                        Toast.makeText(
-                                            context,
-                                            "Device Not found in Inventory",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                            Toast.makeText(
+                                                context,
+                                                "Device ID is valid",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            isEnabled = true
+                                            testingStart = false
+                                            Toast.makeText(
+                                                context,
+                                                "Device Not found in Inventory",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     }
                                 }
+                                else
+                                    Toast.makeText(context, "No Network or Location", Toast.LENGTH_SHORT).show()
+
 
                             },
                         contentAlignment = Alignment.Center

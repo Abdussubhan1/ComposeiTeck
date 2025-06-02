@@ -1,5 +1,6 @@
 package com.example.itecktestingcompose.appScreens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.LocationManager
 import android.util.Log
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,8 +54,10 @@ import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.isInternetAvailable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LoginScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
 
@@ -68,6 +72,11 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
             )
         )
     }
+    val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled =
+        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     var cnic by remember { mutableStateOf("") }
     val couroutineScope = rememberCoroutineScope()
@@ -136,12 +145,6 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
 
                     //On submit, system will check if the location in ON or OFF and ask accordingly
 
-                    val locationManager =
-                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                    val isLocationEnabled =
-                        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
                     if (isInternetAvailable(context)) {
                         if (isLocationEnabled) {
                             validationResult = CNICValidationResult(
@@ -176,8 +179,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                                         .show()
                                 }
                             }
-                        }
-                        else Toast.makeText(context,"Location is OFF",Toast.LENGTH_SHORT).show()
+                        } else Toast.makeText(context, "Location is OFF", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(
                             context,
