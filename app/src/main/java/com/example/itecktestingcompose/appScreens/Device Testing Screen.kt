@@ -539,10 +539,10 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "Refresh",
-                    tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading) Color.White else Color.Transparent,
+                    tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading && ignitionProgress != 1f) Color.White else Color.Transparent,
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading) {
+                        .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading && ignitionProgress != 1f) {
                             ignitionResult = ignitionResponse(isLoading = true, ignition = "")
                             showIgnition = true
                             showBattery = false

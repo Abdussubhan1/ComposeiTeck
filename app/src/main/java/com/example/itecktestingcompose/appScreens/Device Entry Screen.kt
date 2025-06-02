@@ -118,13 +118,22 @@ fun DeviceEntryScreen(
         locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
+
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     LaunchedEffect(Unit) {
-        success = getVehicleDetails(
-            prefs.getAppLoginID(),
-            prefs.getTechnicianID().toString()
-        ) //Saving all vehicle details in memory
+        while (true) {
+            success = getVehicleDetails(
+                prefs.getAppLoginID(),
+                prefs.getTechnicianID().toString()
+            )
+            if (success) {
+                break
+            } else {
+                Toast.makeText(context, "Vehicle Details Not Updated!", Toast.LENGTH_SHORT).show()
+            }
+            delay(3000)
+        }
     }
 
     Column(
@@ -258,7 +267,11 @@ fun DeviceEntryScreen(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(if (vehicleEngineChassis.length >= 3) Color(0XFF39B54A) else Color.Gray) // Green search
+                            .background(
+                                if (vehicleEngineChassis.length >= 3) Color(
+                                    0XFF39B54A
+                                ) else Color.Gray
+                            ) // Green search
                             .clickable(enabled = vehicleEngineChassis.length >= 3) {
                                 keyboard?.hide()
 
@@ -367,9 +380,12 @@ fun DeviceEntryScreen(
                                             ).show()
                                         }
                                     }
-                                }
-                                else
-                                    Toast.makeText(context, "No Network or Location", Toast.LENGTH_SHORT).show()
+                                } else
+                                    Toast.makeText(
+                                        context,
+                                        "No Network or Location",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
 
                             },
