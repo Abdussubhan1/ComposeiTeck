@@ -6,10 +6,10 @@ import com.example.itecktestingcompose.interfaces.RetrofitInterface
 import com.example.itecktestingcompose.objects.ServiceBuilder
 import com.example.itecktestingcompose.objects.vehicle_details
 
-suspend fun getVehicleDetails(vehicleEngineChassis: String): Boolean {
+suspend fun getVehicleDetails(appid:String,T_id:String): Boolean {
     return try {
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
-            .getVehicleDetails(vehicleEngineChassis)
+            .getVehicleDetails(appid,T_id)
 
         if (response.isSuccessful) {
             response.body()?.let { responseBody ->

@@ -2,6 +2,7 @@ package com.example.itecktestingcompose.appScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.LocationManager
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -116,7 +117,10 @@ fun DeviceEntryScreen(
     HandleDoubleBackToExit() //this is used to ensure secure exit from app
 
     LaunchedEffect(Unit) {
-        success = getVehicleDetails("") //Saving all vehicle details in memory
+        success = getVehicleDetails(
+            prefs.getAppLoginID(),
+            prefs.getTechnicianID().toString()
+        ) //Saving all vehicle details in memory
     }
 
     Column(
@@ -253,25 +257,40 @@ fun DeviceEntryScreen(
                             .background(if (vehicleEngineChassis.length >= 3) Color(0XFF39B54A) else Color.Gray) // Green search
                             .clickable(enabled = vehicleEngineChassis.length >= 3) {
                                 keyboard?.hide()
+
+                                val locationManager =
+                                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                                val isLocationEnabled =
+                                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                                            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
                                 if (isInternetAvailable(context)) {
-                                    if (success) {
-                                        vehList = searchInMemory(vehicleEngineChassis)
-                                        if (vehList.isNotEmpty()) {
-                                            showVehicleCards = true
-                                        } else {
+                                    if (isLocationEnabled) {
+                                        if (success) {
+                                            vehList = searchInMemory(vehicleEngineChassis)
+                                            if (vehList.isNotEmpty()) {
+                                                showVehicleCards = true
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Vehicle Not Found",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                showVehicleCards = false
+                                            }
+                                        } else
                                             Toast.makeText(
                                                 context,
-                                                "Vehicle Not Found",
+                                                "Something went wrong",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                            showVehicleCards = false
-                                        }
                                     } else
                                         Toast.makeText(
                                             context,
-                                            "Something went wrong",
+                                            "Location is OFF",
                                             Toast.LENGTH_SHORT
                                         ).show()
+
                                 } else
                                     Toast.makeText(
                                         context,

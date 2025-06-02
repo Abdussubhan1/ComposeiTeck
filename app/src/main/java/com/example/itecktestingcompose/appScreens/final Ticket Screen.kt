@@ -128,7 +128,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                         modifier = Modifier
                             .padding(16.dp)
                             .size(24.dp),
-                        color = Color.Black
+                        color = Color(0XFF39B54A)
                     )
                 } else {
                     listOf(

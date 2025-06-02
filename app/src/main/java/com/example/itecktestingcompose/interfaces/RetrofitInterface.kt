@@ -90,7 +90,10 @@ interface RetrofitInterface {
 
     @FormUrlEncoded
     @POST("get_vehicle_details.php")
-    suspend fun getVehicleDetails(@Field("search") vehicleEngineChassis: String): Response<VehicleDetails>
+    suspend fun getVehicleDetails(
+        @Field("app_id") appID: String,
+        @Field("T_id") techID: String
+    ): Response<VehicleDetails>
 
     @FormUrlEncoded
     @POST("update_FCM.php")
@@ -113,7 +116,7 @@ interface RetrofitInterface {
         @Field("cmd") cmd: String
     ): Response<cmdQueueCheck>
 
-   @POST("TrackerLocation.php")
+    @POST("TrackerLocation.php")
     suspend fun getTrackerInstallLocation(): Response<TrackerLocation>
 }
 
