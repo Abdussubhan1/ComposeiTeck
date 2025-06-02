@@ -3,6 +3,7 @@ package com.example.itecktestingcompose.appScreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.LocationManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -127,6 +128,8 @@ fun DeviceEntryScreen(
                 prefs.getAppLoginID(),
                 prefs.getTechnicianID().toString()
             )
+            Log.d("data", "DeviceEntryScreen: ${prefs.getTechnicianID()}")
+            Log.d("data", "DeviceEntryScreen: ${prefs.getAppLoginID()}")
             if (success) {
                 break
             } else {

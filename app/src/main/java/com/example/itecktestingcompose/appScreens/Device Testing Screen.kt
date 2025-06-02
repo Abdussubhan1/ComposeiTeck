@@ -97,7 +97,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
         label = "logoutAnimation"
     )
 
-    var obdType by remember { mutableStateOf("Select OBD Type") }
+    var obdType by remember { mutableStateOf("Select Device Type") }
 
     var comp by remember { mutableStateOf(false) }
 
@@ -556,7 +556,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
             }
 
             // RELAY Wali Row
-            if (obdType == "Non OBD") {
+            if (obdType == "IMMOBILIZER") {
 
                 var relayProgress by remember { mutableFloatStateOf(0.0f) }
                 var timerStarted by remember { mutableStateOf(false) }
@@ -707,7 +707,7 @@ fun DropdownField_forDeviceTypeSelection(
     selectedOption: String,
     onOptionSelected: (String) -> Unit
 ) {
-    val options = listOf("Non OBD", "OBD", "OBD With Wires")
+    val options = listOf("IMMOBILIZER", "LOCATION", "OBD")
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -747,12 +747,12 @@ fun DropdownField_forDeviceTypeSelection(
                     onClick = {
                         onOptionSelected(selectionOption)
                         Constants.immobilizer = when (selectionOption) {
-                            "Non OBD" -> 1
+                            "IMMOBILIZER" -> 1
                             else -> 0
                         }
                         Constants.installedDeviceType = when (selectionOption) {
-                            "OBD" -> 1
-                            "OBD With Wires" -> 2
+                            "LOCATION" -> 1
+                            "OBD" -> 2
                             else -> 0
                         }
                         expanded = false
