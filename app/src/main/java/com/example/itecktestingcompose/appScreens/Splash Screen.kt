@@ -23,9 +23,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -59,7 +61,6 @@ fun SplashScreen(
                     navController.navigate("mainscreen") {
                         popUpTo("splash") { inclusive = true }
                     }
-                    Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
                 } else {
                     navController.navigate("login") {
                         popUpTo("splash") { inclusive = true }
@@ -80,6 +81,7 @@ fun SplashScreen(
             }
         }
     }
+
 
     Box(
         modifier = Modifier
@@ -114,7 +116,7 @@ fun SplashScreen(
         BottomLogo()
         Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
             Text(
-                "\t\tApp Version  $version",
+                "\t\tVersion  $version",
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center,
@@ -153,4 +155,16 @@ fun BottomLogo() {
             modifier = Modifier.padding(top = 4.dp)
         )
     }
+}
+
+
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen(
+        navController = NavHostController(LocalContext.current),
+        "",
+        PreferenceManager(LocalContext.current),
+        LocalContext.current
+    )
 }

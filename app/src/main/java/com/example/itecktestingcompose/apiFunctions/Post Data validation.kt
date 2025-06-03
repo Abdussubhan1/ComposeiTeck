@@ -28,7 +28,8 @@ fun convertBitmapToMultipart(bitmap: Bitmap?, index: Int): MultipartBody.Part? {
 
 data class submitDataResponse(
     var success: Boolean,
-    var message: String
+    var message: String,
+    var isLoading: Boolean
 )
 
 
@@ -69,12 +70,12 @@ suspend fun submitData(
         if (!response.isSuccessful) {
             Log.e("submitData", "API Error: ${response.code()} ${response.errorBody()?.string()}")
         }
-        submitDataResponse(success = response.isSuccessful, message = response.message())
+        submitDataResponse(success = response.isSuccessful, message = response.message(),false)
 
 
     } catch (e: Exception) {
         Log.e("submitData", "Exception: ${e.localizedMessage}", e)
-        submitDataResponse(success = false, message = "Exception Error: ${e.localizedMessage}")
+        submitDataResponse(success = false, message = "Exception Error: ${e.localizedMessage}",false)
     }
 }
 

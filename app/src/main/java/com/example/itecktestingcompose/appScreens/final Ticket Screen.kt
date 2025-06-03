@@ -87,7 +87,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
 
     val couroutineScope = rememberCoroutineScope()
 
-    var submitDataResponse by remember { mutableStateOf(submitDataResponse(false, "")) }
+    var submitDataResponse by remember { mutableStateOf(submitDataResponse(false, "", false)) }
 
     LaunchedEffect(Unit) { statusResult = getStatus(Constants.deviceID) }
 
@@ -235,7 +235,9 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
+                    enabled = !submitDataResponse.isLoading,
                     onClick = {
+                        submitDataResponse = submitDataResponse(false, "", true)
                         couroutineScope.launch {
                             submitDataResponse = submitData(
                                 prefs.getUserCNIC(),
@@ -301,14 +303,24 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.5.dp, Color(0XFF39B54A))
                 ) {
-                    Text(
-                        text = " کام مکمل ہو گیا ہے۔",
-                        fontFamily = jameelNooriFont,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        fontSize = 17.sp
-                    )
+                    if (submitDataResponse.isLoading) {
+                        CircularProgressIndicator(
+                            color = Color(0XFF39B54A),
+                            strokeWidth = 2.dp,
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                    } else {
+                        Text(
+                            text = " کام مکمل ہو گیا ہے۔",
+                            fontFamily = jameelNooriFont,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            fontSize = 17.sp
+                        )
+                    }
+
                 }
 
             }
