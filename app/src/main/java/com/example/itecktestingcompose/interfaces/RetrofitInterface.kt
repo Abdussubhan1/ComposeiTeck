@@ -12,6 +12,7 @@ import com.example.itecktestingcompose.modelClasses.UpdateFCM_API
 import com.example.itecktestingcompose.modelClasses.ValidateCnicResponse
 import com.example.itecktestingcompose.modelClasses.ValidateDeviceResponse
 import com.example.itecktestingcompose.modelClasses.VehicleDetails
+import com.example.itecktestingcompose.modelClasses.checkLogin
 import com.example.itecktestingcompose.modelClasses.cmdQueueCheck
 import com.example.itecktestingcompose.modelClasses.postDataResponse
 import com.example.itecktestingcompose.modelClasses.technicianLocation
@@ -118,6 +119,12 @@ interface RetrofitInterface {
 
     @POST("TrackerLocation.php")
     suspend fun getTrackerInstallLocation(): Response<TrackerLocation>
+
+    @FormUrlEncoded
+    @POST("check_login.php")
+    suspend fun checkLogin(
+        @Field("appid") appID: String
+    ): Response<checkLogin>
 }
 
 

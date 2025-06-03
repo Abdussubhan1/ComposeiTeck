@@ -1,10 +1,7 @@
 package com.example.itecktestingcompose.appScreens
 
 
-
 import android.content.Context
-import android.location.LocationManager
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.itecktestingcompose.apiFunctions.FCMUpdate
 import com.example.itecktestingcompose.R
+import com.example.itecktestingcompose.apiFunctions.checkLogin
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 
 
@@ -47,20 +45,33 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
 
-        kotlinx.coroutines.delay(2000) // Wait for 2 seconds
+        kotlinx.coroutines.delay(2000) // Wait for 3 seconds
+
         if (prefs.getUserCNIC() != "") {
-            Log.d("FCM token", "FCM submitted at splash ${prefs.getFCM()}")
-            val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
-            Log.d("FCM at Splash", "SplashScreen: $check")
-            if (check) {
-                navController.navigate("mainscreen") {
-                    popUpTo("splash") { inclusive = true }
+
+            val loginResponse = checkLogin(prefs.getAppLoginID())
+
+            if (loginResponse.success) {
+
+                val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
+
+                if (check) {
+                    navController.navigate("mainscreen") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                    Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
+                } else {
+                    navController.navigate("login") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                    prefs.setUserCNIC("")
                 }
             } else {
                 navController.navigate("login") {
                     popUpTo("splash") { inclusive = true }
                 }
-                Toast.makeText(context,"No Network",Toast.LENGTH_SHORT).show()
+                prefs.setUserCNIC("")
+                Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
             }
 
         } else {
