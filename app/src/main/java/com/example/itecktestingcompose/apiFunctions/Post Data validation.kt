@@ -11,10 +11,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
 
-
 fun createPartFromString(value: String): RequestBody {
     return value.toRequestBody("text/plain".toMediaTypeOrNull())
 }
+
 //Convert each bitmap to JPEG
 fun convertBitmapToMultipart(bitmap: Bitmap?, index: Int): MultipartBody.Part? {
     if (bitmap == null) return null
@@ -25,6 +25,11 @@ fun convertBitmapToMultipart(bitmap: Bitmap?, index: Int): MultipartBody.Part? {
     val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull())
     return MultipartBody.Part.createFormData("img[]", "image$index.jpg", requestBody)
 }
+
+data class submitDataResponse(
+    var success: Boolean,
+    var message: String
+)
 
 
 suspend fun submitData(
@@ -40,7 +45,7 @@ suspend fun submitData(
     immo: Int,
     customerNumber: String,
     trackerLocation: Int
-): Boolean {
+): submitDataResponse {
     return try {
         val imageParts = images.mapIndexedNotNull { index, bitmap ->
             convertBitmapToMultipart(bitmap, index)
@@ -64,13 +69,12 @@ suspend fun submitData(
         if (!response.isSuccessful) {
             Log.e("submitData", "API Error: ${response.code()} ${response.errorBody()?.string()}")
         }
-
-        response.isSuccessful && response.body()?.Success == true
+        submitDataResponse(success = response.isSuccessful, message = response.message())
 
 
     } catch (e: Exception) {
         Log.e("submitData", "Exception: ${e.localizedMessage}", e)
-        false
+        submitDataResponse(success = false, message = "Exception Error: ${e.localizedMessage}")
     }
 }
 

@@ -56,6 +56,7 @@ import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.apiFunctions.StatusResult
 import com.example.itecktestingcompose.apiFunctions.getStatus
 import com.example.itecktestingcompose.apiFunctions.submitData
+import com.example.itecktestingcompose.apiFunctions.submitDataResponse
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.constants.Constants
 import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
@@ -85,6 +86,8 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
     allPictures.addAll(Constants.finalPictures)
 
     val couroutineScope = rememberCoroutineScope()
+
+    var submitDataResponse by remember { mutableStateOf(submitDataResponse(false, "")) }
 
     LaunchedEffect(Unit) { statusResult = getStatus(Constants.deviceID) }
 
@@ -234,7 +237,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                 Button(
                     onClick = {
                         couroutineScope.launch {
-                            val submitSuccess = submitData(
+                            submitDataResponse = submitData(
                                 prefs.getUserCNIC(),
                                 prefs.getTechnicianName(),
                                 Constants.deviceID,
@@ -249,7 +252,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                                 Constants.TLocID
                             )
 
-                            if (submitSuccess) {
+                            if (submitDataResponse.success) {
 
                                 resetAllData() //Fun to reset RAM memory
 
@@ -284,9 +287,10 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
 
                             } else Toast.makeText(
                                 current,
-                                "Something went wrong!",
+                                submitDataResponse.message,
                                 Toast.LENGTH_SHORT
                             ).show()
+
                         }
                     },
                     elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
