@@ -389,8 +389,8 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                 LinearProgressIndicator(
                     progress = { 1f },
                     color = when {
-                        locResult in 1.00..5000000000.00 -> Color(0xFF39B54A) // Green
-                        locResult in 5000000001.00..50000000000.00 && !deviceLocationResult.isLoading -> Color.Red
+                        locResult in 1.00..100.00 -> Color(0xFF39B54A) // Green
+                        locResult in 101.00..500000.00 && !deviceLocationResult.isLoading -> Color.Red
                         else -> Color.LightGray
                     },
                     modifier = Modifier
@@ -429,7 +429,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                         }
 
                 )
-                if (locResult in 1.00..5000000000.00 && deviceLocationResult.Success) {
+                if (locResult in 1.00..100.00 && deviceLocationResult.Success) {
                     moveToNextValidationStep =
                         1
                 }
@@ -539,10 +539,10 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "Refresh",
-                    tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading && ignitionProgress != 1f) Color.White else Color.Transparent,
+                    tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading) Color.White else Color.Transparent,
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading && ignitionProgress != 1f) {
+                        .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading) {
                             ignitionResult = ignitionResponse(isLoading = true, ignition = "")
                             showIgnition = true
                             showBattery = false
