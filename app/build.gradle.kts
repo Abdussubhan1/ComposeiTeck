@@ -106,5 +106,7 @@ dependencies {
 
     implementation("com.airbnb.android:lottie-compose:6.3.0") // latest stable version as of 2025
 
+    implementation ("com.google.firebase:firebase-config-ktx:22.1.2")
+
 
 }

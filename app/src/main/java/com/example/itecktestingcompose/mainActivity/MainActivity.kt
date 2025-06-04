@@ -18,7 +18,10 @@ import com.example.itecktestingcompose.functions.AppNavigation
 import com.example.itecktestingcompose.functions.getDeviceInfo
 import com.example.itecktestingcompose.R
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.google.firebase.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 
 
 val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
@@ -28,6 +31,16 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        /**val remoteConfig = Firebase.remoteConfig
+
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600 // 1 hour
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.setDefaultsAsync(mapOf(
+            "welcome_message" to "Welcome to my app!"
+        ))**/
 
         val prefs = PreferenceManager(this) //Created object for class PreferenceManager
         Log.d("CheckAppLoginID", "AppLoginID: ${prefs.getAppLoginID()}")
