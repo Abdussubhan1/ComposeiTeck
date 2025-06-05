@@ -48,6 +48,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,7 +83,6 @@ import com.example.itecktestingcompose.functions.getLocation
 import com.example.itecktestingcompose.mainActivity.jameelNooriFont
 import com.example.itecktestingcompose.appPrefs.PreferenceManager
 import com.example.itecktestingcompose.functions.resetAllData
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -197,7 +197,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
             }
         }
         Spacer(modifier = Modifier.height(32.dp))
-        if (obdType != "Select OBD Type") {
+        if (obdType != "Select Device Type") {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -207,7 +207,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
             ) {
                 ValidationStatusUI(obdType, onTestingCompleted = { result ->
                     comp = result
-                })
+                }, prefs)
             }
         }
 
@@ -289,7 +289,11 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 
 
 @Composable
-fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
+fun ValidationStatusUI(
+    obdType: String,
+    onTestingCompleted: (Boolean) -> Unit,
+    prefs: PreferenceManager
+) {
     var showBattery by remember { mutableStateOf(false) }
     var showIgnition by remember { mutableStateOf(false) }
     var showLocation by remember { mutableStateOf(false) }
@@ -341,6 +345,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
 
 
     var loc by remember { mutableStateOf(false) }
+    var forDemo by remember { mutableIntStateOf(0) }
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 //    checkLocationWithinRange()
@@ -408,28 +413,33 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     modifier = Modifier
                         .size(22.dp)
                         .clickable(enabled = moveToNextValidationStep == 0 && !deviceLocationResult.isLoading) {
-                            showLocation = true
-                            loc = true
-                            deviceLocationResult =
-                                ValidateLocationResponse(
-                                    isLoading = true, //Just yeh loader dikhane k lie hy
-                                    Lat = 0.0,
-                                    Lng = 0.0,
-                                    Message = "",
-                                    Success = false
-                                )
-                            coroutineScope.launch {
-                                deviceLocationResult = validateLoc(Constants.deviceID)
-                                Constants.deviceLocationLat = deviceLocationResult.Lat
-                                Constants.deviceLocationLong = deviceLocationResult.Lng
-                                Constants.deviceLocation = deviceLocationResult.Message
+                            if (prefs.getTechnicianID() == 0) {
+                                locResult = 5.00
+                            } else {
+                                showLocation = true
+                                loc = true
+                                deviceLocationResult =
+                                    ValidateLocationResponse(
+                                        isLoading = true, //Just yeh loader dikhane k lie hy
+                                        Lat = 0.0,
+                                        Lng = 0.0,
+                                        Message = "",
+                                        Success = false
+                                    )
+                                coroutineScope.launch {
+                                    deviceLocationResult = validateLoc(Constants.deviceID)
+                                    Constants.deviceLocationLat = deviceLocationResult.Lat
+                                    Constants.deviceLocationLong = deviceLocationResult.Lng
+                                    Constants.deviceLocation = deviceLocationResult.Message
 
+                                }
                             }
+
 
                         }
 
                 )
-                if (locResult in 1.00..100.00 && deviceLocationResult.Success) {
+                if ((locResult in 1.00..100.00 && deviceLocationResult.Success) || locResult == 5.00) {
                     moveToNextValidationStep =
                         1
                 }
@@ -451,7 +461,10 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     batteryResult.battery == "Connected" && batteryProgress == 0.60f -> 1.0f
                     else -> batteryProgress
                 }
-                if (batteryProgress == 1f) moveToNextValidationStep = 2
+                if (batteryProgress == 1f && obdType == "OBD") {
+                    onTestingCompleted(true)
+                } else if (batteryProgress == 1f && (obdType == "IMMOBILIZER" || obdType == "LOCATION"))
+                    moveToNextValidationStep = 2
 
                 Text(
                     "Battery",
@@ -465,7 +478,7 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                 )
                 LinearProgressIndicator(
                     progress = { batteryProgress },
-                    color = if (batteryResult.battery == "Disconnected" || batteryResult.battery == "Connected") Color(
+                    color = if (batteryResult.battery == "Disconnected" || batteryResult.battery == "Connected" || prefs.getTechnicianID() == 0) Color(
                         0XFF39B54A
                     ) else Color.LightGray,
                     modifier = Modifier
@@ -483,77 +496,92 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                     modifier = Modifier
                         .size(24.dp)
                         .clickable(enabled = moveToNextValidationStep == 1 && !batteryResult.isLoading) {
-                            batteryResult = batteryResponse(isLoading = true, battery = "")
-                            showBattery = true
-                            showLocation = false
-                            coroutineScope.launch {
-                                batteryResult = validateBattery(Constants.deviceID)
+                            if (prefs.getTechnicianID() == 0) {
+                                batteryProgress = 1.0f
+                                moveToNextValidationStep = 2
+                            } else {
+                                batteryResult = batteryResponse(isLoading = true, battery = "")
+                                showBattery = true
+                                showLocation = false
+                                coroutineScope.launch {
+                                    batteryResult = validateBattery(Constants.deviceID)
+                                }
                             }
                         }
                 )
 
             }
 
+            if (obdType != "OBD") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = rowModifier
+                ) {
+                    //THREE STAGES FOR IGNITION VALIDATION
+                    var ignitionProgress by remember { mutableFloatStateOf(0.0f) }
+                    ignitionProgress = when {
+                        ignitionResult.ignition == "ON" && ignitionProgress == 0.0f -> 0.30f
+                        ignitionResult.ignition == "OFF" && ignitionProgress == 0.30f -> 0.60f
+                        ignitionResult.ignition == "ON" && ignitionProgress == 0.60f -> 1.0f
+                        else -> ignitionProgress
+                    }
+                    if (ignitionProgress == 1f) {
+                        if (obdType == "LOCATION") {
+                            onTestingCompleted(true)
+                        } else moveToNextValidationStep = 3
+                    }else
+                        onTestingCompleted(false)
+                    Text(
+                        "Ignition",
+                        fontSize = 12.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(0.15f)
+                            .wrapContentSize(Alignment.CenterStart)
+                    )
+                    LinearProgressIndicator(
+                        progress = { ignitionProgress },
+                        color = if (ignitionResult.ignition == "ON" || ignitionResult.ignition == "OFF" || prefs.getTechnicianID() == 0) Color(
+                            0XFF39B54A
+                        ) else Color.LightGray,
+                        modifier = Modifier
+                            .weight(0.45f)
+                            .clip(RoundedCornerShape(50))
+                            .wrapContentSize()
+                            .height(10.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading) Color.White else Color.Transparent,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading) {
+                                if (prefs.getTechnicianID() == 0) {
+                                    ignitionProgress = 1.0f
+                                    moveToNextValidationStep = 3
+                                } else {
+                                    ignitionResult =
+                                        ignitionResponse(isLoading = true, ignition = "")
+                                    showIgnition = true
+                                    showBattery = false
+                                    coroutineScope.launch {
+                                        ignitionResult = validateIgnition(Constants.deviceID)
+                                    }
+                                }
+
+                            }
+                    )
+
+                }
+            }
             // IGNITION Wali Row
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = rowModifier
-            ) {
-                //THREE STAGES FOR IGNITION VALIDATION
-                var ignitionProgress by remember { mutableFloatStateOf(0.0f) }
-                ignitionProgress = when {
-                    ignitionResult.ignition == "ON" && ignitionProgress == 0.0f -> 0.30f
-                    ignitionResult.ignition == "OFF" && ignitionProgress == 0.30f -> 0.60f
-                    ignitionResult.ignition == "ON" && ignitionProgress == 0.60f -> 1.0f
-                    else -> ignitionProgress
-                }
-                if (ignitionProgress == 1f) {
-                    if (obdType == "OBD" || obdType == "LOCATION") {
-                        onTestingCompleted(true)
-                    } else moveToNextValidationStep = 3
-                }
-                Text(
-                    "Ignition",
-                    fontSize = 12.sp,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .weight(0.15f)
-                        .wrapContentSize(Alignment.CenterStart)
-                )
-                LinearProgressIndicator(
-                    progress = { ignitionProgress },
-                    color = if (ignitionResult.ignition == "ON" || ignitionResult.ignition == "OFF") Color(
-                        0XFF39B54A
-                    ) else Color.LightGray,
-                    modifier = Modifier
-                        .weight(0.45f)
-                        .clip(RoundedCornerShape(50))
-                        .wrapContentSize()
-                        .height(10.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
 
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh",
-                    tint = if (moveToNextValidationStep == 2 && !ignitionResult.isLoading) Color.White else Color.Transparent,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable(enabled = moveToNextValidationStep == 2 && !ignitionResult.isLoading) {
-                            ignitionResult = ignitionResponse(isLoading = true, ignition = "")
-                            showIgnition = true
-                            showBattery = false
-                            coroutineScope.launch {
-                                ignitionResult = validateIgnition(Constants.deviceID)
-                            }
-
-                        }
-                )
-
-            }
 
             // RELAY Wali Row
             if (obdType == "IMMOBILIZER") {
@@ -571,12 +599,14 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                             relayProgress = 1.0f
                             onTestingCompleted(true)
                         }
+                        else -> {onTestingCompleted(false)}
+
                     }
                 }
 
                 // Timer coroutine
                 LaunchedEffect(startTimer) {
-                    if (startTimer && !timerStarted) {
+                    if (startTimer && !timerStarted && prefs.getTechnicianID() != 0) {
                         timerStarted = true
                         while (true) {
                             delay(5000)
@@ -626,25 +656,35 @@ fun ValidationStatusUI(obdType: String, onTestingCompleted: (Boolean) -> Unit) {
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) {
-                                    showRelay = true
-                                    showIgnition = false
-                                    relayResult =
-                                        relayResponse(
-                                            success = false,
-                                            isLoading = true,
-                                            message = ""
-                                        )
-                                    coroutineScope.launch {
-                                        if (relayProgress == 0.0f) {
-                                            relayResult = setRelayStatus(Constants.deviceID, "kill")
-                                            startTimer = true
-                                        } else if (relayProgress == 0.5f) {
-                                            relayResult =
-                                                setRelayStatus(Constants.deviceID, cmd = "release")
-                                            startTimer = true
-                                        }
+                                    if (prefs.getTechnicianID() == 0) {
+                                        relayProgress = 1.0f
+                                        onTestingCompleted(true)
+                                    } else {
+                                        showRelay = true
+                                        showIgnition = false
+                                        relayResult =
+                                            relayResponse(
+                                                success = false,
+                                                isLoading = true,
+                                                message = ""
+                                            )
+                                        coroutineScope.launch {
+                                            if (relayProgress == 0.0f) {
+                                                relayResult =
+                                                    setRelayStatus(Constants.deviceID, "kill")
+                                                startTimer = true
+                                            } else if (relayProgress == 0.5f) {
+                                                relayResult =
+                                                    setRelayStatus(
+                                                        Constants.deviceID,
+                                                        cmd = "release"
+                                                    )
+                                                startTimer = true
+                                            }
 
+                                        }
                                     }
+
                                 }
                         )
                     } else
