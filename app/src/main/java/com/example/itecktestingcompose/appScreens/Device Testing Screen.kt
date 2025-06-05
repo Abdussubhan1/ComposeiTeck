@@ -394,8 +394,8 @@ fun ValidationStatusUI(
                 LinearProgressIndicator(
                     progress = { 1f },
                     color = when {
-                        locResult in 1.00..100.00 -> Color(0xFF39B54A) // Green
-                        locResult in 101.00..500000.00 && !deviceLocationResult.isLoading -> Color.Red
+                        locResult in 1.00..50000000.00 -> Color(0xFF39B54A) // Green
+                        locResult in 50000001.00..500000000.00 && !deviceLocationResult.isLoading -> Color.Red
                         else -> Color.LightGray
                     },
                     modifier = Modifier
@@ -439,7 +439,7 @@ fun ValidationStatusUI(
                         }
 
                 )
-                if ((locResult in 1.00..100.00 && deviceLocationResult.Success) || locResult == 5.00) {
+                if ((locResult in 1.00..50000000.00 && deviceLocationResult.Success) || locResult == 5.00) {
                     moveToNextValidationStep =
                         1
                 }
