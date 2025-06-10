@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.itecktestingcompose"
+    namespace = "com.itecknologi.itecktestingcompose"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.itecktestingcompose"
+        applicationId = "com.itecknologi.itecktestingcompose"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

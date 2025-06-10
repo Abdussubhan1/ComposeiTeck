@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.functions
+package com.itecknologi.itecktestingcompose.functions
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -14,15 +14,15 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.example.itecktestingcompose.apiFunctions.sendTechnicalLocation
-import com.example.itecktestingcompose.mainActivity.MainActivity
-import com.example.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.sendTechnicalLocation
+import com.itecknologi.itecktestingcompose.mainActivity.MainActivity
+import com.itecknologi.itecktestingcompose.R
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {

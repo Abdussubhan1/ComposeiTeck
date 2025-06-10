@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.mainActivity
+package com.itecknologi.itecktestingcompose.mainActivity
 
 import android.Manifest
 import android.content.ContentValues.TAG
@@ -14,10 +14,10 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.itecktestingcompose.functions.AppNavigation
-import com.example.itecktestingcompose.functions.getDeviceInfo
-import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.AppNavigation
+import com.itecknologi.itecktestingcompose.functions.getDeviceInfo
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.remoteConfig

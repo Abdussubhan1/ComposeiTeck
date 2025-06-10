@@ -1,10 +1,10 @@
-package com.example.itecktestingcompose.functions
+package com.itecknologi.itecktestingcompose.functions
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import com.example.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.constants.Constants
 
 @SuppressLint("HardwareIds")
 fun getDeviceInfo(context: Context) {

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.DataBase
+package com.itecknologi.itecktestingcompose.DataBase
 
 import android.content.Context
 import androidx.room.Database

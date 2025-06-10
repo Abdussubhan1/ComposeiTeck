@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -47,13 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.apiFunctions.CNICValidationResult
-import com.example.itecktestingcompose.apiFunctions.validateCnic
-import com.example.itecktestingcompose.constants.Constants
-import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
-import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.functions.isInternetAvailable
+import com.itecknologi.itecktestingcompose.apiFunctions.CNICValidationResult
+import com.itecknologi.itecktestingcompose.apiFunctions.validateCnic
+import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.functions
+package com.itecknologi.itecktestingcompose.functions
 
 import android.app.Activity
 import android.widget.Toast

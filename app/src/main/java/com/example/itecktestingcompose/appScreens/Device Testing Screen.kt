@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
@@ -66,23 +66,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.apiFunctions.ValidateLocationResponse
-import com.example.itecktestingcompose.apiFunctions.batteryResponse
-import com.example.itecktestingcompose.apiFunctions.cmdQueueCheck
-import com.example.itecktestingcompose.apiFunctions.ignitionResponse
-import com.example.itecktestingcompose.apiFunctions.relayResponse
-import com.example.itecktestingcompose.apiFunctions.setRelayStatus
-import com.example.itecktestingcompose.apiFunctions.validateBattery
-import com.example.itecktestingcompose.apiFunctions.validateIgnition
-import com.example.itecktestingcompose.apiFunctions.validateLoc
-import com.example.itecktestingcompose.constants.Constants
-import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
-import com.example.itecktestingcompose.functions.checkLocationWithinRange
-import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.functions.getLocation
-import com.example.itecktestingcompose.mainActivity.jameelNooriFont
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.functions.resetAllData
+import com.itecknologi.itecktestingcompose.apiFunctions.ValidateLocationResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.batteryResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.cmdQueueCheck
+import com.itecknologi.itecktestingcompose.apiFunctions.ignitionResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.relayResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.setRelayStatus
+import com.itecknologi.itecktestingcompose.apiFunctions.validateBattery
+import com.itecknologi.itecktestingcompose.apiFunctions.validateIgnition
+import com.itecknologi.itecktestingcompose.apiFunctions.validateLoc
+import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.functions.checkLocationWithinRange
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.functions.getLocation
+import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -345,7 +345,7 @@ fun ValidationStatusUI(
 
 
     var loc by remember { mutableStateOf(false) }
-    var forDemo by remember { mutableIntStateOf(0) }
+
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 //    checkLocationWithinRange()
@@ -394,8 +394,8 @@ fun ValidationStatusUI(
                 LinearProgressIndicator(
                     progress = { 1f },
                     color = when {
-                        locResult in 1.00..50000000.00 -> Color(0xFF39B54A) // Green
-                        locResult in 50000001.00..500000000.00 && !deviceLocationResult.isLoading -> Color.Red
+                        locResult in 1.00..100.00 -> Color(0xFF39B54A) // Green
+                        locResult in 101.00..5000000.00 && !deviceLocationResult.isLoading -> Color.Red
                         else -> Color.LightGray
                     },
                     modifier = Modifier
@@ -439,7 +439,7 @@ fun ValidationStatusUI(
                         }
 
                 )
-                if ((locResult in 1.00..50000000.00 && deviceLocationResult.Success) || locResult == 5.00) {
+                if ((locResult in 1.00..100.00 && deviceLocationResult.Success) || locResult == 5.00) {
                     moveToNextValidationStep =
                         1
                 }

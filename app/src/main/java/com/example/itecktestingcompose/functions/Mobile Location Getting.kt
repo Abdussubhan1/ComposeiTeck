@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.functions
+package com.itecknologi.itecktestingcompose.functions
 
 import android.content.pm.PackageManager
 import androidx.compose.runtime.Composable
@@ -14,7 +14,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
-import com.example.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.constants.Constants
 
 
 @Composable

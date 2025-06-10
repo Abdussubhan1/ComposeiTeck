@@ -1,0 +1,132 @@
+package com.example.itecktestingcompose.appScreens
+
+import android.app.Activity
+import android.content.Context
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.appScreens.BottomLogo
+
+@Composable
+fun MenuScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+    val name = prefs.getTechnicianName()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0XFF122333))
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+
+    ) {
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(id = R.drawable.user_smile_fill), // Add smile icon
+                    contentDescription = null,
+                    tint = Color(0XFF39B54A),
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text("Khush Amdeed!", color = Color.White, fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = name,
+                        color = Color(0XFF39B54A),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(.6f),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
+
+            }
+        }
+        Spacer(modifier = Modifier.height(200.dp))
+
+        MenuButton("New Installation") {
+            navController.navigate("newinstallation")
+        }
+
+        MenuButton("Redo") {
+
+        }
+
+        MenuButton("Removal") {
+            // TODO: Handle navigation or action
+        }
+
+        MenuButton("Exit") {
+            (context as? Activity)?.finish()
+        }
+        Spacer(modifier = Modifier.height(200.dp))
+        BottomLogo()
+
+
+    }
+}
+
+@Composable
+fun MenuButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .padding(vertical = 8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699))
+    ) {
+        Text(text = text, fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
+    }
+}
+
+
+@Preview
+@Composable
+fun MenuPreview() {
+    MenuScreen(
+        context = LocalContext.current,
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
+    )
+}
+

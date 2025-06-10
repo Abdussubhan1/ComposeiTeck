@@ -1,9 +1,9 @@
-package com.example.itecktestingcompose.apiFunctions
+package com.itecknologi.itecktestingcompose.apiFunctions
 
 import android.util.Log
-import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.modelClasses.NotificationHistoryItem
-import com.example.itecktestingcompose.objects.ServiceBuilder
+import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
+import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistoryItem
+import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 
 suspend fun notificationHistory(cnic: String): List<NotificationHistoryItem> {

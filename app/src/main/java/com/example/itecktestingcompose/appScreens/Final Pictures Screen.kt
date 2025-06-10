@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 import android.Manifest
 import android.content.Context
@@ -70,15 +70,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.constants.Constants
-import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
-import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.mainActivity.jameelNooriFont
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.functions.resetAllData
-import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.modelClasses.TrackerLocationItem
-import com.example.itecktestingcompose.objects.ServiceBuilder
+import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.resetAllData
+import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
+import com.itecknologi.itecktestingcompose.modelClasses.TrackerLocationItem
+import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 import kotlinx.coroutines.delay
 
 

@@ -1,7 +1,7 @@
-package com.example.itecktestingcompose.objects
+package com.itecknologi.itecktestingcompose.objects
 
-import com.example.itecktestingcompose.modelClasses.TrackerLocationItem
-import com.example.itecktestingcompose.modelClasses.VehData
+import com.itecknologi.itecktestingcompose.modelClasses.TrackerLocationItem
+import com.itecknologi.itecktestingcompose.modelClasses.VehData
 
 
 object vehicle_details {

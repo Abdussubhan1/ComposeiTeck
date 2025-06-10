@@ -1,7 +1,7 @@
-package com.example.itecktestingcompose.objects
+package com.itecknologi.itecktestingcompose.objects
 
-import com.example.itecktestingcompose.constants.Constants
-import com.example.itecktestingcompose.interfaces.AuthInterceptor
+import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.interfaces.AuthInterceptor
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

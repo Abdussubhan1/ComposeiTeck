@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.UnusedScreen
+package com.itecknologi.itecktestingcompose.UnusedScreen
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -36,9 +36,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.itecktestingcompose.DataBase.AppDatabase
-import com.example.itecktestingcompose.DataBase.DeviceSearchHistory
-import com.example.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.DataBase.AppDatabase
+import com.itecknologi.itecktestingcompose.DataBase.DeviceSearchHistory
+import com.itecknologi.itecktestingcompose.R
 import kotlinx.coroutines.launch
 
 

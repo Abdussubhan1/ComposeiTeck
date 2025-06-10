@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.modelClasses
+package com.itecknologi.itecktestingcompose.modelClasses
 
 class NotificationHistory : ArrayList<NotificationHistoryItem>()
 

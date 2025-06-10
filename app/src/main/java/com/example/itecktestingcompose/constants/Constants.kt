@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.constants
+package com.itecknologi.itecktestingcompose.constants
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf

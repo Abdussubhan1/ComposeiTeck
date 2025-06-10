@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.modelClasses
+package com.itecknologi.itecktestingcompose.modelClasses
 
 import com.google.gson.annotations.SerializedName
 

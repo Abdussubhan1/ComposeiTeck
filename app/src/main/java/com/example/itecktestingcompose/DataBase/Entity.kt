@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.DataBase
+package com.itecknologi.itecktestingcompose.DataBase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

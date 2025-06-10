@@ -1,6 +1,6 @@
-package com.example.itecktestingcompose.interfaces
+package com.itecknologi.itecktestingcompose.interfaces
 
-import com.example.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.constants.Constants
 import okhttp3.Interceptor
 import okhttp3.Response
 

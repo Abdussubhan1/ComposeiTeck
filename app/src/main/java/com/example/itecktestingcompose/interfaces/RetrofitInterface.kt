@@ -1,21 +1,21 @@
-package com.example.itecktestingcompose.interfaces
+package com.itecknologi.itecktestingcompose.interfaces
 
 
-import com.example.itecktestingcompose.modelClasses.Battery
-import com.example.itecktestingcompose.modelClasses.GetLocation
-import com.example.itecktestingcompose.modelClasses.GetRelay
-import com.example.itecktestingcompose.modelClasses.Ignition
-import com.example.itecktestingcompose.modelClasses.NotificationHistory
-import com.example.itecktestingcompose.modelClasses.Status
-import com.example.itecktestingcompose.modelClasses.TrackerLocation
-import com.example.itecktestingcompose.modelClasses.UpdateFCM_API
-import com.example.itecktestingcompose.modelClasses.ValidateCnicResponse
-import com.example.itecktestingcompose.modelClasses.ValidateDeviceResponse
-import com.example.itecktestingcompose.modelClasses.VehicleDetails
-import com.example.itecktestingcompose.modelClasses.checkLogin
-import com.example.itecktestingcompose.modelClasses.cmdQueueCheck
-import com.example.itecktestingcompose.modelClasses.postDataResponse
-import com.example.itecktestingcompose.modelClasses.technicianLocation
+import com.itecknologi.itecktestingcompose.modelClasses.Battery
+import com.itecknologi.itecktestingcompose.modelClasses.GetLocation
+import com.itecknologi.itecktestingcompose.modelClasses.GetRelay
+import com.itecknologi.itecktestingcompose.modelClasses.Ignition
+import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistory
+import com.itecknologi.itecktestingcompose.modelClasses.Status
+import com.itecknologi.itecktestingcompose.modelClasses.TrackerLocation
+import com.itecknologi.itecktestingcompose.modelClasses.UpdateFCM_API
+import com.itecknologi.itecktestingcompose.modelClasses.ValidateCnicResponse
+import com.itecknologi.itecktestingcompose.modelClasses.ValidateDeviceResponse
+import com.itecknologi.itecktestingcompose.modelClasses.VehicleDetails
+import com.itecknologi.itecktestingcompose.modelClasses.checkLogin
+import com.itecknologi.itecktestingcompose.modelClasses.cmdQueueCheck
+import com.itecknologi.itecktestingcompose.modelClasses.postDataResponse
+import com.itecknologi.itecktestingcompose.modelClasses.technicianLocation
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response

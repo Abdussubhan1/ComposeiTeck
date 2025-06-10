@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -52,16 +52,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavHostController
-import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.apiFunctions.StatusResult
-import com.example.itecktestingcompose.apiFunctions.getStatus
-import com.example.itecktestingcompose.apiFunctions.submitData
-import com.example.itecktestingcompose.apiFunctions.submitDataResponse
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.constants.Constants
-import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
-import com.example.itecktestingcompose.functions.resetAllData
-import com.example.itecktestingcompose.mainActivity.jameelNooriFont
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.StatusResult
+import com.itecknologi.itecktestingcompose.apiFunctions.getStatus
+import com.itecknologi.itecktestingcompose.apiFunctions.submitData
+import com.itecknologi.itecktestingcompose.apiFunctions.submitDataResponse
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.functions.resetAllData
+import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
 import kotlinx.coroutines.launch
 
 @Composable

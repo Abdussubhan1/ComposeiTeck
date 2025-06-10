@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appPrefs
+package com.itecknologi.itecktestingcompose.appPrefs
 
 import android.content.Context
 import android.util.Log

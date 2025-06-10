@@ -1,9 +1,9 @@
-package com.example.itecktestingcompose.apiFunctions
+package com.itecknologi.itecktestingcompose.apiFunctions
 
 import android.graphics.Bitmap
 import android.util.Log
-import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.objects.ServiceBuilder
+import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
+import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream

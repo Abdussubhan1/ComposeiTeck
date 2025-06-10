@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,9 +36,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.itecktestingcompose.apiFunctions.notificationHistory
-import com.example.itecktestingcompose.modelClasses.NotificationHistoryItem
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.apiFunctions.notificationHistory
+import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistoryItem
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 
 
 @Composable

@@ -1,8 +1,8 @@
-package com.example.itecktestingcompose.functions
+package com.itecknologi.itecktestingcompose.functions
 
 import android.content.Context
 import android.content.pm.PackageManager
-import com.example.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.constants.Constants
 
 fun getAppVersion(context: Context): String {
     return try {

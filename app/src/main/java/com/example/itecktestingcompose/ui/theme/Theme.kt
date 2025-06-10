@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.ui.theme
+package com.itecknologi.itecktestingcompose.ui.theme
 
 import android.app.Activity
 import android.os.Build

@@ -1,10 +1,10 @@
-package com.example.itecktestingcompose.apiFunctions
+package com.itecknologi.itecktestingcompose.apiFunctions
 
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.objects.ServiceBuilder
+import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
+import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 data class ValidateLocationResponse(
     var isLoading: Boolean,

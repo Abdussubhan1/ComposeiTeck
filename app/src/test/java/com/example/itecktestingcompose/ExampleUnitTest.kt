@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose
+package com.itecknologi.itecktestingcompose
 
 import org.junit.Test
 

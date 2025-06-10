@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -65,18 +65,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.apiFunctions.DevValidationResult
-import com.example.itecktestingcompose.apiFunctions.validateDev
-import com.example.itecktestingcompose.constants.Constants
-import com.example.itecktestingcompose.functions.HandleDoubleBackToExit
-import com.example.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.DevValidationResult
+import com.itecknologi.itecktestingcompose.apiFunctions.validateDev
+import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.R
 import kotlinx.coroutines.launch
-import com.example.itecktestingcompose.apiFunctions.getVehicleDetails
-import com.example.itecktestingcompose.modelClasses.VehData
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
-import com.example.itecktestingcompose.functions.isInternetAvailable
-import com.example.itecktestingcompose.functions.resetAllData
-import com.example.itecktestingcompose.objects.vehicle_details
+import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
+import com.itecknologi.itecktestingcompose.modelClasses.VehData
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
+import com.itecknologi.itecktestingcompose.functions.resetAllData
+import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 
 

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.modelClasses
+package com.itecknologi.itecktestingcompose.modelClasses
 
 data class postDataResponse(
     val Message: String,

@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
@@ -31,10 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.itecktestingcompose.apiFunctions.FCMUpdate
-import com.example.itecktestingcompose.R
-import com.example.itecktestingcompose.apiFunctions.checkLogin
-import com.example.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.apiFunctions.FCMUpdate
+import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.checkLogin
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 
 
 @Composable

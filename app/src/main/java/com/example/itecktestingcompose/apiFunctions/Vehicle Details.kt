@@ -1,10 +1,10 @@
-package com.example.itecktestingcompose.apiFunctions
+package com.itecknologi.itecktestingcompose.apiFunctions
 
 import android.util.Log
 
-import com.example.itecktestingcompose.interfaces.RetrofitInterface
-import com.example.itecktestingcompose.objects.ServiceBuilder
-import com.example.itecktestingcompose.objects.vehicle_details
+import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
+import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
+import com.itecknologi.itecktestingcompose.objects.vehicle_details
 
 suspend fun getVehicleDetails(appid:String,T_id:String): Boolean {
     return try {
