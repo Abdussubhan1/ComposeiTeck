@@ -58,7 +58,7 @@ fun SplashScreen(
                 val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
 
                 if (check) {
-                    navController.navigate("mainscreen") {
+                    navController.navigate("Menu Screen") {
                         popUpTo("splash") { inclusive = true }
                     }
                 } else {

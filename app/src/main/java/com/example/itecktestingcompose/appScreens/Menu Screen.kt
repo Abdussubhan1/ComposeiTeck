@@ -85,7 +85,7 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         Spacer(modifier = Modifier.height(200.dp))
 
         MenuButton("New Installation") {
-            navController.navigate("newinstallation")
+            navController.navigate("mainscreen") { popUpTo("Menu Screen") { inclusive = true } }
         }
 
         MenuButton("Redo") {

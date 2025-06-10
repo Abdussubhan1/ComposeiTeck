@@ -119,7 +119,7 @@ fun OTPScreen(context: Context, navController: NavHostController, prefs: Prefere
                         prefs.setTechnicianID(Constants.technicianID)
                         prefs.setTechnicianName(Constants.TechnicianName) //Saving Technician Name in Shared Prefs
 
-                        navController.navigate("mainscreen") {
+                        navController.navigate("Menu Screen") {
                             popUpTo("OTP Screen") {
                                 inclusive = true
                             }
