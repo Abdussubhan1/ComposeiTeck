@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.itecktestingcompose.appScreens.MenuScreen
+import com.example.itecktestingcompose.appScreens.RedoScreen
+import com.example.itecktestingcompose.appScreens.RemovalScreen
 import com.itecknologi.itecktestingcompose.appScreens.AllahHafiz
 import com.itecknologi.itecktestingcompose.appScreens.DeviceEntryScreen
 import com.itecknologi.itecktestingcompose.appScreens.FinalPicturesScreen
@@ -34,6 +36,8 @@ fun AppNavigation( context: Context, prefs: PreferenceManager) {
         composable("Menu Screen") { MenuScreen(context, navController, prefs) }
         composable("NotificationScreen") { NotificationScreen(navController,prefs) }
         composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
+        composable("redo Screen") { RedoScreen(context, navController, prefs) }
+        composable("removal Screen") { RemovalScreen(context, navController, prefs) }
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }
         composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }

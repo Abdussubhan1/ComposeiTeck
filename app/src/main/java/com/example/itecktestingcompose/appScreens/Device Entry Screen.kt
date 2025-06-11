@@ -1,10 +1,12 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.location.LocationManager
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -32,12 +34,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -87,6 +91,36 @@ fun DeviceEntryScreen(
     navController: NavHostController,
     prefs: PreferenceManager
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    BackHandler {if (Constants.vehicleID != "") {
+         showDialog = true
+    } else {
+        navController.popBackStack()
+    } }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirm Submission") },
+            text = { Text("Are you sure you want to go back?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    Constants.vehicleID = ""
+                    navController.popBackStack()
+                }) {
+                    Text("Go Back")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     val name = prefs.getTechnicianName()
 
@@ -120,7 +154,7 @@ fun DeviceEntryScreen(
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
 
-    HandleDoubleBackToExit() //this is used to ensure secure exit from app
+
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -138,6 +172,7 @@ fun DeviceEntryScreen(
             delay(3000)
         }
     }
+
 
     Column(
         modifier = Modifier

@@ -41,6 +41,9 @@ suspend fun validateCnic(
                 Constants.authKey=responseBody.Authkey
                 Constants.otp = responseBody.otp
             }
+
+            Log.d("cnicV", "Response: $responseBody")
+
             return CNICValidationResult(ifUserExist, false, name)
         } else {
             CNICValidationResult(ifUserExist = false, isLoading = false, technicianName = "")
