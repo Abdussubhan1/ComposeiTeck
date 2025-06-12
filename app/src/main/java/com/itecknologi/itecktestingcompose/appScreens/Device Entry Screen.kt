@@ -1,7 +1,6 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.location.LocationManager
 import android.util.Log
@@ -72,7 +71,6 @@ import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.apiFunctions.DevValidationResult
 import com.itecknologi.itecktestingcompose.apiFunctions.validateDev
 import com.itecknologi.itecktestingcompose.constants.Constants
-import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.R
 import kotlinx.coroutines.launch
 import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
@@ -107,6 +105,7 @@ fun DeviceEntryScreen(
                 TextButton(onClick = {
                     showDialog = false
                     Constants.vehicleID = ""
+                    Constants.deviceID = ""
                     navController.popBackStack()
                 }) {
                     Text("Go Back")
@@ -258,21 +257,43 @@ fun DeviceEntryScreen(
                         .alpha(alpha)
                         .clickable {
                             isLoggingOut = true
-                            resetAllData()
                         }
                 )
             }
+            var confirmLogout by remember { mutableStateOf(false) }
             if (isLoggingOut) {
+                AlertDialog(
+                    onDismissRequest = { isLoggingOut = false },
+                    title = { Text("Logout") },
+                    text = { Text("Are you sure you want to Logout?") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            isLoggingOut = false
+                            confirmLogout = true
+                            resetAllData()
+                        }) {
+                            Text("Logout")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            isLoggingOut = false
+                        }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
+            if (confirmLogout) {
                 LaunchedEffect(true) {
                     delay(500) // Wait for animation to finish
                     prefs.setUserCNIC(cnic = "")
                     prefs.setTechnicianName(name = "")
                     prefs.setAppLoginID(id = "")
                     prefs.setTechnicianID(T_ID = 0)
-
                     Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                     navController.navigate("login") {
-                        popUpTo("mainScreen") { inclusive = true }
+                        popUpTo("initialPicturesScreen") { inclusive = true }
                     }
                 }
             }

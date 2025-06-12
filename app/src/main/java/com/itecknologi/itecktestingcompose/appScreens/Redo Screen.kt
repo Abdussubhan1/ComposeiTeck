@@ -1,6 +1,6 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
-import android.app.Activity
+
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,9 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,12 +45,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
-import com.itecknologi.itecktestingcompose.appScreens.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
+
 @Composable
-fun MenuScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+fun RedoScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
@@ -129,23 +129,17 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
             }
         }
         Spacer(modifier = Modifier.height(200.dp))
+        Text("Redo Page Under Maintenance", color = Color.White, fontSize = 24.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        Spacer(modifier = Modifier.height(50.dp))
+        Icon(
+            imageVector = Icons.Default.Construction,
+            contentDescription = "Logout",
+            tint = Color.Yellow,
+            modifier = Modifier
+                .size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(50.dp))
 
-        MenuButton("New Installation") {
-            navController.navigate("mainscreen")
-        }
-
-        MenuButton("Redo") {
-            navController.navigate("redo Screen")
-
-        }
-
-        MenuButton("Removal") {
-            navController.navigate("removal Screen")
-        }
-
-        MenuButton("Exit") {
-            (context as? Activity)?.finish()
-        }
         Spacer(modifier = Modifier.height(200.dp))
         BottomLogo()
 
@@ -153,27 +147,11 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
     }
 }
 
-@Composable
-fun MenuButton(text: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .padding(vertical = 8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699))
-    ) {
-        Text(text = text, fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
-    }
-}
-
-
 @Preview
 @Composable
-fun MenuPreview() {
-    MenuScreen(
+fun RedoPreview() {
+    RedoScreen(
         context = LocalContext.current,
-        rememberNavController(),
-        PreferenceManager(LocalContext.current)
+        rememberNavController(), PreferenceManager(LocalContext.current)
     )
 }
-

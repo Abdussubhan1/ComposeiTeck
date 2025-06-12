@@ -36,6 +36,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -149,7 +150,6 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                             .alpha(alpha)
                             .clickable {
                                 isLoggingOut = true
-                                resetAllData()
                             }
                     )
                 }
@@ -157,8 +157,32 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
             }
 
         }
-
+        var confirmLogout by remember { mutableStateOf(false) }
         if (isLoggingOut) {
+            AlertDialog(
+                onDismissRequest = { isLoggingOut = false },
+                title = { Text("Logout") },
+                text = { Text("Are you sure you want to Logout?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        isLoggingOut = false
+                        confirmLogout = true
+                        resetAllData()
+                    }) {
+                        Text("Logout")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        isLoggingOut = false
+                    }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        if (confirmLogout) {
             LaunchedEffect(true) {
                 delay(500) // Wait for animation to finish
                 prefs.setUserCNIC(cnic = "")
@@ -167,7 +191,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                 prefs.setTechnicianID(T_ID = 0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("testingPage") { inclusive = true }
+                    popUpTo("initialPicturesScreen") { inclusive = true }
                 }
             }
         }

@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.itecktestingcompose.appScreens.MenuScreen
-import com.example.itecktestingcompose.appScreens.RedoScreen
-import com.example.itecktestingcompose.appScreens.RemovalScreen
+import com.itecknologi.itecktestingcompose.appScreens.MenuScreen
+import com.itecknologi.itecktestingcompose.appScreens.RedoScreen
+import com.itecknologi.itecktestingcompose.appScreens.RemovalScreen
 import com.itecknologi.itecktestingcompose.appScreens.AllahHafiz
 import com.itecknologi.itecktestingcompose.appScreens.DeviceEntryScreen
 import com.itecknologi.itecktestingcompose.appScreens.FinalPicturesScreen

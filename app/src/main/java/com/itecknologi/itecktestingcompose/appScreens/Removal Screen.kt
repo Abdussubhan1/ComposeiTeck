@@ -1,4 +1,4 @@
-package com.example.itecktestingcompose.appScreens
+package com.itecknologi.itecktestingcompose.appScreens
 
 import android.content.Context
 import android.widget.Toast
@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
-import com.itecknologi.itecktestingcompose.appScreens.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
@@ -135,14 +134,6 @@ fun RemovalScreen(context: Context, navController: NavHostController, prefs: Pre
                 .size(64.dp)
         )
         Spacer(modifier = Modifier.height(50.dp))
-        Text(
-            "Go Back <<<",
-            color = Color.Blue,
-            fontSize = 24.sp,
-            modifier = Modifier.clickable { navController.popBackStack() },
-            textDecoration = TextDecoration.Underline,
-            fontWeight = FontWeight.Light
-        )
 
         Spacer(modifier = Modifier.height(200.dp))
         BottomLogo()
