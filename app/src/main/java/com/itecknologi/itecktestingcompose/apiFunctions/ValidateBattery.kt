@@ -8,7 +8,7 @@ import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 data class batteryResponse(
     var isLoading: Boolean,
-    var battery: String
+    var battery: String?
 )
 
 
