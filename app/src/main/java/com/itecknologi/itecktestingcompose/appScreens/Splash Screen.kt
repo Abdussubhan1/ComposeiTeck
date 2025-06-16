@@ -49,6 +49,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
+import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 
 
 @Composable
@@ -60,26 +61,26 @@ fun SplashScreen(
 ) {
 
     LaunchedEffect(Unit) {
+        if (isInternetAvailable(context)) {
 
+            val remoteConfig = Firebase.remoteConfig
+            remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
 
-        val remoteConfig = Firebase.remoteConfig
-        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-//        remoteConfig.fetchAndActivate().await()
-//        remoteConfig.fetch(0)
-        remoteConfig.fetch(0).await()  // 0 seconds cache → always fetches fresh
-        remoteConfig.activate()        // activates fetched values
+            remoteConfig.fetch(0).await()  // 0 seconds cache → always fetches fresh
+            remoteConfig.activate()        // activates fetched values
 
-        val latestVersion = remoteConfig.getString("latest_app_version")
+            val latestVersion = remoteConfig.getString("latest_app_version")
 
-        Log.d("Latest Version", "Latest Version: $latestVersion")
+            Log.d("Latest Version", "Latest Version: $latestVersion")
 
-        // Check if update is needed
-        if (isUpdateRequired(current = version, latest = latestVersion)) {
-            // Show update dialog before doing anything else
-            showUpdateDialog(context)
-            return@LaunchedEffect // Don't proceed to other navigation
+            // Check if update is needed
+            if (isUpdateRequired(current = version, latest = latestVersion)) {
+                // Show update dialog before doing anything else
+                showUpdateDialog(context)
+                return@LaunchedEffect // Don't proceed to other navigation
+            }
+
         }
-
         delay(2000)
 
         if (prefs.getUserCNIC() != "") {
@@ -102,8 +103,8 @@ fun SplashScreen(
                 navController.navigate("login") {
                     popUpTo("splash") { inclusive = true }
                 }
-                prefs.setUserCNIC("")
-                Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
+//                prefs.setUserCNIC("")
+                Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
             }
 
         } else {
@@ -111,6 +112,8 @@ fun SplashScreen(
                 popUpTo("splash") { inclusive = true }
             }
         }
+
+
     }
 
 
@@ -184,10 +187,16 @@ fun showUpdateDialog(context: Context) {
             .setCancelable(false)
             .setPositiveButton("Update") { _, _ ->
                 try {
-                    val intent = Intent(Intent.ACTION_VIEW, "market://details?id=${context.packageName}".toUri())
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        "market://details?id=${context.packageName}".toUri()
+                    )
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=${context.packageName}".toUri())
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
+                    )
                     context.startActivity(intent)
                 }
 
@@ -206,7 +215,6 @@ fun showUpdateDialog(context: Context) {
             .show()
     }
 }
-
 
 
 @Composable
