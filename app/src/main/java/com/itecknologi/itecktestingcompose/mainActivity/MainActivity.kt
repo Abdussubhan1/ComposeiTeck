@@ -32,15 +32,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        /**val remoteConfig = Firebase.remoteConfig
-
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600 // 1 hour
-        }
-        remoteConfig.setConfigSettingsAsync(configSettings)
-        remoteConfig.setDefaultsAsync(mapOf(
-            "welcome_message" to "Welcome to my app!"
-        ))**/
 
         val prefs = PreferenceManager(this) //Created object for class PreferenceManager
         Log.d("CheckAppLoginID", "AppLoginID: ${prefs.getAppLoginID()}")

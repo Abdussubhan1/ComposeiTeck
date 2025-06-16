@@ -14,14 +14,14 @@ data class batteryResponse(
 
 suspend fun validateBattery(devID: String): batteryResponse {
 
-    var battery = ""
+    var battery: String? = null
 
    return try {
 
         val response =
             ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID)
         if (response.isSuccessful && response.body() != null) {
-            var responseBody = response.body()!!
+            val responseBody = response.body()!!
             battery = responseBody.Battery
 
         }

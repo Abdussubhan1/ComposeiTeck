@@ -1,7 +1,15 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,10 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 import com.itecknologi.itecktestingcompose.apiFunctions.FCMUpdate
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.checkLogin
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.tasks.await
+import kotlin.system.exitProcess
+import androidx.core.net.toUri
 
 
 @Composable
@@ -47,14 +61,31 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
 
-        kotlinx.coroutines.delay(2000) // Wait for 3 seconds
+
+        val remoteConfig = Firebase.remoteConfig
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+//        remoteConfig.fetchAndActivate().await()
+//        remoteConfig.fetch(0)
+        remoteConfig.fetch(0).await()  // 0 seconds cache → always fetches fresh
+        remoteConfig.activate()        // activates fetched values
+
+        val latestVersion = remoteConfig.getString("latest_app_version")
+
+        Log.d("Latest Version", "Latest Version: $latestVersion")
+
+        // Check if update is needed
+        if (isUpdateRequired(current = version, latest = latestVersion)) {
+            // Show update dialog before doing anything else
+            showUpdateDialog(context)
+            return@LaunchedEffect // Don't proceed to other navigation
+        }
+
+        delay(2000)
 
         if (prefs.getUserCNIC() != "") {
-
             val loginResponse = checkLogin(prefs.getAppLoginID())
 
             if (loginResponse.success) {
-
                 val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
 
                 if (check) {
@@ -81,6 +112,7 @@ fun SplashScreen(
             }
         }
     }
+
 
 
     Box(
@@ -125,9 +157,57 @@ fun SplashScreen(
                     .padding(bottom = 8.dp)
             )
         }
+        Log.d("App version", "Version $version")
     }
 
 }
+
+fun isUpdateRequired(current: String, latest: String): Boolean {
+    val curParts = current.split(".").map { it.toIntOrNull() ?: 0 }
+    val latParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
+
+    for (i in 0 until maxOf(curParts.size, latParts.size)) {
+        val cur = curParts.getOrElse(i) { 0 }
+        val lat = latParts.getOrElse(i) { 0 }
+        if (cur < lat) return true
+        if (cur > lat) return false
+    }
+    return false
+}
+
+@SuppressLint("UseKtx")
+fun showUpdateDialog(context: Context) {
+    Handler(Looper.getMainLooper()).post {
+        AlertDialog.Builder(context)
+            .setTitle("Update Required")
+            .setMessage("A new version of the app is available. Please update to continue.")
+            .setCancelable(false)
+            .setPositiveButton("Update") { _, _ ->
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, "market://details?id=${context.packageName}".toUri())
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    val intent = Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=${context.packageName}".toUri())
+                    context.startActivity(intent)
+                }
+
+                if (context is Activity) {
+                    context.finishAffinity()
+                    exitProcess(0)
+                }
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                // Exit app on cancel
+                if (context is Activity) {
+                    context.finishAffinity()
+                    exitProcess(0)
+                }
+            }
+            .show()
+    }
+}
+
+
 
 @Composable
 fun BottomLogo() {
