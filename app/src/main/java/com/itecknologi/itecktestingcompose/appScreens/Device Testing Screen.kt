@@ -871,7 +871,7 @@ fun Alert(
         confirmButton = {
             Button(
                 onClick = {
-                    navController.navigate("mainscreen")
+                    navController.navigate("mainscreen"){popUpTo("testingPage"){inclusive = true}}
                     Constants.deviceID = ""
                     Constants.initialPictures = mutableStateListOf(null, null)
                     Constants.deviceLocationLat = 0.0

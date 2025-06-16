@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -65,7 +64,6 @@ fun SplashScreen(
 
             val remoteConfig = Firebase.remoteConfig
             remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-
             remoteConfig.fetch(0).await()  // 0 seconds cache → always fetches fresh
             remoteConfig.activate()        // activates fetched values
 

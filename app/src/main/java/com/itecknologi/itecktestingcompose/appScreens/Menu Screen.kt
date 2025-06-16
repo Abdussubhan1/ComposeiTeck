@@ -51,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
@@ -63,6 +64,7 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         animationSpec = tween(durationMillis = 500),
         label = "logoutAnimation"
     )
+    HandleDoubleBackToExit()
     Column(
         modifier = Modifier
             .fillMaxSize()

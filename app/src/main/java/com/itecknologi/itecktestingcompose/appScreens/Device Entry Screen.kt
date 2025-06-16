@@ -106,7 +106,7 @@ fun DeviceEntryScreen(
                     showDialog = false
                     Constants.vehicleID = ""
                     Constants.deviceID = ""
-                    navController.popBackStack()
+                    navController.navigate("Menu Screen"){popUpTo("mainscreen"){inclusive = true}}
                 }) {
                     Text("Go Back")
                 }
