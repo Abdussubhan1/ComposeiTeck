@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,7 +53,6 @@ import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -145,7 +143,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
 
                     //On submit, system will check if the location in ON or OFF and ask accordingly
 
-                    if (isInternetAvailable(context)) {
+                    if (isInternetAvailable()) {
                         if (isLocationEnabled) {
                             validationResult = CNICValidationResult(
                                 ifUserExist = false,

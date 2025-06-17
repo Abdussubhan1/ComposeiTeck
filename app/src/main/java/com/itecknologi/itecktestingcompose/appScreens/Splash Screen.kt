@@ -60,25 +60,31 @@ fun SplashScreen(
 ) {
 
     LaunchedEffect(Unit) {
-        if (isInternetAvailable(context)) {
 
-            val remoteConfig = Firebase.remoteConfig
-            remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-            remoteConfig.fetch(0).await()  // 0 seconds cache → always fetches fresh
-            remoteConfig.activate()        // activates fetched values
 
-            val latestVersion = remoteConfig.getString("latest_app_version")
+        val remoteConfig = Firebase.remoteConfig
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults).await()
 
-            Log.d("Latest Version", "Latest Version: $latestVersion")
-
-            // Check if update is needed
-            if (isUpdateRequired(current = version, latest = latestVersion)) {
-                // Show update dialog before doing anything else
-                showUpdateDialog(context)
-                return@LaunchedEffect // Don't proceed to other navigation
-            }
-
+        //Doing so to prevent app crash while net not available
+        try {
+            remoteConfig.fetch(0).await()
+            remoteConfig.activate()
+        } catch (e: Exception) {
+            Log.e("RemoteConfig", "Fetch failed: ${e.localizedMessage}")
+            remoteConfig.activate()
         }
+        val latestVersion = remoteConfig.getString("latest_app_version")
+
+        Log.d("Latest Version", "Latest Version: $latestVersion")
+
+        // Check if update is needed
+        if (isUpdateRequired(current = version, latest = latestVersion)) {
+            // Show update dialog before doing anything else
+            showUpdateDialog(context)
+            return@LaunchedEffect // Don't proceed to other navigation
+        }
+
+
         delay(2000)
 
         if (prefs.getUserCNIC() != "") {

@@ -1,12 +1,12 @@
 package com.itecknologi.itecktestingcompose.functions
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+fun isInternetAvailable(): Boolean {
 
-fun isInternetAvailable(context: Context): Boolean {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val network = connectivityManager.activeNetwork ?: return false
-    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    return try {
+        val process = Runtime.getRuntime().exec("ping -c 1 8.8.8.8")
+        val exitCode = process.waitFor()
+        exitCode == 0  // ✅ Returns true only if ping was successful
+    } catch (e: Exception) {
+        false
+    }
 }
