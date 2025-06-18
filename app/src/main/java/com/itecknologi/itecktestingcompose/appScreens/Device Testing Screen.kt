@@ -49,7 +49,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +56,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,7 +67,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.apiFunctions.ValidateLocationResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.cmdQueueCheck
-import com.itecknologi.itecktestingcompose.apiFunctions.relayResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.RelayResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.setRelayStatus
 import com.itecknologi.itecktestingcompose.apiFunctions.validateBattery
 import com.itecknologi.itecktestingcompose.apiFunctions.validateIgnition
@@ -357,7 +355,7 @@ fun ValidationStatusUI(
 
     var relayResult by remember {
         mutableStateOf(
-            relayResponse(
+            RelayResponse(
                 success = false,
                 isLoading = false,
                 message = ""
@@ -687,7 +685,7 @@ fun ValidationStatusUI(
                                         showRelay = true
                                         showIgnition = false
                                         relayResult =
-                                            relayResponse(
+                                            RelayResponse(
                                                 success = false,
                                                 isLoading = true,
                                                 message = ""

@@ -1,44 +1,35 @@
 package com.itecknologi.itecktestingcompose.apiFunctions
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
-data class relayResponse(
-    var success: Boolean,
-    var isLoading: Boolean,
-    var message: String
+data class RelayResponse(
+    val success: Boolean = false,
+    val isLoading: Boolean = false,
+    val message: String = "Error Sending Command!"
 )
 
-suspend fun setRelayStatus(
-    devID: String,
-    cmd: String
-): relayResponse {
+suspend fun setRelayStatus(devID: String, cmd: String): RelayResponse {
     return try {
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
             .getRelay(devID, cmd)
 
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-
-            relayResponse(
-                success = responseBody.Success,
+        val body = response.body()
+        if (response.isSuccessful && body != null) {
+            RelayResponse(
+                success = body.Success,
                 isLoading = false,
-                message = responseBody.Message
+                message = body.Message.ifEmpty { "No Message from Server" }
             )
         } else {
-            relayResponse(
-                success = false,
-                isLoading = false,
-                message = "Error Sending Command!"
-            )
+            RelayResponse()
         }
 
     } catch (e: Exception) {
-        relayResponse(
-            success = false,
-            isLoading = false,
-            message = "Error Sending Command!"
-        )
+        Log.e(TAG, "setRelayStatus error: ${e.message}")
+        RelayResponse()
     }
 }
 

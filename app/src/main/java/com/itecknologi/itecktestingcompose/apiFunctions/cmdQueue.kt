@@ -1,5 +1,7 @@
 package com.itecknologi.itecktestingcompose.apiFunctions
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
@@ -12,10 +14,10 @@ suspend fun cmdQueueCheck(
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
             .getCmdQueueStatus(devID, cmd)
 
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            if (responseBody.Success) {
-                responseBody.Message
+        val body = response.body()
+        if (response.isSuccessful && body != null) {
+            if (body.Success) {
+                body.Message
             } else {
                 "Command already in queue"
             }
@@ -23,7 +25,9 @@ suspend fun cmdQueueCheck(
             "Error!"
         }
     } catch (e: Exception) {
+        Log.e(TAG, "cmdQueueCheck error: ${e.message}")
         "Error!"
     }
 }
+
 
