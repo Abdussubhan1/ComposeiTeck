@@ -2,6 +2,7 @@ package com.itecknologi.itecktestingcompose.functions
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Constraints
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,12 +20,14 @@ import com.itecknologi.itecktestingcompose.appScreens.TestingPage
 import com.itecknologi.itecktestingcompose.appScreens.initialPicTake
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.appScreens.finalTicket
+import com.itecknologi.itecktestingcompose.constants.Constants
 
 
 @Composable
 fun AppNavigation( context: Context, prefs: PreferenceManager) {
 
     val version = getAppVersion(context)
+
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "splash")

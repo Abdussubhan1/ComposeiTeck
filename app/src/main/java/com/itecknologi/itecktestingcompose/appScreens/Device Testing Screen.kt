@@ -68,9 +68,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.apiFunctions.ValidateLocationResponse
-import com.itecknologi.itecktestingcompose.apiFunctions.batteryResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.cmdQueueCheck
-import com.itecknologi.itecktestingcompose.apiFunctions.ignitionResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.relayResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.setRelayStatus
 import com.itecknologi.itecktestingcompose.apiFunctions.validateBattery
@@ -80,6 +78,8 @@ import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.checkLocationWithinRange
 import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.BatteryResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.IgnitionResponse
 import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
@@ -339,7 +339,7 @@ fun ValidationStatusUI(
 
     var batteryResult by remember {
         mutableStateOf(
-            batteryResponse(
+            BatteryResponse(
                 isLoading = false,
                 battery = ""
             )
@@ -348,7 +348,7 @@ fun ValidationStatusUI(
 
     var ignitionResult by remember {
         mutableStateOf(
-            ignitionResponse(
+            IgnitionResponse(
                 isLoading = false,
                 ignition = ""
             )
@@ -524,7 +524,7 @@ fun ValidationStatusUI(
                                 batteryProgress = 1.0f
                                 moveToNextValidationStep = 2
                             } else {
-                                batteryResult = batteryResponse(isLoading = true, battery = "")
+                                batteryResult = BatteryResponse(isLoading = true, battery = "")
                                 showBattery = true
                                 showLocation = false
                                 coroutineScope.launch {
@@ -591,7 +591,7 @@ fun ValidationStatusUI(
                                     moveToNextValidationStep = 3
                                 } else {
                                     ignitionResult =
-                                        ignitionResponse(isLoading = true, ignition = "")
+                                        IgnitionResponse(isLoading = true, ignition = "")
                                     showIgnition = true
                                     showBattery = false
                                     coroutineScope.launch {

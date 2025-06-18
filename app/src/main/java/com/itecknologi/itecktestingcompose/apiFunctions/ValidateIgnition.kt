@@ -5,30 +5,30 @@ import android.util.Log
 import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
-data class ignitionResponse(
-    var isLoading: Boolean,
-    var ignition: String?
+data class IgnitionResponse(
+    var isLoading: Boolean = false,
+    var ignition: String = "Status Not Found"
 )
 
-
-
-suspend fun validateIgnition(devID: String) : ignitionResponse {
-
-    var ignition : String? = null
-
+suspend fun validateIgnition(devID: String): IgnitionResponse {
     return try {
+        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateIgnition(devID)
 
-        val response =
-            ServiceBuilder.buildService(RetrofitInterface::class.java).validateIgnition(devID)
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            ignition = responseBody.Ignition
-
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null && body.Ignition.isNotEmpty()) {
+                return IgnitionResponse(
+                    isLoading = false,
+                    ignition = body.Ignition
+                )
+            }
         }
-        ignitionResponse(isLoading = false, ignition = ignition)
+
+        Log.w(TAG, "validateIgnition: Response failed or ignition is null")
+        IgnitionResponse()
 
     } catch (e: Exception) {
-        Log.d(TAG, "validateDevice: $e")
-        ignitionResponse(isLoading = false, ignition = ignition)
+        Log.e(TAG, "validateIgnition error: ${e.message}")
+        IgnitionResponse()
     }
 }

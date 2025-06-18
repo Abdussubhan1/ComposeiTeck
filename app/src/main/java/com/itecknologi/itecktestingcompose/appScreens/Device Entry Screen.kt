@@ -334,7 +334,7 @@ fun DeviceEntryScreen(
                             .clickable(enabled = vehicleEngineChassis.length >= 3) {
                                 keyboard?.hide()
 
-                                if (isInternetAvailable()) {
+                                if (isInternetAvailable(context)) {
                                     if (isLocationEnabled) {
                                         if (success) {
                                             vehList = searchInMemory(vehicleEngineChassis)
@@ -414,7 +414,7 @@ fun DeviceEntryScreen(
                                     ifDeviceExist = false,
                                     isLoading = true
                                 )
-                                if (isLocationEnabled && isInternetAvailable()) {
+                                if (isLocationEnabled && isInternetAvailable(context)) {
                                     couroutineScope.launch {
 
                                         validationResult = validateDev(devID)

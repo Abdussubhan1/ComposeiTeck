@@ -143,7 +143,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
 
                     //On submit, system will check if the location in ON or OFF and ask accordingly
 
-                    if (isInternetAvailable()) {
+                    if (isInternetAvailable(context)) {
                         if (isLocationEnabled) {
                             validationResult = CNICValidationResult(
                                 ifUserExist = false,

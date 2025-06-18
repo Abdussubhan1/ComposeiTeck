@@ -48,7 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
-import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
+import kotlinx.coroutines.withTimeoutOrNull
 
 
 @Composable
@@ -67,8 +67,11 @@ fun SplashScreen(
 
         //Doing so to prevent app crash while net not available
         try {
-            remoteConfig.fetch(0).await()
-            remoteConfig.activate()
+            withTimeoutOrNull(3000) {
+                remoteConfig.fetch(0).await()
+                remoteConfig.activate()
+            }
+
         } catch (e: Exception) {
             Log.e("RemoteConfig", "Fetch failed: ${e.localizedMessage}")
             remoteConfig.activate()

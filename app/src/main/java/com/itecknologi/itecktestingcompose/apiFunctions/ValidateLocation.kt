@@ -7,11 +7,11 @@ import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 data class ValidateLocationResponse(
-    var isLoading: Boolean,
-    val Lat: Double,
-    val Lng: Double,
-    val Message: String = "",
-    val Success: Boolean
+    var isLoading: Boolean = false,
+    val Lat: Double = 0.0,
+    val Lng: Double = 0.0,
+    val Message: String = "Location Not Found",
+    val Success: Boolean = false
 )
 
 suspend fun validateLoc(devID: String): ValidateLocationResponse {
@@ -19,21 +19,28 @@ suspend fun validateLoc(devID: String): ValidateLocationResponse {
         val service = ServiceBuilder.buildService(RetrofitInterface::class.java)
         val response = service.validateLocation(devID)
 
-        if (response.isSuccessful) {
-            val body = response.body()
-            if (body != null && body.Success) {
-                Log.d(TAG, "validateDevice: ${body.Lat}, ${body.Lng}")
-                return ValidateLocationResponse(false,body.Lat, body.Lng, body.Message, body.Success)
-            }
+        val body = response.body()
+        if (response.isSuccessful && body != null && body.Success) {
+            Log.d(TAG, "validateLoc: ${body.Lat}, ${body.Lng}")
+            ValidateLocationResponse(
+                isLoading = false,
+                Lat = body.Lat,
+                Lng = body.Lng,
+                Message = body.Message,
+                Success = true
+            )
+        } else {
+            Log.w(TAG, "validateLoc failed or body null")
+            ValidateLocationResponse()
         }
 
-        ValidateLocationResponse(false,0.0,0.0,"Failed", false) // Fallback default if not successful
-
     } catch (e: Exception) {
-        Log.e(TAG, "validateDevice error: ${e.message}")
-        ValidateLocationResponse(false,0.0,0.0,"Failed", false)
+        Log.e(TAG, "validateLoc error: ${e.message}")
+        ValidateLocationResponse()
     }
 }
+
+
 
 
 

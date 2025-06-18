@@ -6,32 +6,34 @@ import android.util.Log
 import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
-data class batteryResponse(
-    var isLoading: Boolean,
-    var battery: String?
+data class BatteryResponse(
+    var isLoading: Boolean = false,
+    var battery: String = "Status Not Found"
 )
 
+suspend fun validateBattery(devID: String): BatteryResponse {
+    return try {
+        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID)
 
-suspend fun validateBattery(devID: String): batteryResponse {
-
-    var battery: String? = null
-
-   return try {
-
-        val response =
-            ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID)
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            battery = responseBody.Battery
-
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (!body?.Battery.isNullOrEmpty()) {
+                return BatteryResponse(
+                    isLoading = false,
+                    battery = body!!.Battery
+                )
+            }
         }
-         batteryResponse(isLoading = false, battery = battery)
+
+        Log.w(TAG, "validateBattery: Response failed or battery is null")
+        BatteryResponse()
 
     } catch (e: Exception) {
-        Log.d(TAG, "validateDevice: $e")
-       batteryResponse(isLoading = false, battery = battery)
+        Log.e(TAG, "validateBattery error: ${e.message}")
+        BatteryResponse()
     }
 }
+
 
 
 
