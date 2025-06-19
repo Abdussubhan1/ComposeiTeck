@@ -61,7 +61,6 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
 
-
         val remoteConfig = Firebase.remoteConfig
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults).await()
 

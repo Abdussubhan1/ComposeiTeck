@@ -1,6 +1,7 @@
 package com.itecknologi.itecktestingcompose.functions
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Constraints
 import androidx.navigation.compose.NavHost
@@ -27,6 +28,7 @@ import com.itecknologi.itecktestingcompose.constants.Constants
 fun AppNavigation( context: Context, prefs: PreferenceManager) {
 
     val version = getAppVersion(context)
+    Log.d("version of app", version)
 
 
     val navController = rememberNavController()
