@@ -552,8 +552,9 @@ fun ValidationStatusUI(
                         if (obdType == "LOCATION") {
                             onTestingCompleted(true)
                         } else moveToNextValidationStep = 3
-                    }else
-                        onTestingCompleted(false)
+                    }
+//                    else
+//                        onTestingCompleted(false)
                     Text(
                         "Ignition",
                         fontSize = 12.sp,
@@ -621,7 +622,10 @@ fun ValidationStatusUI(
                             relayProgress = 1.0f
                             onTestingCompleted(true)
                         }
-                        else -> {onTestingCompleted(false)}
+                        else -> {
+                            // Any other response
+                            onTestingCompleted(false)
+                        }
 
                     }
                 }
