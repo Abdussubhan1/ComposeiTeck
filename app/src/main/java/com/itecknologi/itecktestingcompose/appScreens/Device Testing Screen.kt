@@ -78,6 +78,7 @@ import com.itecknologi.itecktestingcompose.functions.checkLocationWithinRange
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.BatteryResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.IgnitionResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.getEventLogID
 import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
@@ -87,6 +88,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TestingPage(navController: NavHostController, context: Context, prefs: PreferenceManager) {
+
+    var checkForEventLog by remember { mutableIntStateOf(0) }
+    LaunchedEffect(checkForEventLog) {
+        getEventLogID()
+        if (Constants.eventLogID=="")
+            checkForEventLog += 1
+    }
+
     getLocation()
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
@@ -477,12 +486,14 @@ fun ValidationStatusUI(
             ) {
                 //THREE STAGES FOR BATTERY VALIDATION
                 var batteryProgress by remember { mutableFloatStateOf(0.0f) }
+
                 batteryProgress = when {
                     batteryResult.battery == "Connected" && batteryProgress == 0.0f -> 0.30f
                     batteryResult.battery == "Disconnected" && batteryProgress == 0.30f -> 0.60f
                     batteryResult.battery == "Connected" && batteryProgress == 0.60f -> 1.0f
                     else -> batteryProgress
                 }
+
                 if (batteryProgress == 1f && obdType == "OBD") {
                     onTestingCompleted(true)
                 } else if (batteryProgress == 1f && (obdType == "IMMOBILIZER" || obdType == "LOCATION"))
@@ -526,7 +537,17 @@ fun ValidationStatusUI(
                                 showBattery = true
                                 showLocation = false
                                 coroutineScope.launch {
-                                    batteryResult = validateBattery(Constants.deviceID)
+                                    batteryResult = if (Constants.eventLogID != "") {
+                                        validateBattery(
+                                            Constants.deviceID,
+                                            if (batteryProgress == 0.0f) 1 else if (batteryProgress == 0.30f) 0 else 1,
+                                            Constants.eventLogID
+                                        )
+                                    } else {
+                                        BatteryResponse(false, "Event Log Not Found")
+
+                                    }
+
                                 }
                             }
                         }
@@ -622,6 +643,7 @@ fun ValidationStatusUI(
                             relayProgress = 1.0f
                             onTestingCompleted(true)
                         }
+
                         else -> {
                             // Any other response
                             onTestingCompleted(false)
@@ -873,12 +895,17 @@ fun Alert(
         confirmButton = {
             Button(
                 onClick = {
-                    navController.navigate("mainscreen"){popUpTo("testingPage"){inclusive = true}}
+                    navController.navigate("mainscreen") {
+                        popUpTo("testingPage") {
+                            inclusive = true
+                        }
+                    }
                     Constants.deviceID = ""
                     Constants.initialPictures = mutableStateListOf(null, null)
                     Constants.deviceLocationLat = 0.0
                     Constants.deviceLocationLong = 0.0
                     Constants.deviceLocation = ""
+                    Constants.eventLogID=""
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 shape = RoundedCornerShape(12.dp),

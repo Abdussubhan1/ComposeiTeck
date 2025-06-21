@@ -11,9 +11,9 @@ data class BatteryResponse(
     var battery: String = "Status Not Found"
 )
 
-suspend fun validateBattery(devID: String): BatteryResponse {
+suspend fun validateBattery(devID: String,statusCheck: Int,eventLog: String): BatteryResponse {
     return try {
-        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID)
+        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID,statusCheck,eventLog)
 
         if (response.isSuccessful) {
             val body = response.body()

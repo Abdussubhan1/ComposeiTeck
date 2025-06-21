@@ -2,6 +2,7 @@ package com.itecknologi.itecktestingcompose.interfaces
 
 
 import com.itecknologi.itecktestingcompose.modelClasses.Battery
+import com.itecknologi.itecktestingcompose.modelClasses.EventLogCheck
 import com.itecknologi.itecktestingcompose.modelClasses.GetLocation
 import com.itecknologi.itecktestingcompose.modelClasses.GetRelay
 import com.itecknologi.itecktestingcompose.modelClasses.Ignition
@@ -47,8 +48,12 @@ interface RetrofitInterface {
     suspend fun validateLocation(@Field("devid") devID: String): Response<GetLocation>
 
     @FormUrlEncoded
-    @POST("get_battery.php")
-    suspend fun validateBattery(@Field("devid") devID: String): Response<Battery>
+    @POST("get_batteryv1.php")
+    suspend fun validateBattery(
+        @Field("devid") devID: String,
+        @Field("status") status: Int,
+        @Field("event_log") eventLog: String
+    ): Response<Battery>
 
     @FormUrlEncoded
     @POST("get_ignition.php")
@@ -125,6 +130,9 @@ interface RetrofitInterface {
     suspend fun checkLogin(
         @Field("appid") appID: String
     ): Response<checkLogin>
+
+    @POST("get_event_log.php")
+    suspend fun eventLog(): Response<EventLogCheck>
 }
 
 

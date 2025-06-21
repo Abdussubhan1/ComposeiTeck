@@ -16,5 +16,7 @@ fun resetAllData() {
         deviceLocation = ""
         cust_Contact = ""
         vehicleID=""
+        eventLogID=""
+        TLocID=0
     }
 }
