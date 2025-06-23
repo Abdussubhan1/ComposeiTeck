@@ -93,7 +93,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 
     LaunchedEffect(checkForEventLog) {
         getEventLogID()
-        if (Constants.eventLogID=="") // calling function again if event log id is null or empty
+        if (Constants.eventLogID == "") // calling function again if event log id is null or empty
             checkForEventLog += 1
     }
 
@@ -761,7 +761,7 @@ fun ValidationStatusUI(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val text = when {
-                    showLocation -> "Location: ${deviceLocationResult.Message}"
+                    showLocation -> if (Constants.deviceLocationLat != 0.0 || Constants.deviceLocationLong != 0.0) "Location: ${deviceLocationResult.Message}" else "Location: GPS Invalid"
                     showBattery -> "Battery: ${batteryResult.battery}"
                     showIgnition -> "Ignition: ${ignitionResult.ignition}"
                     showRelay -> relayResult.message
@@ -771,7 +771,7 @@ fun ValidationStatusUI(
                 if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading && !relayResult.isLoading) {
                     Text(
                         text = text,
-                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!") Color.Red else Color(
+                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!" || text == "Location: GPS Invalid") Color.Red else Color(
                             0XFF39B54A
                         ),
                         fontWeight = FontWeight.SemiBold,
@@ -906,7 +906,7 @@ fun Alert(
                     Constants.deviceLocationLat = 0.0
                     Constants.deviceLocationLong = 0.0
                     Constants.deviceLocation = ""
-                    Constants.eventLogID=""
+                    Constants.eventLogID = ""
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 shape = RoundedCornerShape(12.dp),
