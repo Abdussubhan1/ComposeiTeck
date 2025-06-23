@@ -18,11 +18,12 @@ suspend fun getEventLogID() {
             if (responseBody.Success) {
                 Constants.eventLogID = responseBody.Event_log
 
-            }
+            }else
+                Constants.eventLogID=""
         }
 
     } catch (e: Exception) {
         Log.d(TAG, "exception error: $e")
-
+        Constants.eventLogID=""
     }
 }

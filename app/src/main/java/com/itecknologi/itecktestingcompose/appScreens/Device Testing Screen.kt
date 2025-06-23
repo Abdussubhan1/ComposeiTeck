@@ -90,13 +90,15 @@ import kotlinx.coroutines.launch
 fun TestingPage(navController: NavHostController, context: Context, prefs: PreferenceManager) {
 
     var checkForEventLog by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(checkForEventLog) {
         getEventLogID()
-        if (Constants.eventLogID=="")
+        if (Constants.eventLogID=="") // calling function again if event log id is null or empty
             checkForEventLog += 1
     }
 
     getLocation()
+
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
@@ -545,7 +547,6 @@ fun ValidationStatusUI(
                                         )
                                     } else {
                                         BatteryResponse(false, "Event Log Not Found")
-
                                     }
 
                                 }
@@ -657,7 +658,7 @@ fun ValidationStatusUI(
                     if (startTimer && !timerStarted && prefs.getTechnicianID() != 0) {
                         timerStarted = true
                         while (true) {
-                            delay(5000)
+                            delay(4000)
                             cmdQueueResult = cmdQueueCheck(
                                 Constants.deviceID,
                                 if (relayProgress == 0.0f) "kill" else "release"
@@ -940,9 +941,3 @@ fun Alert(
 
 
 }
-
-//@Preview
-//@Composable
-//fun AlertPreview() {
-//    Alert("Title", "Text", {}, rememberNavController())
-//}
