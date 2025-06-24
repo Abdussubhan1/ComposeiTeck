@@ -761,7 +761,7 @@ fun ValidationStatusUI(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val text = when {
-                    showLocation -> if (Constants.deviceLocationLat != 0.0 || Constants.deviceLocationLong != 0.0) "Location: ${deviceLocationResult.Message}" else "Location: GPS Invalid"
+                    showLocation -> if (Constants.deviceLocationLat != 0.0 && Constants.deviceLocationLong != 0.0) "Location: ${deviceLocationResult.Message}" else "Location: GPS Invalid"
                     showBattery -> "Battery: ${batteryResult.battery}"
                     showIgnition -> "Ignition: ${ignitionResult.ignition}"
                     showRelay -> relayResult.message
