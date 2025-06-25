@@ -80,4 +80,13 @@ class PreferenceManager(context: Context) {
         return sharedPref.getInt("TechnicianID", 0)
     }
 
+    fun setAppversion(appVersion: String) {
+        Log.d("PreferenceManager", "set App version: $appVersion")
+        sharedPref.edit { putString("AppVersion", appVersion) }
+    }
+
+    fun getAppversion(): String {
+        return sharedPref.getString("AppVersion", "")?: ""
+    }
+
 }

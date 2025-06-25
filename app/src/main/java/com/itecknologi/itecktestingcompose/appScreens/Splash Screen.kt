@@ -48,6 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
+import com.itecknologi.itecktestingcompose.constants.Constants
 import kotlinx.coroutines.withTimeoutOrNull
 
 
@@ -90,12 +91,13 @@ fun SplashScreen(
         delay(2000)
 
         if (prefs.getUserCNIC() != "") {
-            val loginResponse = checkLogin(prefs.getAppLoginID())
+            val loginResponse = checkLogin(prefs.getAppLoginID(),prefs.getAppversion())
 
             if (loginResponse.success) {
                 val check = FCMUpdate(prefs.getAppLoginID(), prefs.getFCM())
 
                 if (check) {
+                    Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
                     navController.navigate("Menu Screen") {
                         popUpTo("splash") { inclusive = true }
                     }

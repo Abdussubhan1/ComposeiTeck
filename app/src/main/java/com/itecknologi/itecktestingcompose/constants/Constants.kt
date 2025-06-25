@@ -11,7 +11,6 @@ object Constants {
     var cust_Contact: String = ""
     var cnic: String = ""
     var appLoginID: String = ""
-    var appVersion: String = ""
     var brand: String = ""
     var mobileID: String = ""
     var osVersion: String = ""

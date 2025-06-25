@@ -4,27 +4,37 @@ import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 
-data class checkLoginResponse(
-    var success: Boolean,
-    var message: String
+data class CheckLoginResponse(
+    val success: Boolean,
+    val message: String
 )
 
-
 suspend fun checkLogin(
-    appID: String
-): checkLoginResponse {
+    appID: String,
+    appVersion: String
+): CheckLoginResponse {
     return try {
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
-            .checkLogin(appID)
+            .checkLogin(appID, appVersion)
 
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            checkLoginResponse(success = responseBody.success, message = responseBody.message)
+        val body = response.body()
+        if (response.isSuccessful && body != null) {
+            CheckLoginResponse(
+                success = body.success,
+                message = body.message
+            )
         } else {
-            checkLoginResponse(success = false, message = "Response error: ${response.code()}")
+            CheckLoginResponse(
+                success = false,
+                message = "Response error: ${response.code()} ${response.message() ?: ""}"
+            )
         }
     } catch (e: Exception) {
-        checkLoginResponse(success = false, message = "Error: ${e.localizedMessage ?: "Unknown error"}")
+        CheckLoginResponse(
+            success = false,
+            message = "Error: ${e.localizedMessage ?: "Unknown error"}"
+        )
     }
 }
+
 

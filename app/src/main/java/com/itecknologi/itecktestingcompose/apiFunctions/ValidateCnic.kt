@@ -8,10 +8,9 @@ import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 data class CNICValidationResult(
     val ifUserExist: Boolean,
-    var isLoading: Boolean,
-    var technicianName: String
+    val isLoading: Boolean,
+    val technicianName: String
 )
-
 
 suspend fun validateCnic(
     cnic: String,
@@ -21,38 +20,43 @@ suspend fun validateCnic(
     OSVersion: String,
     Brand: String
 ): CNICValidationResult {
-
-    var ifUserExist: Boolean
-    var name = ""
-
     return try {
-
-
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
             .validateCnic(cnic, mobileID, FCMToken, appVersion, OSVersion, Brand)
 
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            ifUserExist = responseBody.Success
-            if (ifUserExist) {
-                Constants.TechnicianName = responseBody.Name
-                Constants.appLoginID = responseBody.AppLoginid
-                Constants.technicianID=responseBody.T_ID
-                Constants.authKey=responseBody.Authkey
-                Constants.otp = responseBody.otp
+        val body = response.body()
+
+        if (response.isSuccessful && body != null) {
+
+            if (body.Success) {
+                Constants.TechnicianName = body.Name
+                Constants.appLoginID = body.AppLoginid
+                Constants.technicianID = body.T_ID
+                Constants.authKey = body.Authkey
+                Constants.otp = body.otp
             }
 
-            Log.d("cnicV", "Response: $responseBody")
+            Log.d("cnicV", "Response: $body")
 
-            return CNICValidationResult(ifUserExist, false, name)
+            CNICValidationResult(
+                ifUserExist =body.Success,
+                isLoading = false,
+                technicianName = body.Name
+            )
         } else {
-            CNICValidationResult(ifUserExist = false, isLoading = false, technicianName = "")
+            Log.d("cnicV", "Unsuccessful response: ${response.code()} - ${response.message()}")
+            CNICValidationResult(
+                ifUserExist = false,
+                isLoading = false,
+                technicianName = ""
+            )
         }
-
-
     } catch (e: Exception) {
-        Log.d("cnicV", "Exception: $e")
-        CNICValidationResult(ifUserExist = false, isLoading = false, name)
+        Log.e("cnicV", "Exception occurred: ${e.localizedMessage}", e)
+        CNICValidationResult(
+            ifUserExist = false,
+            isLoading = false,
+            technicianName = ""
+        )
     }
-
 }

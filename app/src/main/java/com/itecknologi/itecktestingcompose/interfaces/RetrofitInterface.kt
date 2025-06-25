@@ -128,7 +128,8 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("check_login.php")
     suspend fun checkLogin(
-        @Field("appid") appID: String
+        @Field("appid") appID: String,
+        @Field("Appversion") appVersion: String
     ): Response<checkLogin>
 
     @POST("get_event_log.php")

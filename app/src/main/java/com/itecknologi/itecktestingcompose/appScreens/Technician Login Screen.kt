@@ -156,7 +156,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
                                     cnic,
                                     Constants.mobileID,
                                     prefs.getFCM(),
-                                    Constants.appVersion,
+                                    prefs.getAppversion(),
                                     Constants.osVersion,
                                     Constants.brand
                                 )
