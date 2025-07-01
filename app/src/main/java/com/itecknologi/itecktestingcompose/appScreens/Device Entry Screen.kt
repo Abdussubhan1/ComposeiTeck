@@ -168,7 +168,7 @@ fun DeviceEntryScreen(
             } else {
                 Toast.makeText(context, "Vehicle Details Not Updated!", Toast.LENGTH_SHORT).show()
             }
-            delay(10000)
+            delay(5000)
         }
     }
 
