@@ -293,7 +293,7 @@ fun DeviceEntryScreen(
                     prefs.setTechnicianID(T_ID = 0)
                     Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                     navController.navigate("login") {
-                        popUpTo("initialPicturesScreen") { inclusive = true }
+                        popUpTo("mainscreen") { inclusive = true }
                     }
                 }
             }
@@ -498,7 +498,7 @@ fun DeviceEntryScreen(
             contentPadding = PaddingValues(0.dp) // Ensures same text alignment as Box
         ) {
             Text(
-                text = "TESTING START KARO",
+                text = "Start New Installation",
                 fontWeight = FontWeight.SemiBold
             )
         }

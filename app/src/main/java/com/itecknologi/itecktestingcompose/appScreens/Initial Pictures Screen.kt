@@ -87,7 +87,6 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
 
     var initiallistCompleted by remember { mutableStateOf(false) }
     var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
-    var moveToTesting by remember { mutableStateOf(false) }
 
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -320,7 +319,7 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 }
             }
         }
-        if (initiallistCompleted && !moveToTesting) {
+        if (initiallistCompleted) {
             PicConfirm(
                 initiallistOfImages,
                 onRetakeConfirmed = { initiallistCompleted = false },

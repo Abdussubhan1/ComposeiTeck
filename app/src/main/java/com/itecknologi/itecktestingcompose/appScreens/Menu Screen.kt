@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
@@ -152,7 +154,7 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
                 prefs.setTechnicianID(T_ID = 0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("initialPicturesScreen") { inclusive = true }
+                    popUpTo("Menu Screen") { inclusive = true }
                 }
             }
         }
@@ -195,53 +197,53 @@ fun MenuButton(text: String, onClick: () -> Unit) {
     }
 }
 
-@Preview
-@Composable
-fun CardMenuButton(
-    text: String = "New Installation",
-    iconResId: Int = R.drawable.tools
-) {
-    Card(
-        modifier = Modifier
-            .width(150.dp)
-            .height(120.dp)
-            .clickable {  },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF336699)),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = text,
-                fontSize = 18.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-            Icon(
-                painter = painterResource(id = iconResId),
-                contentDescription = "Card icon",
-                modifier = Modifier.size(32.dp),
-                tint = Color.White
-            )
-        }
-    }
-}
-
-
-
 //@Preview
 //@Composable
-//fun MenuPreview() {
-//    MenuScreen(
-//        context = LocalContext.current,
-//        rememberNavController(),
-//        PreferenceManager(LocalContext.current)
-//    )
+//fun CardMenuButton(
+//    text: String = "New Installation",
+//    iconResId: Int = R.drawable.tools
+//) {
+//    Card(
+//        modifier = Modifier
+//            .width(150.dp)
+//            .height(120.dp)
+//            .clickable {  },
+//        colors = CardDefaults.cardColors(containerColor = Color(0xFF336699)),
+//        shape = RoundedCornerShape(12.dp),
+//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(12.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(
+//                text = text,
+//                fontSize = 18.sp,
+//                color = Color.White,
+//                textAlign = TextAlign.Center
+//            )
+//            Icon(
+//                painter = painterResource(id = iconResId),
+//                contentDescription = "Card icon",
+//                modifier = Modifier.size(32.dp),
+//                tint = Color.White
+//            )
+//        }
+//    }
 //}
+
+
+
+@Preview
+@Composable
+fun MenuPreview() {
+    MenuScreen(
+        context = LocalContext.current,
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
+    )
+}
 
