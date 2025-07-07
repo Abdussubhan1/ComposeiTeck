@@ -76,8 +76,12 @@ import kotlinx.coroutines.launch
 import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
 import com.itecknologi.itecktestingcompose.modelClasses.VehData
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.BottomLogo
+import com.itecknologi.itecktestingcompose.functions.VehicleCard
+import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
+import com.itecknologi.itecktestingcompose.functions.searchInMemory
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 
@@ -546,96 +550,6 @@ fun CustomTextField(
     )
 }
 
-
-@Composable
-fun VehicleCard(
-    vehicle: VehData,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    val backgroundColor = if (isSelected) Color(0xFF90A4AE) else Color(0xFF102027)
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, Color(0xFF90A4AE)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Column(
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "${vehicle.MAKE} ${vehicle.MODEL}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Color.White,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Color: ${vehicle.COLOR}", color = Color.White)
-                Text(text = "Engine: ${vehicle.ENGINE}", color = Color.White)
-                Text(text = "Chassis: ${vehicle.CHASSIS}", color = Color.White)
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(16.dp)
-                    .background(
-                        color = if (isSelected) Color(0xFF39B54A) else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .border(
-                        width = 2.dp,
-                        color = if (isSelected) Color.White else Color.Gray,
-                        shape = CircleShape
-                    )
-            )
-        }
-    }
-}
-
-@Composable
-fun VehicleListScreen(
-    vehicleList: List<VehData>,
-    onSelectionChanged: (Boolean, String?) -> Unit
-) {
-    var selectedVehicle by remember { mutableStateOf<VehData?>(null) }
-
-    LazyColumn {
-        items(vehicleList) { vehicle ->
-            VehicleCard(
-                vehicle = vehicle,
-                isSelected = vehicle == selectedVehicle,
-                onClick = {
-                    val isSame =
-                        vehicle == selectedVehicle // isSame is true if the same vehicle is selected
-                    selectedVehicle = if (isSame) null else vehicle //toggle selection
-
-                    onSelectionChanged(
-                        !isSame,
-                        if (!isSame) vehicle.V_ID else null
-                    ) //Passes vehicle.V_ID if selected, or null if deselected.
-                }
-            )
-        }
-    }
-}
-
-fun searchInMemory(keyword: String): List<VehData> {
-    return vehicle_details.dataList.filter { data ->
-        data.CHASSIS.contains(keyword, ignoreCase = true) ||
-                data.ENGINE.contains(keyword, ignoreCase = true)
-    } //this will match the entered keyword and provide results accordingly in List form
-}
 
 
 @Preview

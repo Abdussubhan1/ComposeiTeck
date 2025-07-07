@@ -39,6 +39,7 @@ import androidx.navigation.NavHostController
 import com.itecknologi.itecktestingcompose.apiFunctions.notificationHistory
 import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistoryItem
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.BottomLogo
 
 
 @Composable

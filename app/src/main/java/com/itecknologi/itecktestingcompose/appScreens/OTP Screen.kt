@@ -44,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.BottomLogo
 
 @Composable
 fun OTPScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {

@@ -49,6 +49,7 @@ import kotlinx.coroutines.tasks.await
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
 import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import kotlinx.coroutines.withTimeoutOrNull
 
 
@@ -221,35 +222,6 @@ fun showUpdateDialog(context: Context) {
                 }
             }
             .show()
-    }
-}
-
-
-@Composable
-fun BottomLogo() {
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 32.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.Bottom
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.icon),
-            contentDescription = "Company Icon",
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
-            modifier = Modifier.size(width = 23.dp, height = 21.dp)
-        )
-        Spacer(modifier = Modifier.width(5.dp))
-        Text(
-            text = "By Itecknologi",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 4.dp)
-        )
     }
 }
 

@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Notifications
@@ -61,10 +60,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.DevValidationResult
-import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
-import com.itecknologi.itecktestingcompose.apiFunctions.validateDev
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
+import com.itecknologi.itecktestingcompose.functions.BottomLogo
+import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.modelClasses.VehData
@@ -85,7 +84,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
         remember { mutableStateOf(prefs.getHasNewNotification()) }
     var vehicleEngineChassis by rememberSaveable { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
-    var success by remember { mutableStateOf(false) }
+
 //    val locationManager =
 //        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 //    val isLocationEnabled =
@@ -94,7 +93,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
     var vehList by remember { mutableStateOf(emptyList<VehData>()) }
     var devID by remember { mutableStateOf("") }
     var showVehicleCards by rememberSaveable { mutableStateOf(false) }
-    var enableDeviceNumberEntry by remember { mutableStateOf(false) }
+    var enableStartRedo by remember { mutableStateOf(false) }
     var validationResult by remember {
         mutableStateOf(
             DevValidationResult(
@@ -104,25 +103,8 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
         )
     }
     val couroutineScope = rememberCoroutineScope()
-    var isEnabled by remember { mutableStateOf(true) }
-    var testingStart by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            success = getVehicleDetails(
-                prefs.getAppLoginID(),
-                prefs.getTechnicianID().toString()
-            )
-            Log.d("data", "DeviceEntryScreen: ${prefs.getTechnicianID()}")
-            Log.d("data", "DeviceEntryScreen: ${prefs.getAppLoginID()}")
-            if (success) {
-                break
-            } else {
-                Toast.makeText(context, "Vehicle Details Not Updated!", Toast.LENGTH_SHORT).show()
-            }
-            delay(5000)
-        }
-    }
+
 
 
 
@@ -237,7 +219,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
 
                         CustomTextField(
                             vehicleEngineChassis,
-                            "VRN/Contact Number",
+                            "Engine/Chassis",
                             onValueChange = { vehicleEngineChassis = it },
                             true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -259,8 +241,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
 
                                 if (isInternetAvailable(context)) {
                                     if (true) {
-                                        if (success) {
-                                            vehList = searchInMemory(vehicleEngineChassis)
+                                            // todo Api Call for the only vehicle and get the result in vehList variable
                                             if (vehList.isNotEmpty()) {
                                                 showVehicleCards = true
                                             } else {
@@ -271,14 +252,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                                                 ).show()
                                                 showVehicleCards = false
                                             }
-                                        } else {
-                                            showVehicleCards = false
-                                            Toast.makeText(
-                                                context,
-                                                "Something went wrong",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
+
                                     } else {
                                         showVehicleCards = false
                                         Toast.makeText(
@@ -323,7 +297,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                 VehicleListScreen(
                     vehicleList = vehList,
                     onSelectionChanged = { isSelected, vehicleID ->
-                        enableDeviceNumberEntry = isSelected
+                        enableStartRedo = isSelected
                         Constants.vehicleID = vehicleID ?: ""
                     })
             }
@@ -331,10 +305,11 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Button
+        // Button For Starting Redo Process
+
         Button(
             onClick = { navController.navigate("initialPicturesScreen") },
-            enabled = enableDeviceNumberEntry,
+            enabled = enableStartRedo,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -352,7 +327,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                 fontWeight = FontWeight.SemiBold
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
+//        Spacer(modifier = Modifier.weight(1f))
 
         BottomLogo()
 

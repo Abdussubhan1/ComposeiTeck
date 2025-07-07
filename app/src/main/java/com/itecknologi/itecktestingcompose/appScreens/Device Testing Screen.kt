@@ -82,6 +82,7 @@ import com.itecknologi.itecktestingcompose.apiFunctions.getEventLogID
 import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
