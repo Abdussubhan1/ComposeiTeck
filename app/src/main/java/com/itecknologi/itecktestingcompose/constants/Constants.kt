@@ -1,13 +1,13 @@
 package com.itecknologi.itecktestingcompose.constants
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 
 
 object Constants {
 
     var TechnicianName: String = ""
-    var otp: String = ""
     var cust_Contact: String = ""
     var cnic: String = ""
     var appLoginID: String = ""
@@ -30,6 +30,8 @@ object Constants {
     var immobilizer:Int=0
     var TLocID:Int=0
     var eventLogID:String=""
+
+
 }
 
 

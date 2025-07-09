@@ -9,7 +9,8 @@ import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 data class CNICValidationResult(
     val ifUserExist: Boolean,
     val isLoading: Boolean,
-    val technicianName: String
+    val technicianName: String,
+    val code: String = ""
 )
 
 suspend fun validateCnic(
@@ -33,16 +34,23 @@ suspend fun validateCnic(
                 Constants.appLoginID = body.AppLoginid
                 Constants.technicianID = body.T_ID
                 Constants.authKey = body.Authkey
-                Constants.otp = body.otp
+
+                CNICValidationResult(
+                    ifUserExist =body.Success,
+                    isLoading = false,
+                    technicianName = body.Name,
+                    code = body.otp
+                )
+
             }
-
-            Log.d("cnicV", "Response: $body")
-
-            CNICValidationResult(
-                ifUserExist =body.Success,
+            else
+                CNICValidationResult(
+                ifUserExist = false,
                 isLoading = false,
-                technicianName = body.Name
+                technicianName = ""
             )
+
+
         } else {
             Log.d("cnicV", "Unsuccessful response: ${response.code()} - ${response.message()}")
             CNICValidationResult(

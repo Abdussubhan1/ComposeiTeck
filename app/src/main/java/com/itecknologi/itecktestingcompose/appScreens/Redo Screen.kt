@@ -190,6 +190,9 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
 
             }
         }
+        Spacer(modifier = Modifier.height(20.dp))
+        Text("Redo", color = Color.White, fontSize = 22.sp)
+        Spacer(modifier = Modifier.height(20.dp))
 
         if (isLoggingOut) {
             LaunchedEffect(true) {
@@ -204,7 +207,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                 }
             }
         }
-        Spacer(modifier = Modifier.height(40.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()

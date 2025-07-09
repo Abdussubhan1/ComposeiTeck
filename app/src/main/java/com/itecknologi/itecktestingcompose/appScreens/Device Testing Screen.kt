@@ -95,8 +95,11 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
     LaunchedEffect(checkForEventLog) {
         getEventLogID()
         if (Constants.eventLogID == "") // calling function again if event log id is null or empty
+        {
             checkForEventLog += 1
+        }
     }
+
 
     getLocation()
 

@@ -67,7 +67,8 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
             CNICValidationResult(
                 ifUserExist = false,
                 isLoading = false,
-                technicianName = ""
+                technicianName = "",
+                code = ""
             )
         )
     }
@@ -164,7 +165,7 @@ fun LoginScreen(context: Context, navController: NavHostController, prefs: Prefe
 
                                 if (validationResult.ifUserExist) {
 
-                                    navController.navigate("OTP Screen")
+                                    navController.navigate("OTP Screen/${validationResult.code}")
 
                                     //Also saving in RAM
                                     Constants.cnic = cnic

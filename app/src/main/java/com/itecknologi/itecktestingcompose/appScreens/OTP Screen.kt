@@ -47,7 +47,7 @@ import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 
 @Composable
-fun OTPScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+fun OTPScreen(context: Context, navController: NavHostController, prefs: PreferenceManager,code: String) {
 
 
     var otp by remember { mutableStateOf("") }
@@ -113,7 +113,7 @@ fun OTPScreen(context: Context, navController: NavHostController, prefs: Prefere
                 )
                 .clickable(enabled = otp != "" && otp.length == 6) {
                     keyboard?.hide()//hide the keyboard
-                    if (otp == Constants.otp) {
+                    if (otp == code) {
 
                         prefs.setUserCNIC(Constants.cnic)
                         prefs.setAppLoginID(Constants.appLoginID)
@@ -151,5 +151,5 @@ fun OTPScreen(context: Context, navController: NavHostController, prefs: Prefere
 @Preview
 @Composable
 fun OTPScreenPreview() {
-    OTPScreen(context = LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current))
+    OTPScreen(context = LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current),"")
 }
