@@ -431,8 +431,11 @@ fun ValidationStatusUI(
                 LinearProgressIndicator(
                     progress = { 1f },
                     color = when {
-                        locResult in 1.00..100.00 -> Color(0xFF39B54A) // Green
-                        locResult in 101.00..5000000.00 && !deviceLocationResult.isLoading -> Color.Red
+                        locResult in 1.00..100.00 && deviceLocationResult.Success && !deviceLocationResult.isLoading -> Color(
+                            0xFF39B54A
+                        ) // Green
+                        !deviceLocationResult.Success && !deviceLocationResult.isLoading -> Color.Red
+                        (locResult in 101.00..100000.00 && !deviceLocationResult.isLoading) || !deviceLocationResult.Success -> Color.Red
                         else -> Color.LightGray
                     },
                     modifier = Modifier
@@ -765,7 +768,11 @@ fun ValidationStatusUI(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val text = when {
-                    showLocation -> if (Constants.deviceLocationLat != 0.0 && Constants.deviceLocationLong != 0.0) "Location: ${deviceLocationResult.Message}" else "Location: GPS Invalid"
+                    showLocation -> when {
+                        Constants.deviceLocationLat != 0.0 && Constants.deviceLocationLong != 0.0 -> "Location: ${deviceLocationResult.Message}"
+                        else -> "Location: Failed/GPS Invalid"
+                    }
+
                     showBattery -> "Battery: ${batteryResult.battery}"
                     showIgnition -> "Ignition: ${ignitionResult.ignition}"
                     showRelay -> relayResult.message

@@ -168,12 +168,12 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         }
 
         MenuButton("Redo") {
-            navController.navigate("redo Screen")
+//            navController.navigate("redo Screen")
 
         }
 
         MenuButton("Removal") {
-            navController.navigate("removal Screen")
+//            navController.navigate("removal Screen")
         }
 
         MenuButton("Exit") {

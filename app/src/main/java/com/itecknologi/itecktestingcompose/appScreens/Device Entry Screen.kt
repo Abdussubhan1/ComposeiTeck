@@ -296,7 +296,7 @@ fun DeviceEntryScreen(
 
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Text("New Installation", color = Color.White, fontSize = 22.sp)
+//        Text("New Installation", color = Color.White, fontSize = 22.sp)
         Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
