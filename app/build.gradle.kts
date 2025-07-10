@@ -104,9 +104,11 @@ dependencies {
 
 
 
+
     implementation("com.airbnb.android:lottie-compose:6.3.0") // latest stable version as of 2025
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
     implementation (libs.firebase.config) //For Firebase remote config
+
 
 
 }

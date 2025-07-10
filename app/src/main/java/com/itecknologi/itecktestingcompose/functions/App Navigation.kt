@@ -3,9 +3,11 @@ package com.itecknologi.itecktestingcompose.functions
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.itecknologi.itecktestingcompose.appScreens.MenuScreen
 import com.itecknologi.itecktestingcompose.appScreens.RedoScreen
 import com.itecknologi.itecktestingcompose.appScreens.RemovalScreen
@@ -23,9 +25,9 @@ import com.itecknologi.itecktestingcompose.appScreens.finalTicket
 
 
 @Composable
-fun AppNavigation( context: Context, prefs: PreferenceManager) {
+fun AppNavigation(context: Context, prefs: PreferenceManager) {
 
-    val version = getAppVersion(context,prefs)
+    val version = getAppVersion(context, prefs)
     Log.d("version of app", version)
 
 
@@ -33,15 +35,22 @@ fun AppNavigation( context: Context, prefs: PreferenceManager) {
     NavHost(navController = navController, startDestination = "splash")
 
     {
-        composable("splash") { SplashScreen(navController, version, prefs,context) }
+        composable("splash") { SplashScreen(navController, version, prefs, context) }
 
-        composable("login") { LoginScreen(context, navController, prefs) }
+        composable("login") {
+            LoginScreen(
+                context,
+                navController,
+                prefs
+            )
+        } //Login will pass the OTP to OTP Screen
         composable("OTP Screen/{code}") { backStackEntry ->
-            val code = backStackEntry.arguments?.getString("code") ?:""
-            OTPScreen(context, navController, prefs,code) }
+            val code = backStackEntry.arguments?.getString("code") ?: ""
+            OTPScreen(context, navController, prefs, code)
+        }
 
         composable("Menu Screen") { MenuScreen(context, navController, prefs) }
-        composable("NotificationScreen") { NotificationScreen(navController,prefs) }
+        composable("NotificationScreen") { NotificationScreen(navController, prefs) }
         composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
         composable("redo Screen") { RedoScreen(context, navController, prefs) }
         composable("removal Screen") { RemovalScreen(context, navController, prefs) }

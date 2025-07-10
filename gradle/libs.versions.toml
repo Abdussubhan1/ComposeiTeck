@@ -1,4 +1,6 @@
 [versions]
+accompanistNavigationAnimation = "0.34.0"
+accompanistNavigationAnimationVersion = "0.36.1"
 agp = "8.8.2"
 firebaseBom = "33.12.0"
 firebaseMessaging = "24.1.1"
@@ -23,6 +25,8 @@ googleFirebaseCrashlytics = "3.0.3"
 workRuntimeKtx = "2.10.1"
 
 [libraries]
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
+accompanist-navigation-animation-v0361 = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimationVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx-v287 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
