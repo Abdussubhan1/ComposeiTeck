@@ -1,7 +1,6 @@
 package com.itecknologi.itecktestingcompose.constants
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 
 
@@ -15,7 +14,7 @@ object Constants {
     var mobileID: String = ""
     var osVersion: String = ""
     var finalPictures = mutableStateListOf<Bitmap?>(null, null)
-    var baseURL: String = "https://api.itecknologi.com/automated_testing/"
+    const val BASE_URL: String = "https://api.itecknologi.com/automated_testing/"
     var deviceID: String = ""
     var initialPictures = mutableStateListOf<Bitmap?>(null, null)
     var mobileLocationLat: Double = 0.0
