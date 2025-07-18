@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -66,6 +68,8 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         animationSpec = tween(durationMillis = 500),
         label = "logoutAnimation"
     )
+    val hasNewNotification =
+        remember { mutableStateOf(prefs.getHasNewNotification()) }
     HandleDoubleBackToExit()
     Column(
         modifier = Modifier
@@ -105,6 +109,31 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Tips",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                navController.navigate("NotificationScreen")
+                                prefs.setHasNewNotification(value = false)
+                                hasNewNotification.value = false
+                            }
+                    )
+
+                    if (hasNewNotification.value) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp) // Small dot
+                                .background(Color(0xFFFFEB3B), shape = CircleShape)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
@@ -164,7 +193,7 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         Spacer(modifier = Modifier.height(200.dp))
 
         MenuButton("New Installation") {
-            navController.navigate("mainscreen")
+            navController.navigate("Assigned Tasks Screen")
         }
 
         MenuButton("Redo") {
@@ -198,46 +227,6 @@ fun MenuButton(text: String, onClick: () -> Unit) {
         Text(text = text, fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
     }
 }
-
-//@Preview
-//@Composable
-//fun CardMenuButton(
-//    text: String = "New Installation",
-//    iconResId: Int = R.drawable.tools
-//) {
-//    Card(
-//        modifier = Modifier
-//            .width(150.dp)
-//            .height(120.dp)
-//            .clickable {  },
-//        colors = CardDefaults.cardColors(containerColor = Color(0xFF336699)),
-//        shape = RoundedCornerShape(12.dp),
-//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(12.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            Text(
-//                text = text,
-//                fontSize = 18.sp,
-//                color = Color.White,
-//                textAlign = TextAlign.Center
-//            )
-//            Icon(
-//                painter = painterResource(id = iconResId),
-//                contentDescription = "Card icon",
-//                modifier = Modifier.size(32.dp),
-//                tint = Color.White
-//            )
-//        }
-//    }
-//}
-
-
 
 @Preview
 @Composable

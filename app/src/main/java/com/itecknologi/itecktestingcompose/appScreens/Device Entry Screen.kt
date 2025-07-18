@@ -28,6 +28,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.TimeToLeave
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -71,6 +72,8 @@ import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
 import com.itecknologi.itecktestingcompose.modelClasses.VehData
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
+import com.itecknologi.itecktestingcompose.functions.SelectedVehicle
+import com.itecknologi.itecktestingcompose.functions.VehicleCard
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
@@ -87,11 +90,13 @@ fun DeviceEntryScreen(
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
-    BackHandler {if (Constants.vehicleID != "") {
-         showDialog = true
-    } else {
-        navController.popBackStack()
-    } }
+    BackHandler {
+        if (Constants.vehicleID != "") {
+            showDialog = true
+        } else {
+            navController.popBackStack()
+        }
+    }
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -102,7 +107,11 @@ fun DeviceEntryScreen(
                     showDialog = false
                     Constants.vehicleID = ""
                     Constants.deviceID = ""
-                    navController.navigate("Menu Screen"){popUpTo("mainscreen"){inclusive = true}}
+                    navController.navigate("Assigned Tasks Screen") {
+                        popUpTo("mainscreen") {
+                            inclusive = true
+                        }
+                    }
                 }) {
                     Text("Go Back")
                 }
@@ -123,7 +132,7 @@ fun DeviceEntryScreen(
         remember { mutableStateOf(prefs.getHasNewNotification()) }
 
     var devID by remember { mutableStateOf("") }
-    var vehicleEngineChassis by rememberSaveable { mutableStateOf("") }
+
 
     var validationResult by remember {
         mutableStateOf(
@@ -136,37 +145,13 @@ fun DeviceEntryScreen(
 
     val keyboard = LocalSoftwareKeyboardController.current
     val couroutineScope = rememberCoroutineScope()
-    var isEnabled by remember { mutableStateOf(true) }
     var testingStart by remember { mutableStateOf(false) }
-    var showVehicleCards by rememberSaveable { mutableStateOf(false) }
-    var enableDeviceNumberEntry by remember { mutableStateOf(false) }
-    var vehList by remember { mutableStateOf(emptyList<VehData>()) }
-    var success by remember { mutableStateOf(false) }
+
     val locationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     val isLocationEnabled =
         locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-
-
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            success = getVehicleDetails(
-                prefs.getAppLoginID(),
-                prefs.getTechnicianID().toString()
-            )
-            Log.d("data", "DeviceEntryScreen: ${prefs.getTechnicianID()}")
-            Log.d("data", "DeviceEntryScreen: ${prefs.getAppLoginID()}")
-            if (success) {
-                break
-            } else {
-                Toast.makeText(context, "Vehicle Details Not Updated!", Toast.LENGTH_SHORT).show()
-            }
-            delay(5000)
-        }
-    }
 
 
     Column(
@@ -295,9 +280,8 @@ fun DeviceEntryScreen(
             }
 
         }
-        Spacer(modifier = Modifier.height(20.dp))
-//        Text("New Installation", color = Color.White, fontSize = 22.sp)
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -309,89 +293,11 @@ fun DeviceEntryScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
-
-                        CustomTextField(
-                            vehicleEngineChassis,
-                            "Engine/Chassis",
-                            onValueChange = { vehicleEngineChassis = it },
-                            true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-                        )
-
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (vehicleEngineChassis.length >= 3) Color(
-                                    0XFF39B54A
-                                ) else Color.Gray
-                            ) // Green search
-                            .clickable(enabled = vehicleEngineChassis.length >= 3) {
-                                keyboard?.hide()
-
-                                if (isInternetAvailable(context)) {
-                                    if (isLocationEnabled) {
-                                        if (success) {
-                                            vehList = searchInMemory(vehicleEngineChassis)
-                                            if (vehList.isNotEmpty()) {
-                                                showVehicleCards = true
-                                            } else {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Vehicle Not Found",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                showVehicleCards = false
-                                            }
-                                        } else {
-                                            showVehicleCards = false
-                                            Toast.makeText(
-                                                context,
-                                                "Something went wrong",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    } else {
-                                        showVehicleCards = false
-                                        Toast.makeText(
-                                            context,
-                                            "Location is OFF",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-
-                                } else {
-                                    showVehicleCards = false
-                                    Toast.makeText(
-                                        context,
-                                        "No Internet Connection",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
                         CustomTextField(
                             devID,
-                            "Device Number",
+                            "Enter Device ID",
                             onValueChange = { devID = it },
-                            enableDeviceNumberEntry,
+                            true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
 
@@ -402,11 +308,11 @@ fun DeviceEntryScreen(
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(
-                                if (enableDeviceNumberEntry && devID.length >= 4) Color(
+                                if ( devID.length >= 4) Color(
                                     0XFF39B54A
                                 ) else Color.Gray
                             ) // Green search
-                            .clickable(enabled = (devID.length >= 4 && showVehicleCards)) {
+                            .clickable(enabled = (devID.length >= 4)) {
                                 keyboard?.hide()
                                 validationResult = DevValidationResult(
                                     ifDeviceExist = false,
@@ -418,7 +324,6 @@ fun DeviceEntryScreen(
                                         validationResult = validateDev(devID)
 
                                         if (validationResult.ifDeviceExist) {
-                                            isEnabled = false
                                             testingStart = true
                                             Constants.deviceID = devID
 
@@ -428,7 +333,6 @@ fun DeviceEntryScreen(
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         } else {
-                                            isEnabled = true
                                             testingStart = false
                                             Toast.makeText(
                                                 context,
@@ -455,29 +359,12 @@ fun DeviceEntryScreen(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(12.dp))
+                SelectedVehicle()
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
 
-        if (showVehicleCards) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.70f)
-                    .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
-                    .padding(10.dp)
-            ) {
-                VehicleListScreen(
-                    vehicleList = vehList,
-                    onSelectionChanged = { isSelected, vehicleID ->
-                        enableDeviceNumberEntry = isSelected
-                        Constants.vehicleID = vehicleID ?: ""
-                    })
-            }
-
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Button
         Button(
@@ -496,7 +383,7 @@ fun DeviceEntryScreen(
             contentPadding = PaddingValues(0.dp) // Ensures same text alignment as Box
         ) {
             Text(
-                text = "Start New Installation",
+                text = "Start Installation",
                 fontWeight = FontWeight.SemiBold
             )
         }
@@ -536,14 +423,12 @@ fun CustomTextField(
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color(0XFF000000),
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledContainerColor = Color.Gray
+            unfocusedIndicatorColor = Color.Transparent
         ),
         keyboardOptions = keyboardOptions,
         singleLine = true
     )
 }
-
 
 
 @Preview
@@ -552,6 +437,7 @@ fun MainScreenPreview() {
     DeviceEntryScreen(
         LocalContext.current,
         rememberNavController(),
-        PreferenceManager(LocalContext.current))
+        PreferenceManager(LocalContext.current)
+    )
 }
 

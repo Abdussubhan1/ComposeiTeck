@@ -28,8 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.modelClasses.VehData
 
 @Composable
@@ -91,7 +93,7 @@ fun VehicleCard(
 @Composable
 fun VehicleListScreen(
     vehicleList: List<VehData>,
-    onSelectionChanged: (Boolean, String?) -> Unit
+    onSelectionChanged: (Boolean, String?,String?,String?,String?,String?,String?) -> Unit
 ) {
     var selectedVehicle by remember { mutableStateOf<VehData?>(null) }
 
@@ -107,10 +109,60 @@ fun VehicleListScreen(
 
                     onSelectionChanged(
                         !isSame,
-                        if (!isSame) vehicle.V_ID else null
-                    ) //Passes vehicle.V_ID if selected, or null if deselected.
+                        if (!isSame) vehicle.V_ID else null,
+                        if (!isSame) vehicle.ENGINE else null,
+                        if (!isSame) vehicle.CHASSIS else null,
+                        if (!isSame) vehicle.MAKE else null,
+                        if (!isSame) vehicle.MODEL else null,
+                        if (!isSame) vehicle.COLOR else null
+                    ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
                 }
             )
         }
     }
+}
+
+@Composable
+fun SelectedVehicle() {
+    val backgroundColor = Color.Transparent
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 8.dp) // Added padding around card
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp), // Slightly increased corner radius
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp), // Slightly increased elevation
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp) // Increased internal padding
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "${Constants.make} ${Constants.model}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Color: ${Constants.color}", color = Color.White)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Engine: ${Constants.engineNumber}", color = Color.White)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Chassis: ${Constants.chassisNumber}", color = Color.White)
+            }
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun SelectedVehiclePre() {
+    SelectedVehicle()
 }

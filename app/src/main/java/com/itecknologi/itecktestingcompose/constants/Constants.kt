@@ -29,6 +29,11 @@ object Constants {
     var immobilizer:Int=0
     var TLocID:Int=0
     var eventLogID:String=""
+    var engineNumber:String=""
+    var chassisNumber:String=""
+    var make:String=""
+    var model:String=""
+    var color:String=""
 
 
 }

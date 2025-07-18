@@ -21,6 +21,7 @@ import com.itecknologi.itecktestingcompose.appScreens.SplashScreen
 import com.itecknologi.itecktestingcompose.appScreens.TestingPage
 import com.itecknologi.itecktestingcompose.appScreens.initialPicTake
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.appScreens.JobAssigned
 import com.itecknologi.itecktestingcompose.appScreens.finalTicket
 
 
@@ -50,6 +51,7 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
         }
 
         composable("Menu Screen") { MenuScreen(context, navController, prefs) }
+        composable("Assigned Tasks Screen") { JobAssigned(context,navController, prefs) }
         composable("NotificationScreen") { NotificationScreen(navController, prefs) }
         composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
         composable("redo Screen") { RedoScreen(context, navController, prefs) }

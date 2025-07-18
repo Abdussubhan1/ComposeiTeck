@@ -3,12 +3,13 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.content.Context
 import android.location.LocationManager
-import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,16 +29,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,8 +53,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,54 +60,54 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
-import com.itecknologi.itecktestingcompose.apiFunctions.DevValidationResult
+import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
+import com.itecknologi.itecktestingcompose.functions.searchInMemory
 import com.itecknologi.itecktestingcompose.modelClasses.VehData
+import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @Composable
-fun RedoScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+fun JobAssigned(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
+    val hasNewNotification =
+        remember { mutableStateOf(prefs.getHasNewNotification()) }
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
         animationSpec = tween(durationMillis = 500),
         label = "logoutAnimation"
     )
-    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }
-    var vehicleEngineChassis by rememberSaveable { mutableStateOf("") }
+
+    var success by remember { mutableStateOf(false) }
+    var vehList by remember { mutableStateOf(emptyList<VehData>()) }
+    var enableProceed by remember { mutableStateOf(false) }
+    var searchVehicle by rememberSaveable { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
 
-//    val locationManager =
-//        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//    val isLocationEnabled =
-//        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-//                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    var vehList by remember { mutableStateOf(emptyList<VehData>()) }
-    var devID by remember { mutableStateOf("") }
-    var showVehicleCards by rememberSaveable { mutableStateOf(false) }
-    var enableStartRedo by remember { mutableStateOf(false) }
-    var validationResult by remember {
-        mutableStateOf(
-            DevValidationResult(
-                ifDeviceExist = false,
-                isLoading = false
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            success = getVehicleDetails(
+                prefs.getAppLoginID(),
+                prefs.getTechnicianID().toString()
             )
-        )
+            if (success) {
+                break
+            } else {
+                Toast.makeText(context, "Vehicle Details Not Updated!", Toast.LENGTH_SHORT).show()
+            }
+            delay(3000)
+        }
     }
-    val couroutineScope = rememberCoroutineScope()
-
-
-
-
+    BackHandler { navController.navigate("Menu Screen") }
 
     Column(
         modifier = Modifier
@@ -121,7 +122,6 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -183,51 +183,77 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                             .alpha(alpha)
                             .clickable {
                                 isLoggingOut = true
-                                resetAllData()
                             }
                     )
                 }
 
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Text("Redo", color = Color.White, fontSize = 22.sp)
-        Spacer(modifier = Modifier.height(20.dp))
-
+        var confirmLogout by remember { mutableStateOf(false) }
         if (isLoggingOut) {
+            AlertDialog(
+                onDismissRequest = { isLoggingOut = false },
+                title = { Text("Logout") },
+                text = { Text("Are you sure you want to Logout?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        isLoggingOut = false
+                        confirmLogout = true
+                        resetAllData()
+                    }) {
+                        Text("Logout")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        isLoggingOut = false
+                    }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+        if (confirmLogout) {
             LaunchedEffect(true) {
                 delay(500) // Wait for animation to finish
                 prefs.setUserCNIC(cnic = "")
                 prefs.setTechnicianName(name = "")
                 prefs.setAppLoginID(id = "")
-                prefs.setTechnicianID(T_ID=0)
+                prefs.setTechnicianID(T_ID = 0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("redo Screen") { inclusive = true }
+                    popUpTo("Menu Screen") { inclusive = true }
                 }
             }
         }
-
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            "My Pending Tasks",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Text("Select Vehicle for Installation", color = Color.White, fontSize = 14.sp)
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Column {
-                Row(
+                /*Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
-
                         CustomTextField(
-                            vehicleEngineChassis,
-                            "Engine/Chassis",
-                            onValueChange = { vehicleEngineChassis = it },
+                            searchVehicle,
+                            "Search Vehicle",
+                            onValueChange = { searchVehicle = it },
                             true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                         )
-
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Box(
@@ -235,41 +261,28 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(
-                                if (vehicleEngineChassis.length >= 3) Color(
+                                if (searchVehicle.length >= 3) Color(
                                     0XFF39B54A
                                 ) else Color.Gray
                             ) // Green search
-                            .clickable(enabled = vehicleEngineChassis.length >= 3) {
+                            .clickable(enabled = searchVehicle.length >= 3) {
                                 keyboard?.hide()
 
-                                if (isInternetAvailable(context)) {
-                                    if (true) {
-                                            // todo Api Call for the only vehicle and get the result in vehList variable
-                                            if (vehList.isNotEmpty()) {
-                                                showVehicleCards = true
-                                            } else {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Vehicle Not Found",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                showVehicleCards = false
-                                            }
-
+                                if (success) {
+                                    vehicle_details.dataList = searchInMemory(searchVehicle)
+                                    if (vehicle_details.dataList.isNotEmpty()) {
+                                        vehicle_details.dataList = vehicle_details.dataList
                                     } else {
-                                        showVehicleCards = false
                                         Toast.makeText(
                                             context,
-                                            "Location is OFF",
+                                            "Vehicle Not Found",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
-
                                 } else {
-                                    showVehicleCards = false
                                     Toast.makeText(
                                         context,
-                                        "No Internet Connection",
+                                        "Something went wrong",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -284,35 +297,53 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(12.dp))*/
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.80f)
+                        .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!success) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text("Loading..", color = Color.White, fontSize = 18.sp)
+                            Spacer(modifier = Modifier.height(18.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(32.dp),
+                                color = Color(0XFF39B54A)
+                            )
+                        }
 
+                    } else {
+                        VehicleListScreen(
+                            vehicleList = vehicle_details.dataList,
+                            onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, vehicleColor ->
+                                enableProceed = isSelected
+                                Constants.vehicleID = vehicleID ?: ""
+                                Constants.engineNumber = vehicleEngine ?: ""
+                                Constants.chassisNumber = vehicleChassis ?: ""
+                                Constants.make = vehicleMake ?: ""
+                                Constants.model = vehicleModel ?: ""
+                                Constants.color = vehicleColor ?: ""
+                            })
+                    }
+
+                }
             }
+
+
         }
         Spacer(modifier = Modifier.height(12.dp))
-
-//        if (showVehicleCards) {
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .fillMaxHeight(0.70f)
-//                    .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
-//                    .padding(10.dp)
-//            ) {
-//                VehicleListScreen(
-//                    vehicleList = vehList,
-//                    onSelectionChanged = { isSelected, vehicleID ->
-//                        enableStartRedo = isSelected
-//                        Constants.vehicleID = vehicleID ?: ""
-//                    })
-//            }
-//
-//        }
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Button For Starting Redo Process
-
+        // Button for Proceed
         Button(
-            onClick = { navController.navigate("initialPicturesScreen") },
-            enabled = enableStartRedo,
+            onClick = { navController.navigate("mainscreen") },
+            enabled = enableProceed,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -326,23 +357,23 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
             contentPadding = PaddingValues(0.dp) // Ensures same text alignment as Box
         ) {
             Text(
-                text = "Start Redo",
+                text = "Proceed",
                 fontWeight = FontWeight.SemiBold
             )
         }
-//        Spacer(modifier = Modifier.weight(1f))
+
 
         BottomLogo()
-
-
     }
 }
 
 @Preview
 @Composable
-fun RedoPreview() {
-    RedoScreen(
+fun JobAssignedPreview() {
+    JobAssigned(
         context = LocalContext.current,
-        rememberNavController(), PreferenceManager(LocalContext.current)
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
     )
 }
+
