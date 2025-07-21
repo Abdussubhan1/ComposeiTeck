@@ -95,10 +95,10 @@ interface RetrofitInterface {
     ): Response<technicianLocation>
 
     @FormUrlEncoded
-    @POST("get_vehicle_details.php")
+    @POST("technical_jobs_pending.php")
     suspend fun getVehicleDetails(
-        @Field("app_id") appID: String,
-        @Field("T_id") techID: String
+        @Field("T_ID") techID: String,
+        @Field("type") type:String
     ): Response<VehicleDetails>
 
     @FormUrlEncoded

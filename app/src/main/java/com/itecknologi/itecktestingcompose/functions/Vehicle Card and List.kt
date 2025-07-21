@@ -1,22 +1,37 @@
 package com.itecknologi.itecktestingcompose.functions
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,14 +40,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.modelClasses.VehData
+import androidx.core.net.toUri
 
 @Composable
 fun VehicleCard(
@@ -41,40 +62,108 @@ fun VehicleCard(
     onClick: () -> Unit
 ) {
     val backgroundColor = if (isSelected) Color(0xFF90A4AE) else Color(0xFF102027)
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color(0xFF90A4AE)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            // Vehicle info
+            Text(
+                text = "${vehicle.MK_NAME} ${vehicle.M_NAME} - ${vehicle.VEH_REG}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Assigned Date
+            Text(
+                text = "Job Assigned On: ${vehicle.Job_assigned_date}",
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Engine and Chassis
             Column(
-                horizontalAlignment = Alignment.Start
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 14.sp)
+                Text(text = "Engine No: ${vehicle.ENGINE}", color = Color.White, fontSize = 14.sp)
+                Text(text = "Chassis No: ${vehicle.CHASIS}", color = Color.White, fontSize = 14.sp)
+                Text(text = "Location: ${vehicle.location}", color = Color.White, fontSize = 14.sp)
+            }
+
+
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // View on Map Button
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF39B54A))
+                    .clickable {
+                        val sourceLat = Constants.mobileLocationLat
+                        val sourceLong = Constants.mobileLocationLong
+                        val destLat = vehicle.X
+                        val destLong = vehicle.Y
+
+                        val uri =
+                            "https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLong&destination=$destLat,$destLong&travelmode=driving".toUri()
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        intent.setPackage("com.google.android.apps.maps")
+
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(
+                                context,
+                                "Google Maps is not installed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${vehicle.MAKE} ${vehicle.MODEL}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    text = "Get Directions",
                     color = Color.White,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    textDecoration = TextDecoration.Underline
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Color: ${vehicle.COLOR}", color = Color.White)
-                Text(text = "Engine: ${vehicle.ENGINE}", color = Color.White)
-                Text(text = "Chassis: ${vehicle.CHASSIS}", color = Color.White)
+                Spacer(modifier = Modifier.width(6.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.viewmap),
+                    contentDescription = "Map Icon",
+                    modifier = Modifier.size(20.dp)
+                )
             }
+
+            // Selection Dot
             Box(
                 modifier = Modifier
-                    .align(Alignment.CenterEnd)
+                    .align(Alignment.End)
+                    .padding(top = 8.dp)
                     .size(16.dp)
                     .background(
                         color = if (isSelected) Color(0xFF39B54A) else Color.Transparent,
@@ -90,10 +179,11 @@ fun VehicleCard(
     }
 }
 
+
 @Composable
 fun VehicleListScreen(
     vehicleList: List<VehData>,
-    onSelectionChanged: (Boolean, String?,String?,String?,String?,String?,String?) -> Unit
+    onSelectionChanged: (Boolean, String?, String?, String?, String?, String?) -> Unit
 ) {
     var selectedVehicle by remember { mutableStateOf<VehData?>(null) }
 
@@ -111,10 +201,9 @@ fun VehicleListScreen(
                         !isSame,
                         if (!isSame) vehicle.V_ID else null,
                         if (!isSame) vehicle.ENGINE else null,
-                        if (!isSame) vehicle.CHASSIS else null,
-                        if (!isSame) vehicle.MAKE else null,
-                        if (!isSame) vehicle.MODEL else null,
-                        if (!isSame) vehicle.COLOR else null
+                        if (!isSame) vehicle.CHASIS else null,
+                        if (!isSame) vehicle.MK_NAME else null,
+                        if (!isSame) vehicle.M_NAME else null
                     ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
                 }
             )
@@ -149,12 +238,12 @@ fun SelectedVehicle() {
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Color: ${Constants.color}", color = Color.White)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "Engine: ${Constants.engineNumber}", color = Color.White)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "Chassis: ${Constants.chassisNumber}", color = Color.White)
+
+
             }
         }
     }
@@ -164,5 +253,8 @@ fun SelectedVehicle() {
 @Preview
 @Composable
 fun SelectedVehiclePre() {
-    SelectedVehicle()
+    VehicleCard(
+        vehicle = VehData("", "", "", "", "", "", 0.0, "", "", 0.0, 0.0, "", "",""),
+        isSelected = false,
+        onClick = {})
 }

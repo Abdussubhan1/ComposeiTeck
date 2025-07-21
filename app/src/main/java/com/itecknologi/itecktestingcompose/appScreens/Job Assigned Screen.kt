@@ -61,11 +61,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
+import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetailsResponse
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
+import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.functions.searchInMemory
@@ -92,17 +94,23 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
     var searchVehicle by rememberSaveable { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
 
+    var response by remember { mutableStateOf(getVehicleDetailsResponse(
+        success = false,
+        message = ""
+    )) }
+    getLocation()
+
 
     LaunchedEffect(Unit) {
         while (true) {
-            success = getVehicleDetails(
-                prefs.getAppLoginID(),
-                prefs.getTechnicianID().toString()
+            response = getVehicleDetails(
+                T_ID = prefs.getAppLoginID(),
+                type = "1"
             )
-            if (success) {
+            if (response.success) {
                 break
             } else {
-                Toast.makeText(context, "Vehicle Details Not Updated!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
             }
             delay(3000)
         }
@@ -306,7 +314,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                         .padding(8.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (!success) {
+                    if (!response.success) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -323,14 +331,13 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                     } else {
                         VehicleListScreen(
                             vehicleList = vehicle_details.dataList,
-                            onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, vehicleColor ->
+                            onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel ->
                                 enableProceed = isSelected
                                 Constants.vehicleID = vehicleID ?: ""
                                 Constants.engineNumber = vehicleEngine ?: ""
                                 Constants.chassisNumber = vehicleChassis ?: ""
                                 Constants.make = vehicleMake ?: ""
                                 Constants.model = vehicleModel ?: ""
-                                Constants.color = vehicleColor ?: ""
                             })
                     }
 

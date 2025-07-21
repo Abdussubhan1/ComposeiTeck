@@ -33,7 +33,6 @@ object Constants {
     var chassisNumber:String=""
     var make:String=""
     var model:String=""
-    var color:String=""
 
 
 }
