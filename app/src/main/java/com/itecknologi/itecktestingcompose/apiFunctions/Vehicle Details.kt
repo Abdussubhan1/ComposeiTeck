@@ -3,7 +3,6 @@ package com.itecknologi.itecktestingcompose.apiFunctions
 import android.util.Log
 
 import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
-import com.itecknologi.itecktestingcompose.modelClasses.VehData
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 
@@ -15,17 +14,17 @@ data class getVehicleDetailsResponse(
 suspend fun getVehicleDetails(T_ID:String,type:String): getVehicleDetailsResponse {
     return try {
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
-            .getVehicleDetails(T_ID,type)
+            .getVehicleDetails(T_ID, type)
 
         if (response.isSuccessful) {
             response.body()?.let { responseBody ->
-                if (responseBody.success) {
+                if (responseBody.Success) {
                     vehicle_details.dataList = responseBody.data
-                    return getVehicleDetailsResponse(true, responseBody.message)
+                    getVehicleDetailsResponse(true, "Details Fetched")
                 }
             }
         }
-        getVehicleDetailsResponse(false, "unknown error")
+        getVehicleDetailsResponse(false, "Vehicle Details Not Updated")
     } catch (e: Exception) {
         Log.d("cnicV", "Exception: ${e.localizedMessage ?: e}")
         getVehicleDetailsResponse(false, "unknown error")

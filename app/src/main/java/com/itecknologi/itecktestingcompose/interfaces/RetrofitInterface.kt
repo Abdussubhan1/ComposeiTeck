@@ -12,11 +12,11 @@ import com.itecknologi.itecktestingcompose.modelClasses.TrackerLocation
 import com.itecknologi.itecktestingcompose.modelClasses.UpdateFCM_API
 import com.itecknologi.itecktestingcompose.modelClasses.ValidateCnicResponse
 import com.itecknologi.itecktestingcompose.modelClasses.ValidateDeviceResponse
-import com.itecknologi.itecktestingcompose.modelClasses.VehicleDetails
 import com.itecknologi.itecktestingcompose.modelClasses.checkLogin
 import com.itecknologi.itecktestingcompose.modelClasses.cmdQueueCheck
 import com.itecknologi.itecktestingcompose.modelClasses.postDataResponse
 import com.itecknologi.itecktestingcompose.modelClasses.technicianLocation
+import com.itecknologi.itecktestingcompose.modelClasses.vehicleDetailsCheck
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -99,7 +99,7 @@ interface RetrofitInterface {
     suspend fun getVehicleDetails(
         @Field("T_ID") techID: String,
         @Field("type") type:String
-    ): Response<VehicleDetails>
+    ): Response<vehicleDetailsCheck>
 
     @FormUrlEncoded
     @POST("update_FCM.php")

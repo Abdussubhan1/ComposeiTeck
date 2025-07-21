@@ -3,6 +3,7 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.content.Context
 import android.location.LocationManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -71,7 +72,7 @@ import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.functions.searchInMemory
-import com.itecknologi.itecktestingcompose.modelClasses.VehData
+import com.itecknologi.itecktestingcompose.modelClasses.Data
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 
@@ -89,30 +90,35 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
     )
 
     var success by remember { mutableStateOf(false) }
-    var vehList by remember { mutableStateOf(emptyList<VehData>()) }
+    var vehList by remember { mutableStateOf(emptyList<Data>()) }
     var enableProceed by remember { mutableStateOf(false) }
     var searchVehicle by rememberSaveable { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
 
-    var response by remember { mutableStateOf(getVehicleDetailsResponse(
-        success = false,
-        message = ""
-    )) }
+    var response by remember {
+        mutableStateOf(
+            getVehicleDetailsResponse(
+                success = false,
+                message = ""
+            )
+        )
+    }
     getLocation()
-
+    val checkthevalue=prefs.getTechnicianID()
 
     LaunchedEffect(Unit) {
         while (true) {
             response = getVehicleDetails(
-                T_ID = prefs.getAppLoginID(),
+                T_ID = prefs.getTechnicianID().toString(),
                 type = "1"
             )
+            Log.d("response", "JobAssigned: $checkthevalue")
             if (response.success) {
                 break
             } else {
                 Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
             }
-            delay(3000)
+            delay(10000)
         }
     }
     BackHandler { navController.navigate("Menu Screen") }

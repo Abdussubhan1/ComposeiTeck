@@ -14,9 +14,10 @@ suspend fun FCMUpdate(appID: String,fcm: String): Boolean{
             ServiceBuilder.buildService(RetrofitInterface::class.java).FCMUpdated(appID,fcm)
         if (response.isSuccessful && response.body() != null) {
 
-            var responseBody = response.body()!!
+            val responseBody = response.body()!!
             if (responseBody.Success) {
                 Constants.authKey=responseBody.Authkey
+                Log.d("check authkey", "validateDevice: ${responseBody.Authkey}")
                 return true
             }
         }

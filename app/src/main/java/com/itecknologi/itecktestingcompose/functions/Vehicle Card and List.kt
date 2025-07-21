@@ -2,7 +2,6 @@ package com.itecknologi.itecktestingcompose.functions
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -23,14 +22,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,12 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.constants.Constants
-import com.itecknologi.itecktestingcompose.modelClasses.VehData
 import androidx.core.net.toUri
+import com.itecknologi.itecktestingcompose.modelClasses.Data
 
 @Composable
 fun VehicleCard(
-    vehicle: VehData,
+    vehicle: Data,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -182,10 +175,10 @@ fun VehicleCard(
 
 @Composable
 fun VehicleListScreen(
-    vehicleList: List<VehData>,
+    vehicleList: List<Data>,
     onSelectionChanged: (Boolean, String?, String?, String?, String?, String?) -> Unit
 ) {
-    var selectedVehicle by remember { mutableStateOf<VehData?>(null) }
+    var selectedVehicle by remember { mutableStateOf<Data?>(null) }
 
     LazyColumn {
         items(vehicleList) { vehicle ->
@@ -250,11 +243,11 @@ fun SelectedVehicle() {
 }
 
 
-@Preview
-@Composable
-fun SelectedVehiclePre() {
-    VehicleCard(
-        vehicle = VehData("", "", "", "", "", "", 0.0, "", "", 0.0, 0.0, "", "",""),
-        isSelected = false,
-        onClick = {})
-}
+//@Preview
+//@Composable
+//fun SelectedVehiclePre() {
+//    VehicleCard(
+//        vehicle = Data("", ),
+//        isSelected = false,
+//        onClick = {})
+//}

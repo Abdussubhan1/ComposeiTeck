@@ -66,7 +66,7 @@ import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
-import com.itecknologi.itecktestingcompose.modelClasses.VehData
+import com.itecknologi.itecktestingcompose.modelClasses.Data
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -90,7 +90,7 @@ fun RedoScreen(context: Context, navController: NavHostController, prefs: Prefer
 //    val isLocationEnabled =
 //        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
 //                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    var vehList by remember { mutableStateOf(emptyList<VehData>()) }
+    var vehList by remember { mutableStateOf(emptyList<Data>()) }
     var devID by remember { mutableStateOf("") }
     var showVehicleCards by rememberSaveable { mutableStateOf(false) }
     var enableStartRedo by remember { mutableStateOf(false) }

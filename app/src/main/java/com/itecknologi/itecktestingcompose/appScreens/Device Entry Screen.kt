@@ -69,7 +69,6 @@ import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.R
 import kotlinx.coroutines.launch
 import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
-import com.itecknologi.itecktestingcompose.modelClasses.VehData
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.SelectedVehicle
