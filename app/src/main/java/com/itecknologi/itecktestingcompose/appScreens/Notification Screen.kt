@@ -27,6 +27,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -69,6 +70,7 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
     LaunchedEffect(Unit) {
         notifications = notificationHistory(prefs.getUserCNIC())
         isLoading = false
+
     }
 
     Column(
@@ -138,6 +140,7 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
     }
 }
 
+
 @Composable
 fun NotificationCard(item: NotificationHistoryItem) {
 
@@ -155,12 +158,20 @@ fun NotificationCard(item: NotificationHistoryItem) {
                 if (item.title?.contains("Assigned") == true) {
                     Image(
                         painter = painterResource(id = R.drawable.assignment),
-                        contentDescription = "Notification", modifier = Modifier.size(30.dp), alignment = Alignment.Center, contentScale = ContentScale.Fit, colorFilter = ColorFilter.tint(Color.Green)
+                        contentDescription = "Notification",
+                        modifier = Modifier.size(30.dp),
+                        alignment = Alignment.Center,
+                        contentScale = ContentScale.Fit,
+                        colorFilter = ColorFilter.tint(Color.Green)
                     )
-                }else{
+                } else {
                     Image(
                         painter = painterResource(id = R.drawable.dismiss),
-                        contentDescription = "Notification", modifier = Modifier.size(30.dp), alignment = Alignment.Center, contentScale = ContentScale.Fit, colorFilter = ColorFilter.tint(Color.Red)
+                        contentDescription = "Notification",
+                        modifier = Modifier.size(30.dp),
+                        alignment = Alignment.Center,
+                        contentScale = ContentScale.Fit,
+                        colorFilter = ColorFilter.tint(Color.Red)
                     )
                 }
 
@@ -219,6 +230,9 @@ fun NotificationCardPreview() {
 @Preview
 @Composable
 fun NotificationScreen() {
-    NotificationScreen(navController = NavHostController(LocalContext.current), prefs = PreferenceManager(LocalContext.current))
+    NotificationScreen(
+        navController = NavHostController(LocalContext.current),
+        prefs = PreferenceManager(LocalContext.current)
+    )
 }
 
