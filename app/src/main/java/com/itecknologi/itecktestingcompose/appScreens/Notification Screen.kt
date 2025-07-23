@@ -1,6 +1,10 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,16 +15,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,12 +38,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.notificationHistory
 import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistoryItem
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
@@ -59,17 +78,17 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
             .background(Color(0xFF122333))
             .padding(20.dp)
     ) {
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
                 Box(
                     modifier = Modifier.background(
                         Color.Red,
-                        shape = androidx.compose.foundation.shape.CircleShape
+                        shape = CircleShape
                     )
                 ) {
                     Icon(
@@ -81,19 +100,19 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Notifications History",
+            text = "Notifications",
             color = Color.White,
             fontSize = 28.sp,
-            textDecoration = TextDecoration.Underline,
-            fontFamily = FontFamily.Serif,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier
@@ -101,63 +120,105 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
                     .size(24.dp),
                 color = Color(0XFF39B54A)
             )
-        }
-
-
-        Box(
-            modifier = Modifier
-                .height(550.dp)
-                .fillMaxWidth()
-        ) {
-            LazyColumn {
-                items(notifications) { item ->
-                    NotificationCard(item)
+        } else {
+            Box(
+                modifier = Modifier
+                    .height(600.dp)
+                    .fillMaxWidth()
+            ) {
+                LazyColumn {
+                    items(notifications) { item ->
+                        NotificationCard(item)
+                    }
                 }
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
 
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center
-//        ) {
-//
-//            Box(
-//                modifier = Modifier
-//                    .background(
-//                        Color.White,
-//                        shape = androidx.compose.foundation.shape.CircleShape
-//                    )
-//                    .clickable { notifications = emptyList() }
-//            ) {
-//                Text(
-//                    "Clear List   \uD83D\uDDD1\uFE0F", fontFamily = FontFamily.Serif,
-//                    textAlign = TextAlign.Center,
-//                    modifier = Modifier.width(100.dp).height(20.dp)
-//                )
-//            }
-//
-//        }
         BottomLogo()
-
     }
 }
 
 @Composable
 fun NotificationCard(item: NotificationHistoryItem) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        shape = RectangleShape,
+        elevation = CardDefaults.cardElevation()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = item.title, color = Color.Black, fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = item.body, color = Color.Black)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Date: ${item.entrydate.date}", color = Color.DarkGray, fontSize = 12.sp)
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(start = 5.dp)) {
+                Spacer(modifier = Modifier.height(7.dp))
+                if (item.title?.contains("Assigned") == true) {
+                    Image(
+                        painter = painterResource(id = R.drawable.assignment),
+                        contentDescription = "Notification", modifier = Modifier.size(30.dp), alignment = Alignment.Center, contentScale = ContentScale.Fit, colorFilter = ColorFilter.tint(Color.Green)
+                    )
+                }else{
+                    Image(
+                        painter = painterResource(id = R.drawable.dismiss),
+                        contentDescription = "Notification", modifier = Modifier.size(30.dp), alignment = Alignment.Center, contentScale = ContentScale.Fit, colorFilter = ColorFilter.tint(Color.Red)
+                    )
+                }
+
+            }
+
+
+
+            Column(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    text = item.title ?: "",
+                    color = if (item.title?.contains("Unassigned") == true) Color.Red else Color.Green,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 14.dp)
+                )
+                Text(
+                    text = item.body ?: "",
+                    maxLines = 5,
+                    fontStyle = FontStyle.Italic,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                )
+                Text(
+                    text = item.entrydate ?: "",
+                    textAlign = TextAlign.End,
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    thickness = 1.25.dp
+                )
+            }
         }
+
     }
 }
+
+@Preview
+@Composable
+fun NotificationCardPreview() {
+    NotificationCard(
+        item = NotificationHistoryItem(
+            "You Have a New Installation",
+            "07-05-2025 13:88:00",
+            "New Installation"
+        )
+    )
+}
+
+@Preview
+@Composable
+fun NotificationScreen() {
+    NotificationScreen(navController = NavHostController(LocalContext.current), prefs = PreferenceManager(LocalContext.current))
+}
+

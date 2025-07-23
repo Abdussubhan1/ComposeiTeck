@@ -17,7 +17,7 @@ suspend fun getVehicleDetails(T_ID: String, type: String): getVehicleDetailsResp
             .getVehicleDetails(T_ID, type)
 
         response.body()?.let { responseBody ->
-            return if (responseBody.Success) { // correct lowercase "success"
+            return if (responseBody.Success) {
                 vehicle_details.dataList = responseBody.data
                 getVehicleDetailsResponse(true, "Details Fetched")
             } else {

@@ -108,11 +108,17 @@ fun SplashScreen(
                     }
                     prefs.setUserCNIC("")
                 }
-            } else {
+            } else if (!loginResponse.success) {
                 navController.navigate("login") {
                     popUpTo("splash") { inclusive = true }
                 }
-//                prefs.setUserCNIC("")
+                Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
+            }
+            else{
+                navController.navigate("login") {
+                    popUpTo("splash") { inclusive = true }
+                }
+                prefs.setUserCNIC("")
                 Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
             }
 

@@ -74,7 +74,7 @@ fun VehicleCard(
         ) {
             // Vehicle info
             Text(
-                text = "${vehicle.MK_NAME} ${vehicle.M_NAME} - ${vehicle.VEH_REG}",
+                text = "${vehicle.MK_NAME} ${vehicle.M_NAME}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = Color.White,
@@ -176,7 +176,7 @@ fun VehicleCard(
 @Composable
 fun VehicleListScreen(
     vehicleList: List<Data>,
-    onSelectionChanged: (Boolean, String?, String?, String?, String?, String?) -> Unit
+    onSelectionChanged: (Boolean, String?, String?, String?, String?, String?,String?,String?,String?,Double?,Double?) -> Unit
 ) {
     var selectedVehicle by remember { mutableStateOf<Data?>(null) }
 
@@ -196,7 +196,12 @@ fun VehicleListScreen(
                         if (!isSame) vehicle.ENGINE else null,
                         if (!isSame) vehicle.CHASIS else null,
                         if (!isSame) vehicle.MK_NAME else null,
-                        if (!isSame) vehicle.M_NAME else null
+                        if (!isSame) vehicle.M_NAME else null,
+                        if (!isSame) vehicle.Job_assigned_date else null,
+                        if (!isSame) vehicle.VEH_REG else null,
+                        if (!isSame) vehicle.location else null,
+                        if (!isSame) vehicle.X else null,
+                        if (!isSame) vehicle.Y else null
                     ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
                 }
             )
@@ -206,48 +211,133 @@ fun VehicleListScreen(
 
 @Composable
 fun SelectedVehicle() {
-    val backgroundColor = Color.Transparent
+    val backgroundColor = Color(0xFF102027)
+    val context = LocalContext.current
     Card(
         modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 8.dp) // Added padding around card
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp), // Slightly increased corner radius
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp), // Slightly increased elevation
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, Color(0xFF90A4AE)),
+        elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp) // Increased internal padding
+                .padding(16.dp)
         ) {
+            // Vehicle info
+            Text(
+                text = "${Constants.make} ${Constants.model}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Assigned Date
+            Text(
+                text = "Job Assigned On: ${Constants.JobAssigneddate}",
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Engine and Chassis
             Column(
-                horizontalAlignment = Alignment.Start
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(text = "VRN: ${Constants.VRN}", color = Color.White, fontSize = 14.sp)
+                Text(text = "Engine No: ${Constants.engineNumber}", color = Color.White, fontSize = 14.sp)
+                Text(text = "Chassis No: ${Constants.chassisNumber}", color = Color.White, fontSize = 14.sp)
+                Text(text = "Location: ${Constants.jobAssignedLoc}", color = Color.White, fontSize = 14.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF39B54A))
+                    .clickable {
+
+                        val sourceLat = Constants.mobileLocationLat
+                        val sourceLong = Constants.mobileLocationLong
+                        val destLat = Constants.X
+                        val destLong = Constants.Y
+
+                        val uri =
+                            "https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLong&destination=$destLat,$destLong&travelmode=driving".toUri()
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        intent.setPackage("com.google.android.apps.maps")
+
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(
+                                context,
+                                "Google Maps is not installed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${Constants.make} ${Constants.model}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    text = "Get Directions",
                     color = Color.White,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    textDecoration = TextDecoration.Underline
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Engine: ${Constants.engineNumber}", color = Color.White)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Chassis: ${Constants.chassisNumber}", color = Color.White)
-
-
+                Spacer(modifier = Modifier.width(6.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.viewmap),
+                    contentDescription = "Map Icon",
+                    modifier = Modifier.size(20.dp)
+                )
             }
+
         }
     }
 }
 
 
-//@Preview
-//@Composable
-//fun SelectedVehiclePre() {
-//    VehicleCard(
-//        vehicle = Data("", ),
-//        isSelected = false,
-//        onClick = {})
-//}
+@Preview
+@Composable
+fun SelectedVehiclePre() {
+    VehicleCard(
+        vehicle = Data(
+            "",
+            ENGINE = "",
+            Job_assigned_date = "",
+            Job_completed_date = "",
+            MK_NAME = "",
+            M_NAME = "",
+            T_NAME = "",
+            Technical_job_assign_id = "",
+            VEH_REG = "",
+            V_ID = "",
+            X = 0.0,
+            Y = 0.0,
+            Y_NAME = "",
+            location = "",
+            status = "",
+            type = "",
+        ),
+        isSelected = false,
+        onClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun Preview(){
+    SelectedVehicle()
+}

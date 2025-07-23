@@ -33,6 +33,11 @@ object Constants {
     var chassisNumber:String=""
     var make:String=""
     var model:String=""
+    var JobAssigneddate:String=""
+    var VRN:String=""
+    var jobAssignedLoc:String=""
+    var X:Double=0.0
+    var Y:Double=0.0
 
 
 }
