@@ -2,7 +2,6 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
-import android.location.LocationManager
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -25,10 +24,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -42,18 +39,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,13 +59,9 @@ import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetailsRespons
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
-import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.getLocation
-import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
-import com.itecknologi.itecktestingcompose.functions.searchInMemory
-import com.itecknologi.itecktestingcompose.modelClasses.Data
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 
@@ -88,13 +77,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
         animationSpec = tween(durationMillis = 500),
         label = "logoutAnimation"
     )
-
-    var success by remember { mutableStateOf(false) }
-    var vehList by remember { mutableStateOf(emptyList<Data>()) }
     var enableProceed by remember { mutableStateOf(false) }
-    var searchVehicle by rememberSaveable { mutableStateOf("") }
-    val keyboard = LocalSoftwareKeyboardController.current
-
     var response by remember {
         mutableStateOf(
             getVehicleDetailsResponse(
@@ -337,7 +320,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                     } else {
                         VehicleListScreen(
                             vehicleList = vehicle_details.dataList,
-                            onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation,Xcordinate, Ycordinate ->
+                            onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation,xcordinate, ycordinate ->
                                 enableProceed = isSelected
                                 Constants.vehicleID = vehicleID ?: ""
                                 Constants.engineNumber = vehicleEngine ?: ""
@@ -347,8 +330,8 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                                 Constants.JobAssigneddate = assignedDate ?: ""
                                 Constants.VRN = vehicleVRN ?: ""
                                 Constants.jobAssignedLoc = assignedLocation ?: ""
-                                Constants.X=Xcordinate ?: 0.0
-                                Constants.Y=Ycordinate ?: 0.0
+                                Constants.X=xcordinate ?: 0.0
+                                Constants.Y=ycordinate ?: 0.0
                             })
                     }
 

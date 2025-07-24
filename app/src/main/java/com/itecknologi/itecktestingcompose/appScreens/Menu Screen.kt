@@ -2,13 +2,11 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.app.Activity
 import android.content.Context
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,15 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -216,13 +211,13 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
 }
 
 @Composable
-fun MenuButton(text: String, onClick: () -> Unit) {
+fun MenuButton(text: String ,onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .padding(vertical = 8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699))
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699)),
     ) {
         Text(text = text, fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
     }
