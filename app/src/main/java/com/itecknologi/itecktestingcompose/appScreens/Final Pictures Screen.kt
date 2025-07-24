@@ -484,10 +484,9 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                     selectedOption = trackerInstallationLocation,
                     onOptionSelected = { selected ->
                         trackerInstallationLocation = selected
+                        isValidLocation= true
                     }
                 )
-                if (Constants.TLocID != 0)
-                    isValidLocation = true
 
             }
 
