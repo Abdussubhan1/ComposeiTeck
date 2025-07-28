@@ -1,6 +1,7 @@
 [versions]
 accompanistNavigationAnimation = "0.34.0"
 accompanistNavigationAnimationVersion = "0.36.1"
+accompanistSwiperefresh = "0.35.1-alpha"
 agp = "8.8.2"
 firebaseBom = "33.12.0"
 firebaseMessaging = "24.1.1"
@@ -14,6 +15,7 @@ lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.10.1"
 composeBom = "2024.04.01"
 lifecycleRuntimeKtxVersion = "2.8.7"
+materialPullRefresh = "1.7.0"
 navigationRuntimeAndroid = "2.9.0-alpha07"
 storage = "1.5.0"
 navigationCompose = "2.8.8"
@@ -27,8 +29,10 @@ workRuntimeKtx = "2.10.1"
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 accompanist-navigation-animation-v0361 = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimationVersion" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx-v287 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-material-pull-refresh = { module = "androidx.compose.material:material-pull-refresh", version.ref = "materialPullRefresh" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }

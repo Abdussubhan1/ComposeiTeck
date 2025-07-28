@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun showHistory(current: Context) {
+fun ShowHistory(current: Context) {
 
 
     var listItems by remember { mutableStateOf<List<DeviceSearchHistory>>(emptyList()) }

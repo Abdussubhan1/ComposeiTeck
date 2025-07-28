@@ -30,7 +30,7 @@ suspend fun validateBattery(devID: String,statusCheck: Int,eventLog: String): Ba
 
     } catch (e: Exception) {
         Log.e(TAG, "validateBattery error: ${e.message}")
-        BatteryResponse()
+        BatteryResponse(false, "No Internet Connection")
     }
 }
 

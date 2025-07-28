@@ -63,6 +63,7 @@ import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 
 
@@ -87,7 +88,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
         )
     }
     getLocation()
-    val checkthevalue=prefs.getTechnicianID()
+    val checkthevalue = prefs.getTechnicianID()
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -105,6 +106,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
         }
     }
     BackHandler { navController.navigate("Menu Screen") }
+
 
     Column(
         modifier = Modifier
@@ -240,68 +242,107 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                 .padding(8.dp)
         ) {
             Column {
-                /*Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        CustomTextField(
-                            searchVehicle,
-                            "Search Vehicle",
-                            onValueChange = { searchVehicle = it },
-                            true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (searchVehicle.length >= 3) Color(
-                                    0XFF39B54A
-                                ) else Color.Gray
-                            ) // Green search
-                            .clickable(enabled = searchVehicle.length >= 3) {
-                                keyboard?.hide()
+/*                val coroutineScope = rememberCoroutineScope()
+                var isRefreshing by remember { mutableStateOf(false) }
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing),
+                    onRefresh = {
+                        // Trigger refresh
+                        isRefreshing = true
 
-                                if (success) {
-                                    vehicle_details.dataList = searchInMemory(searchVehicle)
-                                    if (vehicle_details.dataList.isNotEmpty()) {
-                                        vehicle_details.dataList = vehicle_details.dataList
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Vehicle Not Found",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                        // Simulate network call
+                        coroutineScope.launch {
+                            response = getVehicleDetails(
+                                T_ID = prefs.getTechnicianID().toString(),
+                                type = "1"
+                            )
+                            delay(2000)
+                            isRefreshing = false
+                        }
+                    }, content = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.80f)
+                                .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
+                                .padding(8.dp)
+                        ) {
+                            if (!response.success) {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    item {
+                                        Column(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text("Loading..", color = Color.White, fontSize = 18.sp)
+                                            Spacer(modifier = Modifier.height(18.dp))
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(32.dp),
+                                                color = Color(0XFF39B54A)
+                                            )
+                                        }
                                     }
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Something went wrong",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+
                                 }
 
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))*/
+                            } else {
+                                if (vehicle_details.dataList.isEmpty()) {
+                                    LazyColumn(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        item {
+                                            Column(
+                                                modifier = Modifier.fillMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    "No Pending Task",
+                                                    color = Color.White,
+                                                    fontSize = 18.sp
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                } else {
+                                    VehicleListScreen(
+                                        vehicleList = vehicle_details.dataList,
+                                        onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation, xcordinate, ycordinate ->
+                                            enableProceed = isSelected
+                                            Constants.vehicleID = vehicleID ?: ""
+                                            Constants.engineNumber = vehicleEngine ?: ""
+                                            Constants.chassisNumber = vehicleChassis ?: ""
+                                            Constants.make = vehicleMake ?: ""
+                                            Constants.model = vehicleModel ?: ""
+                                            Constants.JobAssigneddate = assignedDate ?: ""
+                                            Constants.VRN = vehicleVRN ?: ""
+                                            Constants.jobAssignedLoc = assignedLocation ?: ""
+                                            Constants.X = xcordinate ?: 0.0
+                                            Constants.Y = ycordinate ?: 0.0
+                                        })
+
+
+                                }
+                            }
+                        }
+
+                    }, swipeEnabled = true, refreshTriggerDistance = 80.dp
+                )*/
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.80f)
                         .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(8.dp)
                 ) {
                     if (!response.success) {
                         Column(
@@ -318,21 +359,36 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                         }
 
                     } else {
-                        VehicleListScreen(
-                            vehicleList = vehicle_details.dataList,
-                            onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation,xcordinate, ycordinate ->
-                                enableProceed = isSelected
-                                Constants.vehicleID = vehicleID ?: ""
-                                Constants.engineNumber = vehicleEngine ?: ""
-                                Constants.chassisNumber = vehicleChassis ?: ""
-                                Constants.make = vehicleMake ?: ""
-                                Constants.model = vehicleModel ?: ""
-                                Constants.JobAssigneddate = assignedDate ?: ""
-                                Constants.VRN = vehicleVRN ?: ""
-                                Constants.jobAssignedLoc = assignedLocation ?: ""
-                                Constants.X=xcordinate ?: 0.0
-                                Constants.Y=ycordinate ?: 0.0
-                            })
+                        if (vehicle_details.dataList.isEmpty()) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    "No Pending Tasks",
+                                    color = Color.White,
+                                    fontSize = 18.sp,
+                                )
+                            }
+                        } else {
+                            VehicleListScreen(
+                                vehicleList = vehicle_details.dataList,
+                                onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation, xcordinate, ycordinate ->
+                                    enableProceed = isSelected
+                                    Constants.vehicleID = vehicleID ?: ""
+                                    Constants.engineNumber = vehicleEngine ?: ""
+                                    Constants.chassisNumber = vehicleChassis ?: ""
+                                    Constants.make = vehicleMake ?: ""
+                                    Constants.model = vehicleModel ?: ""
+                                    Constants.JobAssigneddate = assignedDate ?: ""
+                                    Constants.VRN = vehicleVRN ?: ""
+                                    Constants.jobAssignedLoc = assignedLocation ?: ""
+                                    Constants.X = xcordinate ?: 0.0
+                                    Constants.Y = ycordinate ?: 0.0
+                                })
+                        }
+
                     }
 
                 }

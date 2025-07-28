@@ -109,6 +109,16 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
     implementation (libs.firebase.config) //For Firebase remote config
 
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.35.1-alpha")
+
+
+    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha18")
+
+
+
+
 
 
 }

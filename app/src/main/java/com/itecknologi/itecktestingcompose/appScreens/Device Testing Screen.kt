@@ -2,6 +2,7 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
+import android.location.LocationManager
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -116,7 +117,11 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
     var comp by remember { mutableStateOf(false) }
 
     var showDialogueReset by remember { mutableStateOf(false) }
-
+    val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled =
+        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     HandleDoubleBackToExit()
     Column(
@@ -244,7 +249,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
             ) {
                 ValidationStatusUI(obdType, onTestingCompleted = { result ->
                     comp = result
-                }, prefs)
+                }, prefs, isLocationEnabled)
             }
         }
 
@@ -329,7 +334,8 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 fun ValidationStatusUI(
     obdType: String,
     onTestingCompleted: (Boolean) -> Unit,
-    prefs: PreferenceManager
+    prefs: PreferenceManager,
+    isLocationEnabled: Boolean
 ) {
     var showBattery by remember { mutableStateOf(false) }
     var showIgnition by remember { mutableStateOf(false) }
@@ -386,12 +392,14 @@ fun ValidationStatusUI(
     var locResult by remember { mutableDoubleStateOf(0.1) }
     var moveToNextValidationStep by remember { mutableIntStateOf(0) } // 0 = loc, 1 = battery, 2 = ignition, 3 = relay
 //    checkLocationWithinRange()
+    var enableColorForBar by remember { mutableStateOf(false) }
 
     if (loc) {
         getLocation()
         locResult = checkLocationWithinRange()
         loc = false
     }
+
 
     Column(
         modifier = Modifier
@@ -431,11 +439,22 @@ fun ValidationStatusUI(
                 LinearProgressIndicator(
                     progress = { 1f },
                     color = when {
-                        locResult in 1.00..100.00 && deviceLocationResult.Success && !deviceLocationResult.isLoading -> Color(
+                        // 1–100 and success (not loading)
+                        locResult in 1.0..100.0 &&
+                                deviceLocationResult.Success &&
+                                !deviceLocationResult.isLoading && enableColorForBar -> Color(
                             0xFF39B54A
-                        ) // Green
-                        !deviceLocationResult.Success && !deviceLocationResult.isLoading -> Color.Red
-                        (locResult in 101.00..100000.00 && !deviceLocationResult.isLoading) || !deviceLocationResult.Success -> Color.Red
+                        )
+
+                        // Not successful and finished loading
+                        !deviceLocationResult.Success &&
+                                !deviceLocationResult.isLoading && enableColorForBar -> Color.Red
+
+                        // Distance more than 100 and finished loading
+                        locResult > 100.0 &&
+                                !deviceLocationResult.isLoading && enableColorForBar -> Color.Red
+
+                        // Default (loading or unknown)
                         else -> Color.LightGray
                     },
                     modifier = Modifier
@@ -453,33 +472,36 @@ fun ValidationStatusUI(
                     modifier = Modifier
                         .size(22.dp)
                         .clickable(enabled = moveToNextValidationStep == 0 && !deviceLocationResult.isLoading) {
-                            if (prefs.getTechnicianID() == 0) {
-                                locResult = 5.00
-                            } else {
-                                showLocation = true
-                                loc = true
-                                deviceLocationResult =
-                                    ValidateLocationResponse(
-                                        isLoading = true, //Just yeh loader dikhane k lie hy
-                                        Lat = 0.0,
-                                        Lng = 0.0,
-                                        Message = "",
-                                        Success = false
-                                    )
-                                coroutineScope.launch {
-                                    deviceLocationResult = validateLoc(Constants.deviceID)
-                                    Constants.deviceLocationLat = deviceLocationResult.Lat
-                                    Constants.deviceLocationLong = deviceLocationResult.Lng
-                                    Constants.deviceLocation = deviceLocationResult.Message
+                            if (isLocationEnabled) {
+                                enableColorForBar = true
+                                if (prefs.getTechnicianID() == 0) {
+                                    locResult = 5.00
+                                } else {
+                                    showLocation = true
+                                    loc = true
+                                    deviceLocationResult =
+                                        ValidateLocationResponse(
+                                            isLoading = true, //Just yeh loader dikhane k lie hy
+                                            Lat = 0.0,
+                                            Lng = 0.0,
+                                            Message = "",
+                                            Success = false
+                                        )
+                                    coroutineScope.launch {
+                                        deviceLocationResult = validateLoc(Constants.deviceID)
+                                        Constants.deviceLocationLat = deviceLocationResult.Lat
+                                        Constants.deviceLocationLong = deviceLocationResult.Lng
+                                        Constants.deviceLocation = deviceLocationResult.Message
 
+                                    }
                                 }
-                            }
-
+                            } else
+                                enableColorForBar = false
 
                         }
 
                 )
-                if ((locResult in 1.00..100.00 && deviceLocationResult.Success) || locResult == 5.00) {
+                if ((locResult in 1.00..100.00 && deviceLocationResult.Success && isLocationEnabled) || locResult == 5.00) {
                     moveToNextValidationStep =
                         1
                 }
@@ -769,6 +791,7 @@ fun ValidationStatusUI(
             ) {
                 val text = when {
                     showLocation -> when {
+                        !isLocationEnabled -> "Please Turn ON Location Services"
                         Constants.deviceLocationLat != 0.0 && Constants.deviceLocationLong != 0.0 -> "Location: ${deviceLocationResult.Message}"
                         else -> "Location: Failed/GPS Invalid"
                     }
