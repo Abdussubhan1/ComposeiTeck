@@ -374,7 +374,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                         } else {
                             VehicleListScreen(
                                 vehicleList = vehicle_details.dataList,
-                                onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation, xcordinate, ycordinate ->
+                                onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation, xcordinate, ycordinate, jobAssignedID ->
                                     enableProceed = isSelected
                                     Constants.vehicleID = vehicleID ?: ""
                                     Constants.engineNumber = vehicleEngine ?: ""
@@ -386,6 +386,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                                     Constants.jobAssignedLoc = assignedLocation ?: ""
                                     Constants.X = xcordinate ?: 0.0
                                     Constants.Y = ycordinate ?: 0.0
+                                    Constants.technicalJobAssignedID = jobAssignedID ?:""
                                 })
                         }
 

@@ -3,6 +3,7 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.content.Context
 import android.location.LocationManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -95,6 +96,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 
     LaunchedEffect(checkForEventLog) {
         getEventLogID()
+        Log.d("event log ","event log id: ${Constants.eventLogID}")
         if (Constants.eventLogID == "") // calling function again if event log id is null or empty
         {
             checkForEventLog += 1
@@ -874,7 +876,6 @@ fun DropdownField_forDeviceTypeSelection(
                             else -> 0
                         }
                         Constants.installedDeviceType = when (selectionOption) {
-                            "LOCATION" -> 1
                             "OBD" -> 2
                             else -> 0
                         }
