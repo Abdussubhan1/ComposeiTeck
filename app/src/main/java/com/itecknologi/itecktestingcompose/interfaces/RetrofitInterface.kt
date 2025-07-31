@@ -107,16 +107,16 @@ interface RetrofitInterface {
         @Field("appid") appID: String,
         @Field("FcmToken") fcmtoken: String
     ): Response<UpdateFCM_API>
-
+//isko change krdena bd m
     @FormUrlEncoded
-    @POST("get_relay.php")
+    @POST("get_relayv1.php")
     suspend fun getRelay(
         @Field("devid") devID: String,
         @Field("cmd") cmd: String
     ): Response<GetRelay>
-
+    //isko change krdena bd m
     @FormUrlEncoded
-    @POST("cmd_queue.php")
+    @POST("cmd_queuev1.php")
     suspend fun getCmdQueueStatus(
         @Field("devid") devID: String,
         @Field("cmd") cmd: String

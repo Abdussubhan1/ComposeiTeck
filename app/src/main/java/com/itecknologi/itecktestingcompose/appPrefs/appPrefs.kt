@@ -3,10 +3,12 @@ package com.itecknologi.itecktestingcompose.appPrefs
 import android.content.Context
 import android.util.Log
 import androidx.core.content.edit
+import com.itecknologi.itecktestingcompose.functions.TaskStatus
 
 class PreferenceManager(context: Context) {
 
     private val sharedPref = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+    private val reasonPrefs = context.getSharedPreferences("hold_reasons", Context.MODE_PRIVATE)
 
     fun setHasNewNotification(value: Boolean) {
         sharedPref.edit { putBoolean("hasNewNotification", value) }
@@ -89,4 +91,26 @@ class PreferenceManager(context: Context) {
         return sharedPref.getString("AppVersion", "")?: ""
     }
 
+    fun saveVehicleStatus(vehicleId: String, status: TaskStatus) {
+        sharedPref.edit() { putString(vehicleId, status.name) }
+    }
+
+
+    fun getAllVehicleStatuses(): Map<String, TaskStatus> {
+        return sharedPref.all.mapNotNull { (key, value) ->
+            try {
+                key to TaskStatus.valueOf(value as String)
+            } catch (e: Exception) {
+                null
+            }
+        }.toMap()
+    }
+
+    fun saveHoldReason(vehicleId: String, reason: String) {
+        reasonPrefs.edit() { putString(vehicleId, reason) }
+    }
+
+    fun getHoldReason(vehicleId: String): String? {
+        return reasonPrefs.getString(vehicleId, null)
+    }
 }

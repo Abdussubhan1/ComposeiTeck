@@ -3,6 +3,7 @@ package com.itecknologi.itecktestingcompose.mainActivity
 import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.app.ActivityCompat
@@ -60,7 +63,10 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
+
             AppNavigation(this, prefs)
+
+
         }
     }
 
@@ -142,6 +148,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
 }
 

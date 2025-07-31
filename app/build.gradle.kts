@@ -112,9 +112,6 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.35.1-alpha")
 
 
-    implementation("androidx.compose.material3:material3:1.3.2")
-    implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
-    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha18")
 
 
 

@@ -63,7 +63,6 @@ import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 
 
@@ -387,7 +386,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                                     Constants.X = xcordinate ?: 0.0
                                     Constants.Y = ycordinate ?: 0.0
                                     Constants.technicalJobAssignedID = jobAssignedID ?:""
-                                })
+                                },prefs)
                         }
 
                     }

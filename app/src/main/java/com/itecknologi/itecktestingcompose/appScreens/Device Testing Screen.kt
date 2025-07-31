@@ -96,7 +96,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 
     LaunchedEffect(checkForEventLog) {
         getEventLogID()
-        Log.d("event log ","event log id: ${Constants.eventLogID}")
+        Log.d("event log ", "event log id: ${Constants.eventLogID}")
         if (Constants.eventLogID == "") // calling function again if event log id is null or empty
         {
             checkForEventLog += 1
@@ -656,8 +656,6 @@ fun ValidationStatusUI(
 
                 }
             }
-            // IGNITION Wali Row
-
 
             // RELAY Wali Row
             if (obdType == "IMMOBILIZER") {
@@ -689,7 +687,7 @@ fun ValidationStatusUI(
                     if (startTimer && !timerStarted && prefs.getTechnicianID() != 0) {
                         timerStarted = true
                         while (true) {
-                            delay(4000)
+                            delay(3000)
                             cmdQueueResult = cmdQueueCheck(
                                 Constants.deviceID,
                                 if (relayProgress == 0.0f) "kill" else "release"
