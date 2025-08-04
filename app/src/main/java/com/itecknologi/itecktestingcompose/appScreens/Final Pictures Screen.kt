@@ -75,7 +75,6 @@ import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.R
-import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
@@ -272,31 +271,18 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (FinallistOfImages[0] == null) {
-                    Icon(
-                        imageVector = Icons.Default.CameraEnhance,
-                        contentDescription = "Camera Icon 1",
-                        tint = Color(0XFF39B54A),
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(start = 14.dp)
-                            .clickable {
-                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            }
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
                     Text(
-                        text = "ڈیوائس کی تیسری تصویر لینے کے لیے کلک کریں",
+                        text = "Click To Take 3rd Picture",
                         modifier = Modifier.padding(end = 14.dp),
-                        fontFamily = jameelNooriFont,
                         maxLines = 2,
                         fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
                     )
-                } else if (FinallistOfImages[1] == null) {
+                    Spacer(modifier = Modifier.width(20.dp))
                     Icon(
                         imageVector = Icons.Default.CameraEnhance,
                         contentDescription = "Camera Icon 1",
@@ -308,18 +294,29 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                                 cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                             }
                     )
-                    Spacer(modifier = Modifier.width(14.dp))
+                } else if (FinallistOfImages[1] == null) {
                     Text(
-                        text = "ڈیوائس کی چوتھی تصویر لینے کے لیے کلک کریں۔",
+                        text = "Click to Take 4th Picture",
                         modifier = Modifier.padding(end = 14.dp),
-                        fontFamily = jameelNooriFont,
                         fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Icon(
+                        imageVector = Icons.Default.CameraEnhance,
+                        contentDescription = "Camera Icon 1",
+                        tint = Color(0XFF39B54A),
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(start = 14.dp)
+                            .clickable {
+                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
                     )
                 } else
                     FinallistCompleted = true
 
             }
-
+            Spacer(modifier = Modifier.height(28.dp))
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -345,7 +342,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
 
 
             if (FinallistCompleted) {
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -375,9 +372,8 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                             .height(48.dp)
                     ) {
                         Text(
-                            text = "دونوں تصویریں دوبارہ لیں۔",
-                            fontFamily = jameelNooriFont,
-                            fontWeight = FontWeight.Bold,
+                            text = "Retake Both Pictures",
+                            fontWeight = FontWeight.Medium,
                             color = Color.White,
                             textAlign = TextAlign.Center,
                             fontSize = 21.sp
@@ -400,9 +396,8 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                         border = BorderStroke(1.5.dp, Color(0XFF39B54A))
                     ) {
                         Text(
-                            text = " آگے بڑھیں۔",
-                            fontFamily = jameelNooriFont,
-                            fontWeight = FontWeight.Bold,
+                            text = " Proceed",
+                            fontWeight = FontWeight.Medium,
                             color = Color.White,
                             textAlign = TextAlign.Center,
                             fontSize = 21.sp

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Bitmap
 import android.widget.Toast
+import androidx.activity.compose.LocalActivityResultRegistryOwner.current
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,14 +45,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.StatusResult
 import com.itecknologi.itecktestingcompose.apiFunctions.getStatus
@@ -61,7 +65,7 @@ import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.resetAllData
-import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -89,7 +93,14 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
 
     var submitDataResponse by remember { mutableStateOf(submitDataResponse(false, "", false)) }
 
-    LaunchedEffect(Unit) { statusResult = getStatus(Constants.deviceID) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000)
+            statusResult = getStatus(Constants.deviceID)
+            if (!statusResult.isLoading) break
+        }
+
+    }
 
     Box(
         modifier = Modifier
@@ -235,7 +246,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    enabled = !submitDataResponse.isLoading,
+                    enabled = (!submitDataResponse.isLoading && !statusResult.isLoading ),
                     onClick = {
                         submitDataResponse = submitDataResponse(false, "", true)
                         couroutineScope.launch {
@@ -312,12 +323,11 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                         )
                     } else {
                         Text(
-                            text = " کام مکمل ہو گیا ہے۔",
-                            fontFamily = jameelNooriFont,
-                            fontWeight = FontWeight.Bold,
+                            text = " Installation Completed",
+                            fontWeight = FontWeight.Medium,
                             color = Color.White,
                             textAlign = TextAlign.Center,
-                            fontSize = 17.sp
+                            fontSize = 21.sp
                         )
                     }
 
@@ -328,4 +338,14 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
     }
 
 
+}
+
+@Preview
+@Composable
+fun preview() {
+    finalTicket(
+        navController = rememberNavController(),
+        prefs = PreferenceManager(context = LocalContext.current),
+        LocalContext.current
+    )
 }

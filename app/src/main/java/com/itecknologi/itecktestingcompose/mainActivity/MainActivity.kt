@@ -26,10 +26,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 
-
-val jameelNooriFont = FontFamily(Font(R.font.jameelnoori))
-
-
 class MainActivity : ComponentActivity() {
 
 

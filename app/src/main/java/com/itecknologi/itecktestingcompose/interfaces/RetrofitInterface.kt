@@ -109,14 +109,14 @@ interface RetrofitInterface {
     ): Response<UpdateFCM_API>
 //isko change krdena bd m
     @FormUrlEncoded
-    @POST("get_relayv1.php")
+    @POST("get_relay.php")
     suspend fun getRelay(
         @Field("devid") devID: String,
         @Field("cmd") cmd: String
     ): Response<GetRelay>
     //isko change krdena bd m
     @FormUrlEncoded
-    @POST("cmd_queuev1.php")
+    @POST("cmd_queue.php")
     suspend fun getCmdQueueStatus(
         @Field("devid") devID: String,
         @Field("cmd") cmd: String

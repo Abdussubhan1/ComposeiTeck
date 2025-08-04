@@ -82,7 +82,6 @@ import com.itecknologi.itecktestingcompose.apiFunctions.BatteryResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.IgnitionResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.getEventLogID
 import com.itecknologi.itecktestingcompose.functions.getLocation
-import com.itecknologi.itecktestingcompose.mainActivity.jameelNooriFont
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.resetAllData
@@ -119,11 +118,11 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
     var comp by remember { mutableStateOf(false) }
 
     var showDialogueReset by remember { mutableStateOf(false) }
-    val locationManager =
-        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    val isLocationEnabled =
-        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        val locationManager =
+            context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isLocationEnabled =
+            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     HandleDoubleBackToExit()
     Column(
@@ -240,7 +239,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 
             }
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         if (obdType != "Select Device Type") {
             Box(
                 contentAlignment = Alignment.Center,
@@ -274,8 +273,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                     .height(48.dp)
             ) {
                 Text(
-                    text = " ڈیوائس تبدیل کریں",
-                    fontFamily = jameelNooriFont,
+                    text = " Change Device ?",
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -307,8 +305,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
                 } else null
             ) {
                 Text(
-                    text = " آگے بڑھیں۔",
-                    fontFamily = jameelNooriFont,
+                    text = "Proceed",
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     fontSize = 21.sp
@@ -318,8 +315,8 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
 
         if (showDialogueReset) {
             Alert(
-                title = "ٹریکر کی تبدیلی",
-                text = "کیا آپ واقعی ٹریکر تبدیل کرنا چاہتے ہیں؟",
+                title = "Change Of Tracker",
+                text = "Do you want to change the Tracker Device?",
                 onDismiss = { showDialogueReset = false },
                 navController = navController
             )
@@ -387,7 +384,7 @@ fun ValidationStatusUI(
     }
     var startTimer by remember { mutableStateOf(false) }
     var cmdQueueResult by remember { mutableStateOf("") }
-
+    val context = LocalContext.current
 
     var loc by remember { mutableStateOf(false) }
 
@@ -401,7 +398,6 @@ fun ValidationStatusUI(
         locResult = checkLocationWithinRange()
         loc = false
     }
-
 
     Column(
         modifier = Modifier
@@ -442,7 +438,7 @@ fun ValidationStatusUI(
                     progress = { 1f },
                     color = when {
                         // 1–100 and success (not loading)
-                        locResult in 1.0..100.0 &&
+                        locResult in 1.0..1000.0 &&
                                 deviceLocationResult.Success &&
                                 !deviceLocationResult.isLoading && enableColorForBar -> Color(
                             0xFF39B54A
@@ -453,7 +449,7 @@ fun ValidationStatusUI(
                                 !deviceLocationResult.isLoading && enableColorForBar -> Color.Red
 
                         // Distance more than 100 and finished loading
-                        locResult > 100.0 &&
+                        locResult > 1000.0 &&
                                 !deviceLocationResult.isLoading && enableColorForBar -> Color.Red
 
                         // Default (loading or unknown)
@@ -497,13 +493,17 @@ fun ValidationStatusUI(
 
                                     }
                                 }
-                            } else
+                            } else {
+                                Toast.makeText(context, "Location is OFF", Toast.LENGTH_SHORT)
+                                    .show()
                                 enableColorForBar = false
+                            }
+
 
                         }
 
                 )
-                if ((locResult in 1.00..100.00 && deviceLocationResult.Success && isLocationEnabled) || locResult == 5.00) {
+                if ((locResult in 1.00..1000.00 && deviceLocationResult.Success && isLocationEnabled) || locResult == 5.00) {
                     moveToNextValidationStep =
                         1
                 }
@@ -910,8 +910,7 @@ fun Alert(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.White,
-                fontFamily = jameelNooriFont,
-                textAlign = TextAlign.End,
+                textAlign = TextAlign.Start,
                 fontSize = 26.sp
             )
         },
@@ -920,8 +919,7 @@ fun Alert(
                 text = text,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.White,
-                fontFamily = jameelNooriFont,
-                textAlign = TextAlign.End,
+                textAlign = TextAlign.Start,
                 fontSize = 20.sp
             )
         },
@@ -946,9 +944,8 @@ fun Alert(
                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)
             ) {
                 Text(
-                    "جی ہاں",
-                    color = Color(0xFF122333), // Text color contrasting with white background
-                    fontFamily = jameelNooriFont,
+                    "Yes",
+                    color = Color(0xFF122333),
                     fontSize = 20.sp
                 )
             }
@@ -961,9 +958,8 @@ fun Alert(
                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp)
             ) {
                 Text(
-                    "نہیں",
+                    "Cancel",
                     color = Color(0xFF122333),
-                    fontFamily = jameelNooriFont,
                     fontSize = 20.sp
                 )
             }

@@ -307,7 +307,7 @@ fun VehicleCard(
                     Image(
                         painter = painterResource(id = R.drawable.viewmap),
                         contentDescription = "Map Icon",
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(14.dp))
@@ -325,7 +325,7 @@ fun VehicleCard(
                     Image(
                         painter = painterResource(id = R.drawable.phonecall),
                         contentDescription = "Map Icon",
-                        modifier = Modifier.size(28.dp), colorFilter = ColorFilter.tint(Color.White)
+                        modifier = Modifier.size(20.dp), colorFilter = ColorFilter.tint(Color.White)
                     )
                 }
 
@@ -638,9 +638,9 @@ fun SelectedVehicle() {
 }
 
 
-/*@Preview
+@Preview
 @Composable
-fun SelectedVehiclePre() {
+fun VehicleCardInList() {
     VehicleCard(
         vehicle = Data(
             "",
@@ -660,17 +660,18 @@ fun SelectedVehiclePre() {
             status = "",
             type = "",
         ),
-        status = TaskStatus.HELD,
+        status = TaskStatus.PENDING,
         isSelected = false,
         cardSelection = {},
         onStatusChange = {},
         prefs = PreferenceManager(LocalContext.current)
     )
-}*/
+}
 
+/*
 @Preview
 @Composable
 fun selected(){
     SelectedVehicle()
 
-}
+}*/
