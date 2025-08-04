@@ -438,7 +438,7 @@ fun ValidationStatusUI(
                     progress = { 1f },
                     color = when {
                         // 1–100 and success (not loading)
-                        locResult in 1.0..1000.0 &&
+                        locResult in 1.0..100000.0 &&
                                 deviceLocationResult.Success &&
                                 !deviceLocationResult.isLoading && enableColorForBar -> Color(
                             0xFF39B54A
@@ -449,7 +449,7 @@ fun ValidationStatusUI(
                                 !deviceLocationResult.isLoading && enableColorForBar -> Color.Red
 
                         // Distance more than 100 and finished loading
-                        locResult > 1000.0 &&
+                        locResult > 100000.0 &&
                                 !deviceLocationResult.isLoading && enableColorForBar -> Color.Red
 
                         // Default (loading or unknown)
@@ -503,7 +503,7 @@ fun ValidationStatusUI(
                         }
 
                 )
-                if ((locResult in 1.00..1000.00 && deviceLocationResult.Success && isLocationEnabled) || locResult == 5.00) {
+                if ((locResult in 1.00..100000.00 && deviceLocationResult.Success && isLocationEnabled) || locResult == 5.00) {
                     moveToNextValidationStep =
                         1
                 }
