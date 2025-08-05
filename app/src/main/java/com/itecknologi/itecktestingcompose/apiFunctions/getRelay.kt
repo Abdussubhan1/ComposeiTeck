@@ -17,7 +17,7 @@ suspend fun setRelayStatus(devID: String, cmd: String): RelayResponse {
             .getRelay(devID, cmd)
 
         val body = response.body()
-        if (response.isSuccessful && body != null) {
+        if (body != null) {
             RelayResponse(
                 success = body.Success,
                 isLoading = false,

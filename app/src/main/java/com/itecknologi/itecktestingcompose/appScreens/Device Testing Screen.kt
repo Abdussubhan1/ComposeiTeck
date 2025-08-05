@@ -640,6 +640,8 @@ fun ValidationStatusUI(
 
                 }
             }
+            var showConfirmationForKill by remember { mutableStateOf(false) }
+            var showConfirmationForRelease by remember { mutableStateOf(false) }
 
             // RELAY Wali Row
             if (obdType == "IMMOBILIZER") {
@@ -650,12 +652,12 @@ fun ValidationStatusUI(
                 LaunchedEffect(cmdQueueResult) {
                     when {
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.0f -> {
-                            relayProgress = 0.5f
+                            showConfirmationForKill = true
                         }
 
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.5f -> {
-                            relayProgress = 1.0f
-                            onTestingCompleted(true)
+                            showConfirmationForRelease = true
+
                         }
 
                         else -> {
@@ -665,13 +667,55 @@ fun ValidationStatusUI(
 
                     }
                 }
+                if (showConfirmationForKill) {
+                    AlertDialog(
+                        onDismissRequest = { },
+                        title = { Text("Confirmation") },
+                        text = { Text("Is the Vehicle physically Killed?") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showConfirmationForKill = false
+                                relayProgress = 0.5f
+                            }) {
+                                Text("Yes")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showConfirmationForKill = false }) {
+                                Text("No")
+                            }
+                        }
+                    )
+                }
+                if (showConfirmationForRelease) {
+                    AlertDialog(
+                        onDismissRequest = { },
+                        title = { Text("Confirmation") },
+                        text = { Text("Is the Vehicle physically Released?") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showConfirmationForRelease = false
+                                relayProgress = 1f
+                                onTestingCompleted(true)
+                                showRelay = false
+                            }) {
+                                Text("Yes")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showConfirmationForRelease = false }) {
+                                Text("No")
+                            }
+                        }
+                    )
+                }
 
                 // Timer coroutine
                 LaunchedEffect(startTimer) {
                     if (startTimer && !timerStarted && prefs.getTechnicianID() != 0) {
                         timerStarted = true
                         while (true) {
-                            delay(3000)
+                            delay(5000)
                             cmdQueueResult = cmdQueueCheck(
                                 Constants.deviceID,
                                 if (relayProgress == 0.0f) "kill" else "release"
@@ -714,7 +758,7 @@ fun ValidationStatusUI(
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = "Refresh",
-                            tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) Color.White else Color.Transparent,
+                            tint = if (moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer && !showConfirmationForKill && !showConfirmationForRelease) Color.White else Color.Transparent,
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable(enabled = moveToNextValidationStep == 3 && !relayResult.isLoading && !startTimer) {
@@ -734,14 +778,20 @@ fun ValidationStatusUI(
                                             if (relayProgress == 0.0f) {
                                                 relayResult =
                                                     setRelayStatus(Constants.deviceID, "kill")
-                                                startTimer = true
+                                                if (relayResult.success) {
+                                                    startTimer = true
+                                                }
+
+
                                             } else if (relayProgress == 0.5f) {
                                                 relayResult =
                                                     setRelayStatus(
                                                         Constants.deviceID,
                                                         cmd = "release"
                                                     )
-                                                startTimer = true
+                                                if (relayResult.success) {
+                                                    startTimer = true
+                                                }
                                             }
 
                                         }
@@ -790,7 +840,7 @@ fun ValidationStatusUI(
                 if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading && !relayResult.isLoading) {
                     Text(
                         text = text,
-                        color = if (text == "Battery: Disconnected" || text.contains("Data not Updating Last Gps time:")||text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!" || text == "Location: GPS Invalid") Color.Red else Color(
+                        color = if (text == "Battery: Disconnected" || text.contains("Data not Updating Last Gps time:") || text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!" || text == "Location: GPS Invalid") Color.Red else Color(
                             0XFF39B54A
                         ),
                         fontWeight = FontWeight.SemiBold,
