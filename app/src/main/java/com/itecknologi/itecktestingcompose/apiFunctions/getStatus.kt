@@ -15,34 +15,25 @@ data class StatusResult(
 )
 
 suspend fun getStatus(devID: String): StatusResult {
-
-var gps_time=""
-var gsm_Signals=0
-var ignition_status=""
-var location_status=""
-var p_voltages=""
-
-
     return try {
+        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).getStatus(devID)
 
-
-
-        val response =
-            ServiceBuilder.buildService(RetrofitInterface::class.java).getStatus(devID)
-        if (response.isSuccessful && response.body() != null) {
-            val responseBody = response.body()!!
-            gps_time=responseBody.GPSTime
-            gsm_Signals=responseBody.GSMSignal
-            ignition_status=responseBody.Ignition
-            location_status=responseBody.Location
-            p_voltages= responseBody.PowerVoltages
+        val body = response.body()
+        if (body != null) {
+            StatusResult(
+                isLoading = false,
+                GPSTime = body.GPSTime,
+                GSMSignal = body.GSMSignal,
+                Ignition = body.Ignition,
+                Location = body.Location,
+                PowerVoltages = body.PowerVoltages
+            )
+        } else {
+            StatusResult(false, "", 0, "", "", "")
         }
 
-        StatusResult(false,gps_time,gsm_Signals,ignition_status,location_status,p_voltages)
-
-
     } catch (e: Exception) {
-        Log.d(TAG, "validateDevice: $e")
-        StatusResult(false,gps_time,gsm_Signals,ignition_status,location_status,p_voltages)
+        Log.d(TAG, "getStatus: $e")
+        StatusResult(false, "", 0, "", "", "")
     }
 }

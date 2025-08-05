@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Bitmap
 import android.widget.Toast
-import androidx.activity.compose.LocalActivityResultRegistryOwner.current
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -91,7 +90,7 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
 
     val couroutineScope = rememberCoroutineScope()
 
-    var submitDataResponse by remember { mutableStateOf(submitDataResponse(false, "", false)) }
+    var submitDataResponse by remember { mutableStateOf(submitDataResponse()) }
 
     LaunchedEffect(Unit) {
         while (true) {
