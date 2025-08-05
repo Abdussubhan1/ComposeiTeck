@@ -118,11 +118,11 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
     var comp by remember { mutableStateOf(false) }
 
     var showDialogueReset by remember { mutableStateOf(false) }
-        val locationManager =
-            context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val isLocationEnabled =
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled =
+        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     HandleDoubleBackToExit()
     Column(
@@ -345,41 +345,25 @@ fun ValidationStatusUI(
 
     var deviceLocationResult by remember {
         mutableStateOf(
-            ValidateLocationResponse(
-                isLoading = false,
-                Lat = 0.0,
-                Lng = 0.0,
-                Message = "",
-                Success = false
-            )
+            ValidateLocationResponse()
         )
     }
 
     var batteryResult by remember {
         mutableStateOf(
-            BatteryResponse(
-                isLoading = false,
-                battery = ""
-            )
+            BatteryResponse()
         )
     }
 
     var ignitionResult by remember {
         mutableStateOf(
-            IgnitionResponse(
-                isLoading = false,
-                ignition = ""
-            )
+            IgnitionResponse()
         )
     }
 
     var relayResult by remember {
         mutableStateOf(
-            RelayResponse(
-                success = false,
-                isLoading = false,
-                message = ""
-            )
+            RelayResponse()
         )
     }
     var startTimer by remember { mutableStateOf(false) }
@@ -789,11 +773,12 @@ fun ValidationStatusUI(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 val text = when {
                     showLocation -> when {
                         !isLocationEnabled -> "Please Turn ON Location Services"
                         Constants.deviceLocationLat != 0.0 && Constants.deviceLocationLong != 0.0 -> "Location: ${deviceLocationResult.Message}"
-                        else -> "Location: Failed/GPS Invalid"
+                        else -> deviceLocationResult.Message
                     }
 
                     showBattery -> "Battery: ${batteryResult.battery}"
@@ -805,7 +790,7 @@ fun ValidationStatusUI(
                 if (!deviceLocationResult.isLoading && !batteryResult.isLoading && !ignitionResult.isLoading && !relayResult.isLoading) {
                     Text(
                         text = text,
-                        color = if (text == "Battery: Disconnected" || text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!" || text == "Location: GPS Invalid") Color.Red else Color(
+                        color = if (text == "Battery: Disconnected" || text.contains("Data not Updating Last Gps time:")||text == "Ignition: OFF" || text == "Location: Failed" || text == "Command already in queue" || text == "Error Sending Command!" || text == "Location: GPS Invalid") Color.Red else Color(
                             0XFF39B54A
                         ),
                         fontWeight = FontWeight.SemiBold,

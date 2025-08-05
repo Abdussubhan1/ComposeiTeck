@@ -18,8 +18,8 @@ suspend fun validateLoc(devID: String): ValidateLocationResponse {
     return try {
         val service = ServiceBuilder.buildService(RetrofitInterface::class.java)
         val response = service.validateLocation(devID)
-
         val body = response.body()
+
         if (response.isSuccessful && body != null && body.Success) {
             Log.d(TAG, "validateLoc: ${body.Lat}, ${body.Lng}")
             ValidateLocationResponse(
@@ -29,10 +29,11 @@ suspend fun validateLoc(devID: String): ValidateLocationResponse {
                 Message = body.Message,
                 Success = true
             )
-        } else {
+        } else if (response.isSuccessful && body != null) {
             Log.w(TAG, "validateLoc failed or body null")
-            ValidateLocationResponse()
+            ValidateLocationResponse(false,0.0,0.0,body.Message,false)
         }
+        else ValidateLocationResponse()
 
     } catch (e: Exception) {
         Log.e(TAG, "validateLoc error: ${e.message}")
