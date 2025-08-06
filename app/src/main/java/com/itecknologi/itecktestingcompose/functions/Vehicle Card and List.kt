@@ -53,6 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,6 +62,7 @@ import com.itecknologi.itecktestingcompose.constants.Constants
 import androidx.core.net.toUri
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.modelClasses.Data
+import java.util.Locale
 
 
 enum class TaskStatus {
@@ -73,7 +75,7 @@ enum class TaskStatus {
 @Composable
 fun VehicleListScreen(
     vehicleList: List<Data>,
-    onSelectionChanged: (Boolean, String?, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?) -> Unit,
+    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?) -> Unit,
     prefs: PreferenceManager
 ) {
 
@@ -103,7 +105,7 @@ fun VehicleListScreen(
                         val isSame =
                             vehicle == selectedVehicle // isSame is true if the same vehicle is selected
                         selectedVehicle = if (isSame) null else vehicle //toggle selection
-                        onSelectionChanged(
+                        onConfirmSelection(
                             !isSame,
                             if (!isSame) vehicle.V_ID else null,
                             if (!isSame) vehicle.ENGINE else null,
@@ -112,10 +114,10 @@ fun VehicleListScreen(
                             if (!isSame) vehicle.M_NAME else null,
                             if (!isSame) vehicle.Job_assigned_date else null,
                             if (!isSame) vehicle.VEH_REG else null,
-                            if (!isSame) vehicle.location else null,
                             if (!isSame) vehicle.X else null,
                             if (!isSame) vehicle.Y else null,
-                            if (!isSame) vehicle.Technical_job_assign_id else null
+                            if (!isSame) vehicle.Technical_job_assign_id else null,
+                            if (!isSame) vehicle.customer_number else null
                         ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
 
                     }
@@ -175,7 +177,7 @@ fun VehicleCard(
                 Text(
                     text = "${vehicle.MK_NAME} ${vehicle.M_NAME}",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    fontSize = 14.sp,
                     color = Color.White,
                     modifier = Modifier.wrapContentSize(),
                     textAlign = TextAlign.Start
@@ -216,14 +218,15 @@ fun VehicleCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Assigned Date
             Text(
-                text = "Job Assigned On: ${vehicle.Job_assigned_date}",
-                color = Color.White,
-                fontSize = 14.sp
+                text = vehicle.Job_assigned_date,
+                color = Color.Gray,
+                fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start
             )
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Show hold reason if exists
             if (status == TaskStatus.HELD && !currentHoldReason.isNullOrBlank()) {
@@ -251,29 +254,26 @@ fun VehicleCard(
                 }
             }
 
-
-            Spacer(modifier = Modifier.height(10.dp))
-
             // Engine and Chassis
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 14.sp)
+                val modifiedCustomerName= vehicle.customer_name.uppercase(Locale.getDefault())
+                Text(text = "Customer Name: $modifiedCustomerName", color = Color.White, fontSize = 12.sp)
+                Text(text = "Customer Location: ${vehicle.poc_location}", color = Color.White, fontSize = 12.sp)
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 12.sp)
                 Text(
                     text = "Engine No: ${vehicle.ENGINE}",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
                 Text(
                     text = "Chassis No: ${vehicle.CHASIS}",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
-                Text(
-                    text = "Location: ${vehicle.location}",
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
+
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -317,7 +317,7 @@ fun VehicleCard(
                         .clickable {
                             // Intent to open dialer
                             val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = "tel: 03000564639".toUri()
+                                data = "tel: ${vehicle.customer_number}".toUri()
                             }
                             context.startActivity(intent)
                         }, contentAlignment = Alignment.Center
@@ -544,101 +544,94 @@ fun SelectedVehicle() {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Vehicle info
-            Text(
-                text = "${Constants.make} ${Constants.model}",
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = Color.White,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${Constants.make} ${Constants.model}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    modifier = Modifier.wrapContentSize(),
+                    textAlign = TextAlign.Start
+                )
+            }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Assigned Date
             Text(
-                text = "Job Assigned On: ${Constants.JobAssigneddate}",
-                color = Color.White,
-                fontSize = 14.sp
+                text = Constants.JobAssigneddate,
+                color = Color.Gray,
+                fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End
             )
-
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Engine and Chassis
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(text = "VRN: ${Constants.VRN}", color = Color.White, fontSize = 14.sp)
+                Text(text = "VRN: ${Constants.VRN}", color = Color.White, fontSize = 12.sp)
                 Text(
                     text = "Engine No: ${Constants.engineNumber}",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
                 Text(
                     text = "Chassis No: ${Constants.chassisNumber}",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
-                Text(
-                    text = "Location: ${Constants.jobAssignedLoc}",
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
+
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF39B54A))
-                    .clickable {
+            // View on Map Button
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            val sourceLat = Constants.mobileLocationLat
+                            val sourceLong = Constants.mobileLocationLong
+                            val destLat = Constants.X
+                            val destLong = Constants.Y
 
-                        val sourceLat = Constants.mobileLocationLat
-                        val sourceLong = Constants.mobileLocationLong
-                        val destLat = Constants.X
-                        val destLong = Constants.Y
+                            val uri =
+                                "https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLong&destination=$destLat,$destLong&travelmode=driving".toUri()
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            intent.setPackage("com.google.android.apps.maps")
 
-                        val uri =
-                            "https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLong&destination=$destLat,$destLong&travelmode=driving".toUri()
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        intent.setPackage("com.google.android.apps.maps")
-
-                        try {
-                            context.startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(
-                                context,
-                                "Google Maps is not installed",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast.makeText(
+                                    context,
+                                    "Google Maps is not installed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
-                    }
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Get Directions",
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    textDecoration = TextDecoration.Underline
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.viewmap),
-                    contentDescription = "Map Icon",
-                    modifier = Modifier.size(20.dp)
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.viewmap),
+                        contentDescription = "Map Icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+
             }
+
 
         }
     }
 }
 
 
-@Preview
+/*@Preview
 @Composable
 fun VehicleCardInList() {
     VehicleCard(
@@ -656,9 +649,11 @@ fun VehicleCardInList() {
             X = 0.0,
             Y = 0.0,
             Y_NAME = "",
-            location = "",
             status = "",
             type = "",
+            poc_location = "",
+            customer_name = "",
+            customer_number = ""
         ),
         status = TaskStatus.PENDING,
         isSelected = false,
@@ -666,12 +661,11 @@ fun VehicleCardInList() {
         onStatusChange = {},
         prefs = PreferenceManager(LocalContext.current)
     )
-}
+}*/
 
-/*
 @Preview
 @Composable
 fun selected(){
     SelectedVehicle()
 
-}*/
+}

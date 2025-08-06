@@ -373,19 +373,19 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
                         } else {
                             VehicleListScreen(
                                 vehicleList = vehicle_details.dataList,
-                                onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation, xcordinate, ycordinate, jobAssignedID ->
+                                onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
                                     enableProceed = isSelected
-                                    Constants.vehicleID = vehicleID ?: ""
-                                    Constants.engineNumber = vehicleEngine ?: ""
-                                    Constants.chassisNumber = vehicleChassis ?: ""
-                                    Constants.make = vehicleMake ?: ""
-                                    Constants.model = vehicleModel ?: ""
-                                    Constants.JobAssigneddate = assignedDate ?: ""
-                                    Constants.VRN = vehicleVRN ?: ""
-                                    Constants.jobAssignedLoc = assignedLocation ?: ""
-                                    Constants.X = xcordinate ?: 0.0
-                                    Constants.Y = ycordinate ?: 0.0
-                                    Constants.technicalJobAssignedID = jobAssignedID ?:""
+                                    Constants.vehicleID = vehicleID ?: "" //Yeh last get log wali api mein bhejna hai
+                                    Constants.engineNumber = vehicleEngine ?: "" //Saving for selected card in device entry screen
+                                    Constants.chassisNumber = vehicleChassis ?: "" //Saving for selected card in device entry screen
+                                    Constants.make = vehicleMake ?: "" //Saving for selected card in device entry screen
+                                    Constants.model = vehicleModel ?: "" //Saving for selected card in device entry screen
+                                    Constants.JobAssigneddate = assignedDate ?: "" //Saving for selected card in device entry screen
+                                    Constants.VRN = vehicleVRN ?: "" //Saving for selected card in device entry screen
+                                    Constants.X = xcordinate ?: 0.0 //Saving for selected card in device entry screen
+                                    Constants.Y = ycordinate ?: 0.0 //Saving for selected card in device entry screen
+                                    Constants.technicalJobAssignedID = jobAssignedID ?:"" //Yeh last get log wali api mein bhejna hai
+                                    Constants.cust_Contact=customerContactNumber?:"" //Yeh last get log wali api mein bhejna hai
                                 },prefs)
                         }
 

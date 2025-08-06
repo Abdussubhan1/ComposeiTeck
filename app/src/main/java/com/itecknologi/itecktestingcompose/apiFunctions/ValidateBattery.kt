@@ -7,32 +7,30 @@ import com.itecknologi.itecktestingcompose.interfaces.RetrofitInterface
 import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 
 data class BatteryResponse(
-    var isLoading: Boolean = false,
-    var battery: String = "Status Not Found"
+    val isLoading: Boolean = false,
+    val battery: String =""
 )
 
-suspend fun validateBattery(devID: String,statusCheck: Int,eventLog: String): BatteryResponse {
+suspend fun validateBattery(devID: String, statusCheck: Int, eventLog: String): BatteryResponse {
     return try {
-        val response = ServiceBuilder.buildService(RetrofitInterface::class.java).validateBattery(devID,statusCheck,eventLog)
+        val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
+            .validateBattery(devID, statusCheck, eventLog)
 
-        if (response.isSuccessful) {
-            val body = response.body()
-            if (!body?.Battery.isNullOrEmpty()) {
-                return BatteryResponse(
-                    isLoading = false,
-                    battery = body!!.Battery
-                )
-            }
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            BatteryResponse(
+                isLoading = false,
+                battery = body.Battery ?: "Battery status is null"
+            )
+        } else {
+            BatteryResponse(isLoading = false, battery = "Failed to retrieve battery status")
         }
-
-        Log.w(TAG, "validateBattery: Response failed or battery is null")
-        BatteryResponse()
-
     } catch (e: Exception) {
         Log.e(TAG, "validateBattery error: ${e.message}")
-        BatteryResponse(false, "No Internet Connection")
+        BatteryResponse(isLoading = false, battery = "No Internet Connection: ${e.message}")
     }
 }
+
 
 
 

@@ -30,11 +30,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
-import androidx.compose.material.icons.filled.DoneAll
-import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
@@ -65,7 +62,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -89,7 +85,6 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
     HandleDoubleBackToExit()
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
-    var custContact by remember { mutableStateOf("") }
     val current = LocalContext.current
     var FinallistCompleted by remember { mutableStateOf(false) }
     val FinallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
@@ -410,61 +405,6 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
         }
         if (showFinalTicket) {
 
-            //Now all 4 pictures are contained in a Array
-            val isValidContact =
-                Regex("^(03[0-9]{9}|0[1-9]{2}[0-9]{7})$").matches(custContact)
-
-            if (isValidContact) {
-                Constants.cust_Contact = custContact
-            } else
-                Constants.cust_Contact = ""
-
-            //For customer Contact Number
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
-                    .padding(16.dp)
-            ) {
-                TextField(
-                    trailingIcon = {
-                        if (!isValidContact) Icon(
-                            Icons.Default.PhoneAndroid,
-                            contentDescription = null,
-                            tint = Color.Red
-                        ) else Icon(
-                            Icons.Filled.DoneAll,
-                            contentDescription = null,
-                            tint = Color.Green
-                        )
-                    },
-                    value = custContact, onValueChange = { eachDigit ->
-                        custContact = eachDigit
-                    },
-                    placeholder = {
-                        Text(
-                            "Enter Customer Mobile Number",
-                            color = Color.DarkGray,
-                            fontSize = 16.sp,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp),
-                    shape = RoundedCornerShape(50),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color(0XFF000000),
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             Box(
                 modifier = Modifier
@@ -487,7 +427,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (isValidContact && isValidLocation) {
+            if (isValidLocation) {
                 Button(
                     onClick = {
                         navController.navigate("finalTicketScreen") {

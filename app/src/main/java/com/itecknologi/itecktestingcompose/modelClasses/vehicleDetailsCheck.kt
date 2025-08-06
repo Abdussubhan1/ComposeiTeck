@@ -19,7 +19,9 @@ data class Data(
     val X: Double,
     val Y: Double,
     val Y_NAME: String,
-    val location: String,
     val status: String,
-    val type: String
+    val type: String,
+    val poc_location:String,
+    val customer_name:String,
+    val customer_number: String
 )

@@ -530,7 +530,7 @@ fun ValidationStatusUI(
                     progress = { batteryProgress },
                     color = if (batteryResult.battery == "Disconnected" || batteryResult.battery == "Connected" || prefs.getTechnicianID() == 0) Color(
                         0XFF39B54A
-                    ) else Color.LightGray,
+                    ) else if (batteryResult.battery == "Battery status is null") Color.Red else Color.LightGray,
                     modifier = Modifier
                         .weight(0.45f)
                         .clip(RoundedCornerShape(50))
@@ -653,6 +653,7 @@ fun ValidationStatusUI(
                     when {
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.0f -> {
                             showConfirmationForKill = true
+                            cmdQueueResult=""
                         }
 
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.5f -> {
@@ -715,12 +716,12 @@ fun ValidationStatusUI(
                     if (startTimer && !timerStarted && prefs.getTechnicianID() != 0) {
                         timerStarted = true
                         while (true) {
-                            delay(5000)
                             cmdQueueResult = cmdQueueCheck(
                                 Constants.deviceID,
                                 if (relayProgress == 0.0f) "kill" else "release"
                             )
                             if (cmdQueueResult == "Command Not in queue") break
+                            delay(1000)
                         }
                         timerStarted = false
                         startTimer = false
@@ -803,7 +804,6 @@ fun ValidationStatusUI(
                         Spacer(modifier = Modifier.width(24.dp))
                 }
             }
-
 
         }
         Spacer(modifier = Modifier.height(5.dp))
