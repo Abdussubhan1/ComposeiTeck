@@ -42,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,8 +61,10 @@ import androidx.compose.ui.unit.sp
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.constants.Constants
 import androidx.core.net.toUri
+import com.itecknologi.itecktestingcompose.apiFunctions.jobPendingComments
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.modelClasses.Data
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 
@@ -125,7 +128,7 @@ fun VehicleListScreen(
                 }, onStatusChange = { newStatus ->
                     vehicleStatuses = vehicleStatuses + (vehicle.V_ID to newStatus)
                     prefs.saveVehicleStatus(vehicle.V_ID, newStatus)
-                },prefs
+                }, prefs
             )
         }
     }
@@ -140,13 +143,16 @@ fun VehicleCard(
     onStatusChange: (TaskStatus) -> Unit,
     prefs: PreferenceManager
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val backgroundColor = if (isSelected) Color(0xFF90A4AE) else Color(0xFF102027)
     val context = LocalContext.current
     var acceptAlertDialog by remember { mutableStateOf(false) }
     var holdAlertDialog by remember { mutableStateOf(false) }
     var rejectAlertDialog by remember { mutableStateOf(false) }
     var holdReasonDialog by remember { mutableStateOf(false) }
+    var rejectReasonDialog by remember { mutableStateOf(false) }
     var holdReason by remember { mutableStateOf("") }
+    var rejectReason by remember { mutableStateOf("") }
 
     val hideTheOptions = status == TaskStatus.ACCEPTED || status == TaskStatus.HELD
 
@@ -183,7 +189,7 @@ fun VehicleCard(
                     textAlign = TextAlign.Start
                 )
                 if (status != TaskStatus.PENDING) {
-                    when (status){
+                    when (status) {
                         TaskStatus.ACCEPTED -> Icons.Default.DoneAll
                         TaskStatus.HELD -> Icons.Outlined.CalendarMonth
                         else -> null
@@ -191,7 +197,7 @@ fun VehicleCard(
                         Icon(
                             imageVector = it,
                             contentDescription = "",
-                            tint = when(status){
+                            tint = when (status) {
                                 TaskStatus.ACCEPTED -> Color.Green
                                 TaskStatus.HELD -> Color.Yellow
                                 else -> Color.White
@@ -201,20 +207,20 @@ fun VehicleCard(
                         )
                     }
 
-/*                    Text(
-                        text = when (status) {
-                            TaskStatus.ACCEPTED -> "ACCEPTED"
-                            TaskStatus.HELD -> "ON HOLD"
-                            else -> ""
-                        },
-                        color = when (status) {
-                            TaskStatus.ACCEPTED -> Color.Green
-                            TaskStatus.HELD -> Color.Yellow
-                            else -> Color.White
-                        },
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )*/
+                    /*                    Text(
+                                            text = when (status) {
+                                                TaskStatus.ACCEPTED -> "ACCEPTED"
+                                                TaskStatus.HELD -> "ON HOLD"
+                                                else -> ""
+                                            },
+                                            color = when (status) {
+                                                TaskStatus.ACCEPTED -> Color.Green
+                                                TaskStatus.HELD -> Color.Yellow
+                                                else -> Color.White
+                                            },
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )*/
                 }
             }
 
@@ -258,9 +264,17 @@ fun VehicleCard(
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                val modifiedCustomerName= vehicle.customer_name.uppercase(Locale.getDefault())
-                Text(text = "Customer Name: $modifiedCustomerName", color = Color.White, fontSize = 12.sp)
-                Text(text = "Customer Location: ${vehicle.poc_location}", color = Color.White, fontSize = 12.sp)
+                val modifiedCustomerName = vehicle.customer_name.uppercase(Locale.getDefault())
+                Text(
+                    text = "Customer Name: $modifiedCustomerName",
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+                Text(
+                    text = "Customer Location: ${vehicle.poc_location}",
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 12.sp)
                 Text(
@@ -479,13 +493,33 @@ fun VehicleCard(
                     TextButton(
                         onClick = {
                             if (holdReason.trim().isNotBlank()) {
-                                onStatusChange(TaskStatus.HELD)
-                                prefs.saveHoldReason(vehicle.V_ID, holdReason.trim())
-                                holdReasonDialog = false
-                                holdReason = ""
-                                Toast.makeText(context, "Task Put on Hold", Toast.LENGTH_SHORT).show()
+                                coroutineScope.launch {
+                                    val commentSubmission = jobPendingComments(
+                                        vehicle.Technical_job_assign_id,
+                                        "3",
+                                        holdReason
+                                    )
+                                    if (commentSubmission == "Record updated successfully.") {
+                                        onStatusChange(TaskStatus.HELD)
+                                        prefs.saveHoldReason(vehicle.V_ID, holdReason.trim())
+                                        holdReasonDialog = false
+                                        holdReason = ""
+                                        Toast.makeText(
+                                            context,
+                                            "Task Put on Hold",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Failed to put task on hold",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
                             } else {
-                                Toast.makeText(context, "Please enter a reason", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Please enter a reason", Toast.LENGTH_SHORT)
+                                    .show()
                             }
                         }
                     ) {
@@ -509,9 +543,10 @@ fun VehicleCard(
                 text = { Text("Are you sure you want to Reject this Task?") },
                 confirmButton = {
                     TextButton(onClick = {
-                        onStatusChange(TaskStatus.REJECTED)
+                        rejectReasonDialog = true
+                        /*                        onStatusChange(TaskStatus.REJECTED)*/
                         rejectAlertDialog = false
-                        Toast.makeText(context, "Task Rejected!", Toast.LENGTH_SHORT).show()
+                        // Toast.makeText(context, "Task Rejected!", Toast.LENGTH_SHORT).show()
                     }) {
                         Text("Reject")
                     }
@@ -523,7 +558,77 @@ fun VehicleCard(
                 }
             )
         }
+        if (rejectReasonDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    rejectReasonDialog = false
+                    rejectReason = ""
+                },
+                title = { Text("Reason for Reject") },
+                text = {
+                    Column {
+                        Text(
+                            text = "Please provide a reason for rejecting this task:",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        OutlinedTextField(
+                            value = rejectReason,
+                            onValueChange = { rejectReason = it },
+                            label = { Text("Reject Reason") },
+                            placeholder = { Text("Enter reason...") },
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 3
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            if (rejectReason.trim().isNotBlank()) {
+                                coroutineScope.launch {
+                                    val commentSubmission = jobPendingComments(
+                                        vehicle.Technical_job_assign_id,
+                                        "2",
+                                        rejectReason
+                                    )
+                                    if (commentSubmission == "Record updated successfully.") {
+                                        onStatusChange(TaskStatus.REJECTED)
+                                        rejectReasonDialog = false
+                                        rejectReason = ""
+                                        Toast.makeText(
+                                            context,
+                                            "Task Rejected Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Failed to Reject Task",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(context, "Please enter a reason", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    ) {
+                        Text("Submit")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        rejectReasonDialog = false
+                        rejectReason = ""
+                    }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
     }
+
 }
 
 @Composable
@@ -631,7 +736,7 @@ fun SelectedVehicle() {
 }
 
 
-/*@Preview
+@Preview
 @Composable
 fun VehicleCardInList() {
     VehicleCard(
@@ -661,11 +766,11 @@ fun VehicleCardInList() {
         onStatusChange = {},
         prefs = PreferenceManager(LocalContext.current)
     )
-}*/
+}
 
-@Preview
+/*@Preview
 @Composable
 fun selected(){
     SelectedVehicle()
 
-}
+}*/

@@ -6,6 +6,7 @@ import com.itecknologi.itecktestingcompose.modelClasses.EventLogCheck
 import com.itecknologi.itecktestingcompose.modelClasses.GetLocation
 import com.itecknologi.itecktestingcompose.modelClasses.GetRelay
 import com.itecknologi.itecktestingcompose.modelClasses.Ignition
+import com.itecknologi.itecktestingcompose.modelClasses.JobPendingComments
 import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistory
 import com.itecknologi.itecktestingcompose.modelClasses.Status
 import com.itecknologi.itecktestingcompose.modelClasses.TrackerLocation
@@ -134,6 +135,14 @@ interface RetrofitInterface {
 
     @POST("get_event_log.php")
     suspend fun eventLog(): Response<EventLogCheck>
+
+    @FormUrlEncoded
+    @POST("technical_jobs_pending_comments.php")
+    suspend fun jobPendingComments(
+        @Field("Technical_job_assign_id") jobbAssignID: String,
+        @Field("Technical_status") technicalStatus: String,
+        @Field("comment") comment: String
+    ): Response<JobPendingComments>
 }
 
 
