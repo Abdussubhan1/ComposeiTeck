@@ -298,7 +298,7 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { rejectAlertDialog = true }
-                                    .padding(8.dp)
+                                    .padding(12.dp).wrapContentSize()
                             ) {
                                 Text(
                                     text = "Reject",
@@ -314,7 +314,7 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { holdAlertDialog = true }
-                                    .padding(8.dp)
+                                    .padding(12.dp).wrapContentSize()
                             ) {
                                 Text(
                                     text = "Hold",
