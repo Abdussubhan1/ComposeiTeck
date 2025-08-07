@@ -141,8 +141,8 @@ fun DeviceEntryScreen(
 
     val name = prefs.getTechnicianName()
 
-    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }
+/*    val hasNewNotification =
+        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
 
     var devID by remember { mutableStateOf("") }
 
@@ -208,7 +208,7 @@ fun DeviceEntryScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Box(
+            /*Box(
                 contentAlignment = Alignment.TopEnd
             ) {
                 Icon(
@@ -231,7 +231,7 @@ fun DeviceEntryScreen(
                             .background(Color(0xFFFFEB3B), shape = CircleShape)
                     )
                 }
-            }
+            }*/
             Spacer(modifier = Modifier.width(10.dp))
             var isLoggingOut by remember { mutableStateOf(false) }
             val alpha by animateFloatAsState(

@@ -293,6 +293,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                 }
 
                             } else {
+                                prefs.setHasNewNotification(value = false)
                                 if (vehicle_details.dataList.isEmpty()) {
                                     LazyColumn(
                                         modifier = Modifier.fillMaxSize(),
