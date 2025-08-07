@@ -27,6 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -128,7 +131,7 @@ fun VehicleCard(
             .fillMaxWidth()
             .clickable { cardSelection() },
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, Color(0xFF90A4AE)),
+        border = BorderStroke(2.dp, /*if (vehicle.status_id==1)Color.Yellow else */Color(0xFF90A4AE)),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
@@ -156,54 +159,29 @@ fun VehicleCard(
                         contentDescription = "",
                         tint = Color.Yellow,
                         modifier = Modifier
-                            .size(20.dp)
+                            .size(25.dp)
                     )
 
                 }
             }
-            Text(
-                text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            // Assigned Date
-            Text(
-                text = "Job Assigned on: ${vehicle.Job_assigned_date}",
-                color = Color.White,
-                fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-
-            // Show hold reason if exists
-            if (vehicle.status_id == 3 && vehicle.comments != null) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF34699A)), shape = CircleShape
-                ) {
-                    Text(
-                        text = "Hold Reason: ${vehicle.comments}",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(14.dp),
-                        textAlign = TextAlign.Start,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-            }
-
-            Spacer(modifier = Modifier.height(2.dp))
-
+            Spacer(modifier = Modifier.height(4.dp))
             // Engine and Chassis
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val modifiedCustomerName = vehicle.customer_name.uppercase(Locale.getDefault())
+                Text(
+                    text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                // Assigned Date
+                Text(
+                    text = "Job Assigned on: ${vehicle.Job_assigned_date}",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
+                )
                 Text(
                     text = "Customer Name: $modifiedCustomerName",
                     color = Color.White,
@@ -214,7 +192,7 @@ fun VehicleCard(
                     color = Color.White,
                     fontSize = 12.sp
                 )*/
-                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = "Engine No: ${vehicle.ENGINE}",
                     color = Color.White,
@@ -225,8 +203,37 @@ fun VehicleCard(
                     color = Color.White,
                     fontSize = 12.sp
                 )
+                // Show hold reason if exists
+                if (vehicle.status_id == 3 && vehicle.comments != null) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF34699A)),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text(
+                            text = "Hold Reason: ${vehicle.comments}",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            textAlign = TextAlign.Start,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                }
 
             }
+            Spacer(modifier = Modifier.height(2.dp))
+
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -259,7 +266,7 @@ fun VehicleCard(
                     Image(
                         painter = painterResource(id = R.drawable.viewmap),
                         contentDescription = "Map Icon",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(14.dp))
@@ -277,7 +284,7 @@ fun VehicleCard(
                     Image(
                         painter = painterResource(id = R.drawable.phonecall),
                         contentDescription = "Map Icon",
-                        modifier = Modifier.size(20.dp), colorFilter = ColorFilter.tint(Color.White)
+                        modifier = Modifier.size(24.dp), colorFilter = ColorFilter.tint(Color.White)
                     )
                 }
 
@@ -299,7 +306,7 @@ fun VehicleCard(
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     textDecoration = TextDecoration.Underline,
-                                    fontSize = 13.sp
+                                    fontSize = 16.sp
                                 )
                             }
 
@@ -315,12 +322,12 @@ fun VehicleCard(
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     textDecoration = TextDecoration.Underline,
-                                    fontSize = 13.sp
+                                    fontSize = 16.sp
                                 )
                             }
 
                             // Button 3 for Accept
-                            Row(
+                            /*Row(
                                 modifier = Modifier
                                     .clickable { acceptAlertDialog = true }
                                     .padding(8.dp)
@@ -333,7 +340,7 @@ fun VehicleCard(
                                     textDecoration = TextDecoration.Underline,
                                     fontSize = 13.sp
                                 )
-                            }
+                            }*/
                         }
 
                         3 -> {
@@ -358,7 +365,7 @@ fun VehicleCard(
 
 
         }
-        if (acceptAlertDialog) {
+        /*if (acceptAlertDialog) {
             AlertDialog(
                 onDismissRequest = { acceptAlertDialog = false },
                 title = { Text("Accept Task") },
@@ -367,6 +374,7 @@ fun VehicleCard(
                     TextButton(onClick = {
                         acceptAlertDialog = false
                         Toast.makeText(context, "Task Accepted", Toast.LENGTH_SHORT).show()
+                        vehicle.status_id=2
                     }) {
                         Text("Accept")
                     }
@@ -377,7 +385,7 @@ fun VehicleCard(
                     }
                 }
             )
-        }
+        }*/
 
         if (holdAlertDialog) {
             AlertDialog(
@@ -441,7 +449,7 @@ fun VehicleCard(
                                         holdReason = ""
                                         Toast.makeText(
                                             context,
-                                            "Task Put on Hold",
+                                            "Task Put on Hold, Swipe to refresh",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
@@ -532,7 +540,7 @@ fun VehicleCard(
                                         rejectReason = ""
                                         Toast.makeText(
                                             context,
-                                            "Task Rejected Successfully",
+                                            "Task Rejected Successfully,Swipe to refresh",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
@@ -696,7 +704,7 @@ fun VehicleCardInList() {
             customer_name = "",
             customer_number = "",
             comments = "",
-            status_id = 3
+            status_id = 1
         ),
         isSelected = false,
         cardSelection = {}
