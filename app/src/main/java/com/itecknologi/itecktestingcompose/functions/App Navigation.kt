@@ -3,11 +3,9 @@ package com.itecknologi.itecktestingcompose.functions
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.itecknologi.itecktestingcompose.appScreens.MenuScreen
 import com.itecknologi.itecktestingcompose.appScreens.AllahHafiz
 import com.itecknologi.itecktestingcompose.appScreens.DeviceEntryScreen
@@ -51,7 +49,12 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
         }
 
         composable("Menu Screen") { MenuScreen(context, navController, prefs) }
-        composable("New Installations Assigned Tasks Screen") { JobAssignedNewInstallation(context,navController, prefs) }
+        composable("New Installations Assigned Tasks Screen") { JobAssignedNewInstallation(
+            context,
+            navController,
+            prefs
+        )
+        }
         composable("NotificationScreen") { NotificationScreen(navController, prefs) }
         composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
         composable("Redo Assigned Tasks Screen") { JobAssignedRedo(context, navController, prefs) }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -70,7 +71,7 @@ fun VehicleListScreen(
     var selectedVehicle by remember { mutableStateOf<Data?>(null) }
 
 
-    LazyColumn /*(modifier = Modifier.fillMaxSize())*/ {
+    LazyColumn (modifier = Modifier.fillMaxSize()) {
 
         items(vehicleList) { vehicle ->
             VehicleCard(
@@ -435,6 +436,7 @@ fun VehicleCard(
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
+
                                 }
                             } else {
                                 Toast.makeText(context, "Please enter a reason", Toast.LENGTH_SHORT)
@@ -525,6 +527,7 @@ fun VehicleCard(
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
+
                                 }
                             } else {
                                 Toast.makeText(context, "Please enter a reason", Toast.LENGTH_SHORT)

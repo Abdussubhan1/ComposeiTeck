@@ -98,6 +98,23 @@ fun DeviceEntryScreen(
                     showDialog = false
                     Constants.vehicleID = ""
                     Constants.deviceID = ""
+                    when(Constants.navigateBackto){
+                        1->{navController.navigate("New Installations Assigned Tasks Screen") {
+                            popUpTo("mainscreen") {
+                                inclusive = true
+                            }
+                        }}
+                        2->{navController.navigate("Redo Assigned Tasks Screen") {
+                            popUpTo("mainscreen") {
+                                inclusive = true
+                            }
+                        }}
+                        3->{navController.navigate("Removal Assigned Tasks Screen") {
+                            popUpTo("mainscreen") {
+                                inclusive = true
+                            }
+                        }}
+                    }
                     navController.navigate("New Installations Assigned Tasks Screen") {
                         popUpTo("mainscreen") {
                             inclusive = true

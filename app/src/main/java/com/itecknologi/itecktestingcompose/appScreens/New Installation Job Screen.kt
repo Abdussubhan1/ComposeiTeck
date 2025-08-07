@@ -2,7 +2,6 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -37,8 +37,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetails
 import com.itecknologi.itecktestingcompose.apiFunctions.getVehicleDetailsResponse
@@ -64,10 +68,15 @@ import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun JobAssignedNewInstallation(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+fun JobAssignedNewInstallation(
+    context: Context,
+    navController: NavHostController,
+    prefs: PreferenceManager
+) {
     val name = prefs.getTechnicianName()
     val hasNewNotification =
         remember { mutableStateOf(prefs.getHasNewNotification()) }
@@ -224,7 +233,7 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            "My Pending Tasks",
+            "New Installation Tasks",
             color = Color.White,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
@@ -239,7 +248,7 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
                 .padding(8.dp)
         ) {
             Column {
-/*                val coroutineScope = rememberCoroutineScope()
+                val coroutineScope = rememberCoroutineScope()
                 var isRefreshing by remember { mutableStateOf(false) }
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
@@ -312,19 +321,33 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
                                 } else {
                                     VehicleListScreen(
                                         vehicleList = vehicle_details.dataList,
-                                        onSelectionChanged = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, assignedLocation, xcordinate, ycordinate ->
+                                        onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
                                             enableProceed = isSelected
-                                            Constants.vehicleID = vehicleID ?: ""
-                                            Constants.engineNumber = vehicleEngine ?: ""
-                                            Constants.chassisNumber = vehicleChassis ?: ""
-                                            Constants.make = vehicleMake ?: ""
-                                            Constants.model = vehicleModel ?: ""
-                                            Constants.JobAssigneddate = assignedDate ?: ""
-                                            Constants.VRN = vehicleVRN ?: ""
-                                            Constants.jobAssignedLoc = assignedLocation ?: ""
-                                            Constants.X = xcordinate ?: 0.0
-                                            Constants.Y = ycordinate ?: 0.0
-                                        })
+                                            Constants.vehicleID =
+                                                vehicleID
+                                                    ?: "" //Yeh last get log wali api mein bhejna hai
+                                            Constants.engineNumber = vehicleEngine
+                                                ?: "" //Saving for selected card in device entry screen
+                                            Constants.chassisNumber = vehicleChassis
+                                                ?: "" //Saving for selected card in device entry screen
+                                            Constants.make = vehicleMake
+                                                ?: "" //Saving for selected card in device entry screen
+                                            Constants.model = vehicleModel
+                                                ?: "" //Saving for selected card in device entry screen
+                                            Constants.JobAssigneddate = assignedDate
+                                                ?: "" //Saving for selected card in device entry screen
+                                            Constants.VRN = vehicleVRN
+                                                ?: "" //Saving for selected card in device entry screen
+                                            Constants.X = xcordinate
+                                                ?: 0.0 //Saving for selected card in device entry screen
+                                            Constants.Y = ycordinate
+                                                ?: 0.0 //Saving for selected card in device entry screen
+                                            Constants.technicalJobAssignedID = jobAssignedID
+                                                ?: "" //Yeh last get log wali api mein bhejna hai
+                                            Constants.cust_Contact = customerContactNumber
+                                                ?: "" //Yeh last get log wali api mein bhejna hai
+                                        }
+                                    )
 
 
                                 }
@@ -332,64 +355,76 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
                         }
 
                     }, swipeEnabled = true, refreshTriggerDistance = 80.dp
-                )*/
+                )
+                /*
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(0.80f)
+                                        .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
+                                        .padding(8.dp)
+                                ) {
+                                    if (!response.success) {
+                                        Column(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text("Loading..", color = Color.White, fontSize = 18.sp)
+                                            Spacer(modifier = Modifier.height(18.dp))
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(32.dp),
+                                                color = Color(0XFF39B54A)
+                                            )
+                                        }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.80f)
-                        .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
-                        .padding(8.dp)
-                ) {
-                    if (!response.success) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text("Loading..", color = Color.White, fontSize = 18.sp)
-                            Spacer(modifier = Modifier.height(18.dp))
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(32.dp),
-                                color = Color(0XFF39B54A)
-                            )
-                        }
+                                    } else {
+                                        if (vehicle_details.dataList.isEmpty()) {
+                                            Column(
+                                                modifier = Modifier.fillMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    "No Pending Tasks",
+                                                    color = Color.White,
+                                                    fontSize = 18.sp,
+                                                )
+                                            }
+                                        } else {
+                                            VehicleListScreen(
+                                                vehicleList = vehicle_details.dataList,
+                                                onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
+                                                    enableProceed = isSelected
+                                                    Constants.vehicleID =
+                                                        vehicleID ?: "" //Yeh last get log wali api mein bhejna hai
+                                                    Constants.engineNumber = vehicleEngine
+                                                        ?: "" //Saving for selected card in device entry screen
+                                                    Constants.chassisNumber = vehicleChassis
+                                                        ?: "" //Saving for selected card in device entry screen
+                                                    Constants.make = vehicleMake
+                                                        ?: "" //Saving for selected card in device entry screen
+                                                    Constants.model = vehicleModel
+                                                        ?: "" //Saving for selected card in device entry screen
+                                                    Constants.JobAssigneddate = assignedDate
+                                                        ?: "" //Saving for selected card in device entry screen
+                                                    Constants.VRN = vehicleVRN
+                                                        ?: "" //Saving for selected card in device entry screen
+                                                    Constants.X = xcordinate
+                                                        ?: 0.0 //Saving for selected card in device entry screen
+                                                    Constants.Y = ycordinate
+                                                        ?: 0.0 //Saving for selected card in device entry screen
+                                                    Constants.technicalJobAssignedID = jobAssignedID
+                                                        ?: "" //Yeh last get log wali api mein bhejna hai
+                                                    Constants.cust_Contact = customerContactNumber
+                                                        ?: "" //Yeh last get log wali api mein bhejna hai
+                                                }
+                                            )
+                                        }
 
-                    } else {
-                        if (vehicle_details.dataList.isEmpty()) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    "No Pending Tasks",
-                                    color = Color.White,
-                                    fontSize = 18.sp,
-                                )
-                            }
-                        } else {
-                            VehicleListScreen(
-                                vehicleList = vehicle_details.dataList,
-                                onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
-                                    enableProceed = isSelected
-                                    Constants.vehicleID = vehicleID ?: "" //Yeh last get log wali api mein bhejna hai
-                                    Constants.engineNumber = vehicleEngine ?: "" //Saving for selected card in device entry screen
-                                    Constants.chassisNumber = vehicleChassis ?: "" //Saving for selected card in device entry screen
-                                    Constants.make = vehicleMake ?: "" //Saving for selected card in device entry screen
-                                    Constants.model = vehicleModel ?: "" //Saving for selected card in device entry screen
-                                    Constants.JobAssigneddate = assignedDate ?: "" //Saving for selected card in device entry screen
-                                    Constants.VRN = vehicleVRN ?: "" //Saving for selected card in device entry screen
-                                    Constants.X = xcordinate ?: 0.0 //Saving for selected card in device entry screen
-                                    Constants.Y = ycordinate ?: 0.0 //Saving for selected card in device entry screen
-                                    Constants.technicalJobAssignedID = jobAssignedID ?:"" //Yeh last get log wali api mein bhejna hai
-                                    Constants.cust_Contact=customerContactNumber?:"" //Yeh last get log wali api mein bhejna hai
-                                })
-                        }
+                                    }
 
-                    }
-
-                }
+                                }*/
             }
 
 
@@ -397,7 +432,10 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
         Spacer(modifier = Modifier.height(12.dp))
         // Button for Proceed
         Button(
-            onClick = { navController.navigate("mainscreen") },
+            onClick = {
+                Constants.navigateBackto = 1
+                navController.navigate("mainscreen")
+            },
             enabled = enableProceed,
             modifier = Modifier
                 .fillMaxWidth()
