@@ -67,7 +67,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun JobAssigned(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+fun JobAssignedNewInstallation(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
     val hasNewNotification =
         remember { mutableStateOf(prefs.getHasNewNotification()) }
@@ -427,7 +427,7 @@ fun JobAssigned(context: Context, navController: NavHostController, prefs: Prefe
 @Preview
 @Composable
 fun JobAssignedPreview() {
-    JobAssigned(
+    JobAssignedNewInstallation(
         context = LocalContext.current,
         rememberNavController(),
         PreferenceManager(LocalContext.current)

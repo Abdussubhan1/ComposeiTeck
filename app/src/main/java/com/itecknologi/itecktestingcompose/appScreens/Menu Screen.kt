@@ -188,16 +188,15 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         Spacer(modifier = Modifier.height(200.dp))
 
         MenuButton("New Installation") {
-            navController.navigate("Assigned Tasks Screen")
+            navController.navigate("New Installations Assigned Tasks Screen")
         }
 
         MenuButton("Redo") {
-//            navController.navigate("redo Screen")
-
+            navController.navigate("Redo Assigned Tasks Screen")
         }
 
         MenuButton("Removal") {
-//            navController.navigate("removal Screen")
+            navController.navigate("Removal Assigned Tasks Screen")
         }
 
         MenuButton("Exit") {

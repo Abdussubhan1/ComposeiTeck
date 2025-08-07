@@ -206,26 +206,9 @@ fun VehicleCard(
                                 .size(20.dp)
                         )
                     }
-
-                    /*                    Text(
-                                            text = when (status) {
-                                                TaskStatus.ACCEPTED -> "ACCEPTED"
-                                                TaskStatus.HELD -> "ON HOLD"
-                                                else -> ""
-                                            },
-                                            color = when (status) {
-                                                TaskStatus.ACCEPTED -> Color.Green
-                                                TaskStatus.HELD -> Color.Yellow
-                                                else -> Color.White
-                                            },
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )*/
                 }
             }
-
             Spacer(modifier = Modifier.height(2.dp))
-
             // Assigned Date
             Text(
                 text = vehicle.Job_assigned_date,
@@ -236,29 +219,13 @@ fun VehicleCard(
 
             // Show hold reason if exists
             if (status == TaskStatus.HELD && !currentHoldReason.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-                    border = BorderStroke(1.dp, Color.Yellow.copy(alpha = 0.3f))
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text(
-                            text = "Hold Reason:",
-                            color = Color.Yellow,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = currentHoldReason,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            lineHeight = 16.sp
-                        )
-                    }
-                }
+                Text(
+                    text = "Reason: $currentHoldReason",
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
             }
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Engine and Chassis
             Column(
@@ -760,7 +727,7 @@ fun VehicleCardInList() {
             customer_name = "",
             customer_number = ""
         ),
-        status = TaskStatus.PENDING,
+        status = TaskStatus.HELD,
         isSelected = false,
         cardSelection = {},
         onStatusChange = {},

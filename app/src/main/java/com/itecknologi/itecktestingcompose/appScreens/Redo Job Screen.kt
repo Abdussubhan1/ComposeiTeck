@@ -1,5 +1,6 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
+
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -24,7 +25,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,8 +65,9 @@ import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 
+
 @Composable
-fun JobAssignedRemoval(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
     val hasNewNotification =
         remember { mutableStateOf(prefs.getHasNewNotification()) }
@@ -93,7 +93,7 @@ fun JobAssignedRemoval(context: Context, navController: NavHostController, prefs
         while (true) {
             response = getVehicleDetails(
                 T_ID = prefs.getTechnicianID().toString(),
-                type = "3"
+                type = "2"
             )
             Log.d("response", "JobAssigned: $checkthevalue")
             if (response.success) {
@@ -226,13 +226,13 @@ fun JobAssignedRemoval(context: Context, navController: NavHostController, prefs
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            "Removal Tasks",
+            "Redo Tasks",
             color = Color.White,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(5.dp))
-        Text("Select Vehicle for Removal", color = Color.White, fontSize = 14.sp)
+        Text("Select Vehicle for Redo", color = Color.White, fontSize = 14.sp)
         Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
@@ -426,8 +426,8 @@ fun JobAssignedRemoval(context: Context, navController: NavHostController, prefs
 
 @Preview
 @Composable
-fun JobAssignedRemovalScreen() {
-    JobAssignedRemoval(
+fun JobAssignedRedoScreen() {
+    JobAssignedRedo(
         context = LocalContext.current,
         rememberNavController(),
         PreferenceManager(LocalContext.current)
