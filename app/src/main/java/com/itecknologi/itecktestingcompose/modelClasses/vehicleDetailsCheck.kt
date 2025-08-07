@@ -23,5 +23,7 @@ data class Data(
     val type: String,
     val poc_location:String,
     val customer_name:String,
-    val customer_number: String
+    val customer_number: String,
+    val comments: String?,
+    val status_id: Int
 )

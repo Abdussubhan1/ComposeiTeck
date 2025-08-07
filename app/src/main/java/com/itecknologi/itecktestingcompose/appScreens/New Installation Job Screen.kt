@@ -87,7 +87,6 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
         )
     }
     getLocation()
-    val checkthevalue = prefs.getTechnicianID()
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -95,13 +94,12 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
                 T_ID = prefs.getTechnicianID().toString(),
                 type = "1"
             )
-            Log.d("response", "JobAssigned: $checkthevalue")
             if (response.success) {
                 break
             } else {
                 Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
             }
-            delay(10000)
+            delay(2000)
         }
     }
     BackHandler { navController.navigate("Menu Screen") }
@@ -386,7 +384,7 @@ fun JobAssignedNewInstallation(context: Context, navController: NavHostControlle
                                     Constants.Y = ycordinate ?: 0.0 //Saving for selected card in device entry screen
                                     Constants.technicalJobAssignedID = jobAssignedID ?:"" //Yeh last get log wali api mein bhejna hai
                                     Constants.cust_Contact=customerContactNumber?:"" //Yeh last get log wali api mein bhejna hai
-                                },prefs)
+                                })
                         }
 
                     }

@@ -386,7 +386,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                     Constants.Y = ycordinate ?: 0.0 //Saving for selected card in device entry screen
                                     Constants.technicalJobAssignedID = jobAssignedID ?:"" //Yeh last get log wali api mein bhejna hai
                                     Constants.cust_Contact=customerContactNumber?:"" //Yeh last get log wali api mein bhejna hai
-                                },prefs)
+                                })
                         }
 
                     }

@@ -98,7 +98,7 @@ fun DeviceEntryScreen(
                     showDialog = false
                     Constants.vehicleID = ""
                     Constants.deviceID = ""
-                    navController.navigate("Assigned Tasks Screen") {
+                    navController.navigate("New Installations Assigned Tasks Screen") {
                         popUpTo("mainscreen") {
                             inclusive = true
                         }
