@@ -71,7 +71,7 @@ fun VehicleListScreen(
     var selectedVehicle by remember { mutableStateOf<Data?>(null) }
 
 
-    LazyColumn (modifier = Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
 
         items(vehicleList) { vehicle ->
             VehicleCard(
@@ -161,6 +161,10 @@ fun VehicleCard(
 
                 }
             }
+            Text(
+                text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(2.dp))
             // Assigned Date
             Text(
@@ -172,13 +176,25 @@ fun VehicleCard(
 
             // Show hold reason if exists
             if (vehicle.status_id == 3 && vehicle.comments != null) {
-                Text(
-                    text = "Hold Reason: ${vehicle.comments}",
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF34699A)), shape = CircleShape
+                ) {
+                    Text(
+                        text = "Hold Reason: ${vehicle.comments}",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        textAlign = TextAlign.Start,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
             }
 
             Spacer(modifier = Modifier.height(2.dp))
@@ -193,13 +209,12 @@ fun VehicleCard(
                     color = Color.White,
                     fontSize = 12.sp
                 )
-                Text(
+                /*Text(
                     text = "Customer Location: ${vehicle.poc_location}",
                     color = Color.White,
                     fontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 12.sp)
+                )*/
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Engine No: ${vehicle.ENGINE}",
                     color = Color.White,

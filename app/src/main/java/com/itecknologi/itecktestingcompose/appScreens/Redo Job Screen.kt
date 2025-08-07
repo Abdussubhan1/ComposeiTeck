@@ -74,8 +74,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
-    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }
+/*    val hasNewNotification =
+        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
@@ -147,7 +147,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Box(
+/*                Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
@@ -170,7 +170,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                 .background(Color(0xFFFFEB3B), shape = CircleShape)
                         )
                     }
-                }
+                }*/
                 Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd

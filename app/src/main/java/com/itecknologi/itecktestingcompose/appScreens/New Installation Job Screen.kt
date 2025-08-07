@@ -37,7 +37,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,7 +69,6 @@ import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun JobAssignedNewInstallation(
     context: Context,
@@ -78,8 +76,10 @@ fun JobAssignedNewInstallation(
     prefs: PreferenceManager
 ) {
     val name = prefs.getTechnicianName()
-    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }
+
+/*    val hasNewNotification =
+        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
+
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
@@ -151,7 +151,7 @@ fun JobAssignedNewInstallation(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Box(
+                /*Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
@@ -174,7 +174,7 @@ fun JobAssignedNewInstallation(
                                 .background(Color(0xFFFFEB3B), shape = CircleShape)
                         )
                     }
-                }
+                }*/
                 Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd
@@ -281,14 +281,14 @@ fun JobAssignedNewInstallation(
                                 ) {
                                     item {
                                         Column(
-                                            modifier = Modifier.fillMaxSize(),
+                                            modifier = Modifier.fillMaxSize().padding(8.dp),
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            Text("Loading..", color = Color.White, fontSize = 18.sp)
+                                            Text("Loading..", color = Color.White, fontSize = 14.sp)
                                             Spacer(modifier = Modifier.height(18.dp))
                                             CircularProgressIndicator(
-                                                modifier = Modifier.size(32.dp),
+                                                modifier = Modifier.size(28.dp),
                                                 color = Color(0XFF39B54A)
                                             )
                                         }

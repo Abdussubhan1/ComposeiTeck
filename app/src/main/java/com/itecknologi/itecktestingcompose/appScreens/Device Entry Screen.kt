@@ -114,6 +114,11 @@ fun DeviceEntryScreen(
                                 inclusive = true
                             }
                         }}
+                        else->{navController.navigate("Menu Screen") {
+                            popUpTo("mainscreen") {
+                                inclusive = true
+                            }
+                        }}
                     }
                     navController.navigate("New Installations Assigned Tasks Screen") {
                         popUpTo("mainscreen") {

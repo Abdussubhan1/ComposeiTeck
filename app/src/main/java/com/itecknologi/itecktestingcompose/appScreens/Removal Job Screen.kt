@@ -75,8 +75,8 @@ fun JobAssignedRemoval(
     prefs: PreferenceManager
 ) {
     val name = prefs.getTechnicianName()
-    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }
+/*    val hasNewNotification =
+        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
@@ -148,7 +148,7 @@ fun JobAssignedRemoval(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Box(
+/*                Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
@@ -171,7 +171,7 @@ fun JobAssignedRemoval(
                                 .background(Color(0xFFFFEB3B), shape = CircleShape)
                         )
                     }
-                }
+                }*/
                 Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd
