@@ -191,11 +191,11 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
             navController.navigate("New Installations Assigned Tasks Screen")
         }
 
-        MenuButton("Redo") {
+        MenuButton("Redo (Coming Soon)") {
             navController.navigate("Redo Assigned Tasks Screen")
         }
 
-        MenuButton("Removal") {
+        MenuButton("Removal (Coming Soon)") {
             navController.navigate("Removal Assigned Tasks Screen")
         }
 
@@ -213,10 +213,11 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
 fun MenuButton(text: String ,onClick: () -> Unit) {
     Button(
         onClick = onClick,
+        enabled = !(text=="Redo (Coming Soon)"||text=="Removal (Coming Soon)"),
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .padding(vertical = 8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699)),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699), disabledContainerColor = Color.Gray),
     ) {
         Text(text = text, fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
     }
