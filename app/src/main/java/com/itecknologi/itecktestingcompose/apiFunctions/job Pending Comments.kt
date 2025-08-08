@@ -7,7 +7,7 @@ suspend fun jobPendingComments(
     jobAssignedID: String,
     techStatus: String,
     comments: String,
-    pocNumberId: String
+    pocNumberId: Int
 ): String {
     return try {
         val response =

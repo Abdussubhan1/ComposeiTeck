@@ -2,6 +2,7 @@ package com.itecknologi.itecktestingcompose.functions
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -390,19 +391,23 @@ fun VehicleCard(
                                 vehicle.Technical_job_assign_id,
                                 "5",
                                 "",
-                                vehicle.poc_number_id
+                                vehicle.poc_number_id.toInt()
                             )
                             if (commentSubmission == "Record updated successfully.") {
-                                Toast.makeText(context, "Task Accepted", Toast.LENGTH_LONG).show()
-                            } else Toast.makeText(context, commentSubmission, Toast.LENGTH_SHORT)
-                                .show()
+                                acceptAlertDialog = false
+                                Toast.makeText(
+                                    context,
+                                    "Task Accepted\nSwipe Down to refresh",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Log.d("RejectReason", "RejectReason: $commentSubmission")
+                                Toast.makeText(context, commentSubmission, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+
                         }
-                        acceptAlertDialog = false
-                        Toast.makeText(
-                            context,
-                            "Task Accepted\nSwipe Down to refresh",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
                     }) {
                         Text("Accept")
                     }
@@ -470,7 +475,7 @@ fun VehicleCard(
                                     val commentSubmission = jobPendingComments(
                                         vehicle.Technical_job_assign_id,
                                         "3",
-                                        holdReason,vehicle.poc_number_id
+                                        holdReason, vehicle.poc_number_id.toInt()
                                     )
                                     if (commentSubmission == "Record updated successfully.") {
                                         holdReasonDialog = false
@@ -481,6 +486,7 @@ fun VehicleCard(
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
+                                        Log.d("HoldReason", "HoldReason: $commentSubmission")
                                         Toast.makeText(
                                             context,
                                             commentSubmission,
@@ -562,7 +568,7 @@ fun VehicleCard(
                                         vehicle.Technical_job_assign_id,
                                         "2",
                                         rejectReason,
-                                        vehicle.poc_number_id
+                                        vehicle.poc_number_id.toInt()
                                     )
                                     if (commentSubmission == "Record updated successfully.") {
                                         rejectReasonDialog = false
@@ -573,6 +579,7 @@ fun VehicleCard(
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
+                                        Log.d("RejectReason", "RejectReason: $commentSubmission")
                                         Toast.makeText(
                                             context,
                                             commentSubmission,
@@ -642,8 +649,8 @@ fun SelectedVehicle() {
             // Assigned Date
             Text(
                 text = Constants.JobAssigneddate,
-                color = Color.Gray,
-                fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End
+                color = Color.White,
+                fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start
             )
             Spacer(modifier = Modifier.height(2.dp))
 
@@ -741,9 +748,9 @@ fun VehicleCardInList() {
     )
 }
 
-/*@Preview
+@Preview
 @Composable
-fun selected(){
+fun selected() {
     SelectedVehicle()
 
-}*/
+}

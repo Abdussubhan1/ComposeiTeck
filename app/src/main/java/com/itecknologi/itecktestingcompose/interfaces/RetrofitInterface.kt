@@ -143,7 +143,7 @@ interface RetrofitInterface {
         @Field("Technical_job_assign_id") jobbAssignID: String,
         @Field("Technical_status") technicalStatus: String,
         @Field("comment") comment: String,
-        @Field("poc_number_id") pocNumberId: String
+        @Field("poc_number_id") pocNumberId: Int
     ): Response<JobPendingComments>
 }
 
