@@ -244,8 +244,8 @@ fun JobAssignedNewInstallation(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0XFF182b3c), shape = RoundedCornerShape(24.dp))
-                .padding(8.dp)
+                .background(Color(0XFF182b3c), shape = RoundedCornerShape(16.dp))
+                .padding(4.dp)
         ) {
             Column {
                 val coroutineScope = rememberCoroutineScope()

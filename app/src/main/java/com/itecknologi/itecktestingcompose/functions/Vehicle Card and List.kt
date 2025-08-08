@@ -31,6 +31,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -130,15 +131,17 @@ fun VehicleCard(
 
     Card(
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(horizontal = 4.dp, vertical = 12.dp)
             .fillMaxWidth()
-            .clickable { cardSelection() },
+            .clickable(enabled = vehicle.status_id != 1) {
+                cardSelection()
+            }, // Click sirf tab ho jab status 1 nhi hai
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(
             2.dp, /*if (vehicle.status_id==1)Color.Yellow else */
             Color(0xFF90A4AE)
         ),
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(30.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Column(
@@ -238,7 +241,10 @@ fun VehicleCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             // View on Map Button
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ) {
                 Row(
                     modifier = Modifier
                         .clickable {
@@ -279,7 +285,8 @@ fun VehicleCard(
                                 data = "tel: ${vehicle.customer_number}".toUri()
                             }
                             context.startActivity(intent)
-                        }, contentAlignment = Alignment.Center
+                        },
+                    contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.phonecall),
@@ -290,7 +297,7 @@ fun VehicleCard(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Absolute.Right,
+                    horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     when (vehicle.status_id) {
@@ -298,16 +305,14 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { rejectAlertDialog = true }
-                                    .padding(4.dp)
-                                    .wrapContentSize()
+                                    .padding(horizontal = 6.dp)
                             ) {
                                 Text(
                                     text = "Reject",
                                     color = Color.Red,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
-                                    textDecoration = TextDecoration.Underline,
-                                    fontSize = 13.sp
+                                    fontSize = 12.sp
                                 )
                             }
 
@@ -315,16 +320,14 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { holdAlertDialog = true }
-                                    .padding(4.dp)
-                                    .wrapContentSize()
+                                    .padding(horizontal = 6.dp)
                             ) {
                                 Text(
                                     text = "Hold",
                                     color = Color.Yellow,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
-                                    textDecoration = TextDecoration.Underline,
-                                    fontSize = 13.sp
+                                    fontSize = 12.sp
                                 )
                             }
 
@@ -332,15 +335,14 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { acceptAlertDialog = true }
-                                    .padding(4.dp)
+                                    .padding(horizontal = 6.dp)
                             ) {
                                 Text(
                                     text = "Accept",
                                     color = Color.Green,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
-                                    textDecoration = TextDecoration.Underline,
-                                    fontSize = 13.sp
+                                    fontSize = 12.sp
                                 )
                             }
                         }
