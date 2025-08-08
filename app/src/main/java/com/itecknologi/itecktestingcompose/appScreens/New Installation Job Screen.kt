@@ -62,6 +62,7 @@ import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
 import com.itecknologi.itecktestingcompose.functions.getLocation
+import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
 import kotlinx.coroutines.delay
@@ -257,12 +258,22 @@ fun JobAssignedNewInstallation(
 
                         // Simulate network call
                         coroutineScope.launch {
-                            response = getVehicleDetails(
-                                T_ID = prefs.getTechnicianID().toString(),
-                                type = "1"
-                            )
-                            delay(2000)
-                            isRefreshing = false
+                            if (isInternetAvailable(context)) {
+                                response = getVehicleDetails(
+                                    T_ID = prefs.getTechnicianID().toString(),
+                                    type = "1"
+                                )
+                                delay(2000)
+                                isRefreshing = false
+                            } else{
+                                isRefreshing = false
+                                Toast.makeText(
+                                    context,
+                                    "No Internet Connection",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
                         }
                     }, content = {
                         Box(
@@ -348,7 +359,7 @@ fun JobAssignedNewInstallation(
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
-                                        },navController
+                                        }, navController
                                     )
                                 }
                             }
