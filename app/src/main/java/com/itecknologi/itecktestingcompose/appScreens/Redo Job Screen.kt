@@ -2,7 +2,6 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,11 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -92,6 +89,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
         )
     }
     getLocation()
+    Constants.navigateBackto=2
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -342,7 +340,8 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
-                                        }
+                                        },
+                                        navController = navController
                                     )
 
 
@@ -429,7 +428,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
         // Button for Proceed
         Button(
             onClick = {
-                Constants.navigateBackto=2
+
                 navController.navigate("mainscreen") },
             enabled = enableProceed,
             modifier = Modifier

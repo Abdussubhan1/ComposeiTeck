@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.sp
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.constants.Constants
 import androidx.core.net.toUri
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.apiFunctions.jobPendingComments
 import com.itecknologi.itecktestingcompose.modelClasses.Data
 import kotlinx.coroutines.launch
@@ -66,11 +68,12 @@ import java.util.Locale
 @Composable
 fun VehicleListScreen(
     vehicleList: List<Data>,
-    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?) -> Unit
+    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?) -> Unit,
+    navController: NavHostController
+
 ) {
 
     var selectedVehicle by remember { mutableStateOf<Data?>(null) }
-
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
 
@@ -99,17 +102,19 @@ fun VehicleListScreen(
                     ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
 
 
-                }
+                }, navController
             )
         }
     }
+
 }
 
 @Composable
 fun VehicleCard(
     vehicle: Data,
     isSelected: Boolean,
-    cardSelection: () -> Unit
+    cardSelection: () -> Unit,
+    navController: NavHostController
 ) {
     val coroutineScope = rememberCoroutineScope()
     val backgroundColor = if (isSelected) Color(0xFF90A4AE) else Color(0xFF102027)
@@ -397,15 +402,20 @@ fun VehicleCard(
                                 acceptAlertDialog = false
                                 Toast.makeText(
                                     context,
-                                    "Task Accepted\nSwipe Down to refresh",
+                                    "Task Accepted",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                when (Constants.navigateBackto) {
+                                    1 -> navController.navigate("New Installations Assigned Tasks Screen")
+                                    2 -> navController.navigate("Redo Assigned Tasks Screen")
+                                    3 -> navController.navigate("Removal Assigned Tasks Screen")
+                                    else -> navController.navigate("Menu Screen")
+                                }
                             } else {
                                 Log.d("RejectReason", "RejectReason: $commentSubmission")
                                 Toast.makeText(context, commentSubmission, Toast.LENGTH_SHORT)
                                     .show()
                             }
-
                         }
 
                     }) {
@@ -482,9 +492,15 @@ fun VehicleCard(
                                         holdReason = ""
                                         Toast.makeText(
                                             context,
-                                            "Task Put on Hold\nSwipe Down to refresh",
+                                            "Task Put on Hold",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        when (Constants.navigateBackto) {
+                                            1 -> navController.navigate("New Installations Assigned Tasks Screen")
+                                            2 -> navController.navigate("Redo Assigned Tasks Screen")
+                                            3 -> navController.navigate("Removal Assigned Tasks Screen")
+                                            else -> navController.navigate("Menu Screen")
+                                        }
                                     } else {
                                         Log.d("HoldReason", "HoldReason: $commentSubmission")
                                         Toast.makeText(
@@ -493,7 +509,6 @@ fun VehicleCard(
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
-
                                 }
                             } else {
                                 Toast.makeText(context, "Please enter a reason", Toast.LENGTH_SHORT)
@@ -575,9 +590,15 @@ fun VehicleCard(
                                         rejectReason = ""
                                         Toast.makeText(
                                             context,
-                                            "Task Rejected\nSwipe Down to refresh",
+                                            "Task Rejected",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        when (Constants.navigateBackto) {
+                                            1 -> navController.navigate("New Installations Assigned Tasks Screen")
+                                            2 -> navController.navigate("Redo Assigned Tasks Screen")
+                                            3 -> navController.navigate("Removal Assigned Tasks Screen")
+                                            else -> navController.navigate("Menu Screen")
+                                        }
                                     } else {
                                         Log.d("RejectReason", "RejectReason: $commentSubmission")
                                         Toast.makeText(
@@ -744,7 +765,8 @@ fun VehicleCardInList() {
             poc_number_id = ""
         ),
         isSelected = false,
-        cardSelection = {}
+        cardSelection = {},
+        rememberNavController()
     )
 }
 
