@@ -89,7 +89,6 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
             )
         )
     }
-    getLocation()
     Constants.navigateBackto=2
 
     LaunchedEffect(Unit) {

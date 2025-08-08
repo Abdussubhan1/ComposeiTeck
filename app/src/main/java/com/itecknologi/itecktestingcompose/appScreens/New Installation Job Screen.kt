@@ -95,7 +95,6 @@ fun JobAssignedNewInstallation(
         )
     }
     Constants.navigateBackto = 1
-    getLocation()
 
     LaunchedEffect(Unit) {
         while (true) {

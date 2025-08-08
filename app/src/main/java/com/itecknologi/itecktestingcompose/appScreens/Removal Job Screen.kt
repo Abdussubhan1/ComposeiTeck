@@ -91,7 +91,6 @@ fun JobAssignedRemoval(
             )
         )
     }
-    getLocation()
     Constants.navigateBackto = 3
 
     LaunchedEffect(Unit) {
