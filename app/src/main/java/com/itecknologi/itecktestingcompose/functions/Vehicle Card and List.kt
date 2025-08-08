@@ -27,8 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -46,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -131,7 +128,10 @@ fun VehicleCard(
             .fillMaxWidth()
             .clickable { cardSelection() },
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(2.dp, /*if (vehicle.status_id==1)Color.Yellow else */Color(0xFF90A4AE)),
+        border = BorderStroke(
+            2.dp, /*if (vehicle.status_id==1)Color.Yellow else */
+            Color(0xFF90A4AE)
+        ),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
@@ -228,12 +228,6 @@ fun VehicleCard(
                 }
 
             }
-            Spacer(modifier = Modifier.height(2.dp))
-
-
-            Spacer(modifier = Modifier.height(2.dp))
-
-
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -298,7 +292,8 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { rejectAlertDialog = true }
-                                    .padding(12.dp).wrapContentSize()
+                                    .padding(4.dp)
+                                    .wrapContentSize()
                             ) {
                                 Text(
                                     text = "Reject",
@@ -306,7 +301,7 @@ fun VehicleCard(
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     textDecoration = TextDecoration.Underline,
-                                    fontSize = 16.sp
+                                    fontSize = 13.sp
                                 )
                             }
 
@@ -314,7 +309,8 @@ fun VehicleCard(
                             Row(
                                 modifier = Modifier
                                     .clickable { holdAlertDialog = true }
-                                    .padding(12.dp).wrapContentSize()
+                                    .padding(4.dp)
+                                    .wrapContentSize()
                             ) {
                                 Text(
                                     text = "Hold",
@@ -322,15 +318,15 @@ fun VehicleCard(
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     textDecoration = TextDecoration.Underline,
-                                    fontSize = 16.sp
+                                    fontSize = 13.sp
                                 )
                             }
 
                             // Button 3 for Accept
-                            /*Row(
+                            Row(
                                 modifier = Modifier
                                     .clickable { acceptAlertDialog = true }
-                                    .padding(8.dp)
+                                    .padding(4.dp)
                             ) {
                                 Text(
                                     text = "Accept",
@@ -340,10 +336,27 @@ fun VehicleCard(
                                     textDecoration = TextDecoration.Underline,
                                     fontSize = 13.sp
                                 )
-                            }*/
+                            }
                         }
 
                         3 -> {
+                            Box(
+                                modifier = Modifier
+                                    .padding(top = 8.dp)
+                                    .size(16.dp)
+                                    .background(
+                                        color = if (isSelected) Color(0xFF39B54A) else Color.Transparent,
+                                        shape = CircleShape
+                                    )
+                                    .border(
+                                        width = 2.dp,
+                                        color = if (isSelected) Color.White else Color.Gray,
+                                        shape = CircleShape
+                                    )
+                            )
+                        }
+
+                        5 -> {
                             Box(
                                 modifier = Modifier
                                     .padding(top = 8.dp)
@@ -365,16 +378,31 @@ fun VehicleCard(
 
 
         }
-        /*if (acceptAlertDialog) {
+        if (acceptAlertDialog) {
             AlertDialog(
                 onDismissRequest = { acceptAlertDialog = false },
                 title = { Text("Accept Task") },
                 text = { Text("Are you sure you want to Accept this Task?") },
                 confirmButton = {
                     TextButton(onClick = {
+                        coroutineScope.launch {
+                            val commentSubmission = jobPendingComments(
+                                vehicle.Technical_job_assign_id,
+                                "5",
+                                "",
+                                vehicle.poc_number_id
+                            )
+                            if (commentSubmission == "Record updated successfully.") {
+                                Toast.makeText(context, "Task Accepted", Toast.LENGTH_LONG).show()
+                            } else Toast.makeText(context, commentSubmission, Toast.LENGTH_SHORT)
+                                .show()
+                        }
                         acceptAlertDialog = false
-                        Toast.makeText(context, "Task Accepted", Toast.LENGTH_SHORT).show()
-                        vehicle.status_id=2
+                        Toast.makeText(
+                            context,
+                            "Task Accepted\nSwipe Down to refresh",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }) {
                         Text("Accept")
                     }
@@ -385,7 +413,7 @@ fun VehicleCard(
                     }
                 }
             )
-        }*/
+        }
 
         if (holdAlertDialog) {
             AlertDialog(
@@ -442,20 +470,20 @@ fun VehicleCard(
                                     val commentSubmission = jobPendingComments(
                                         vehicle.Technical_job_assign_id,
                                         "3",
-                                        holdReason
+                                        holdReason,vehicle.poc_number_id
                                     )
                                     if (commentSubmission == "Record updated successfully.") {
                                         holdReasonDialog = false
                                         holdReason = ""
                                         Toast.makeText(
                                             context,
-                                            "Task Put on Hold, Swipe to refresh",
-                                            Toast.LENGTH_SHORT
+                                            "Task Put on Hold\nSwipe Down to refresh",
+                                            Toast.LENGTH_LONG
                                         ).show()
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Failed to put task on hold",
+                                            commentSubmission,
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -533,20 +561,21 @@ fun VehicleCard(
                                     val commentSubmission = jobPendingComments(
                                         vehicle.Technical_job_assign_id,
                                         "2",
-                                        rejectReason
+                                        rejectReason,
+                                        vehicle.poc_number_id
                                     )
                                     if (commentSubmission == "Record updated successfully.") {
                                         rejectReasonDialog = false
                                         rejectReason = ""
                                         Toast.makeText(
                                             context,
-                                            "Task Rejected Successfully,Swipe to refresh",
-                                            Toast.LENGTH_SHORT
+                                            "Task Rejected\nSwipe Down to refresh",
+                                            Toast.LENGTH_LONG
                                         ).show()
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Failed to Reject Task",
+                                            commentSubmission,
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -704,7 +733,8 @@ fun VehicleCardInList() {
             customer_name = "",
             customer_number = "",
             comments = "",
-            status_id = 1
+            status_id = 1,
+            poc_number_id = ""
         ),
         isSelected = false,
         cardSelection = {}

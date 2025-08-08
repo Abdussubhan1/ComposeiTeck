@@ -6,12 +6,13 @@ import com.itecknologi.itecktestingcompose.objects.ServiceBuilder
 suspend fun jobPendingComments(
     jobAssignedID: String,
     techStatus: String,
-    comments: String
+    comments: String,
+    pocNumberId: String
 ): String {
     return try {
         val response =
             ServiceBuilder.buildService(RetrofitInterface::class.java)
-                .jobPendingComments(jobAssignedID, techStatus, comments)
+                .jobPendingComments(jobAssignedID, techStatus, comments,pocNumberId)
         val body = response.body()
         body?.message ?: "Response error: ${response.code()} ${response.message() ?: ""}"
     } catch (e: Exception) {

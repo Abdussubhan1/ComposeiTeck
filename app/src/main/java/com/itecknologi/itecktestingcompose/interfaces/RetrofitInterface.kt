@@ -66,7 +66,7 @@ interface RetrofitInterface {
     suspend fun getStatus(@Field("devid") devID: String): Response<Status>
 
     @Multipart
-    @POST("get_log.php")
+    @POST("get_logv1.php")
     suspend fun postData(
         @Part("CNIC") cnic: RequestBody,
         @Part("name") name: RequestBody,
@@ -79,7 +79,8 @@ interface RetrofitInterface {
         @Part("OBD") obd: RequestBody,
         @Part("IMMOBILIZER") immo: RequestBody,
         @Part("Customernumber") customerNumber: RequestBody,
-        @Part("TLocId") trackerLocation: RequestBody
+        @Part("TLocId") trackerLocation: RequestBody,
+        @Part("Technical_job_assign_id") technicalJobAssignedID: RequestBody
     ): Response<postDataResponse>
 
     @FormUrlEncoded
@@ -141,7 +142,8 @@ interface RetrofitInterface {
     suspend fun jobPendingComments(
         @Field("Technical_job_assign_id") jobbAssignID: String,
         @Field("Technical_status") technicalStatus: String,
-        @Field("comment") comment: String
+        @Field("comment") comment: String,
+        @Field("poc_number_id") pocNumberId: String
     ): Response<JobPendingComments>
 }
 

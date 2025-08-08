@@ -261,7 +261,8 @@ fun finalTicket(navController: NavHostController, prefs: PreferenceManager, curr
                                 Constants.installedDeviceType,
                                 Constants.immobilizer,
                                 Constants.cust_Contact,
-                                Constants.TLocID
+                                Constants.TLocID,
+                                Constants.technicalJobAssignedID
                             )
 
                             if (submitDataResponse.success) {

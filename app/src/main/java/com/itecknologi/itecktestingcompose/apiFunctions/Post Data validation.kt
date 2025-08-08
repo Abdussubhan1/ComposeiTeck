@@ -45,7 +45,8 @@ suspend fun submitData(
     obd: Int,
     immo: Int,
     customerNumber: String,
-    trackerLocation: Int
+    trackerLocation: Int,
+    technicalJobAssignedID: String
 ): submitDataResponse {
     return try {
         val imageParts = images.mapIndexedNotNull { index, bitmap ->
@@ -65,7 +66,8 @@ suspend fun submitData(
                 createPartFromString(obd.toString()),
                 createPartFromString(immo.toString()),
                 createPartFromString(customerNumber),
-                createPartFromString(trackerLocation.toString())
+                createPartFromString(trackerLocation.toString()),
+                createPartFromString(technicalJobAssignedID)
             )
 
         val body = response.body()
