@@ -18,8 +18,6 @@ import com.itecknologi.itecktestingcompose.appScreens.TestingPage
 import com.itecknologi.itecktestingcompose.appScreens.initialPicTake
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.appScreens.JobAssignedNewInstallation
-import com.itecknologi.itecktestingcompose.appScreens.JobAssignedRedo
-import com.itecknologi.itecktestingcompose.appScreens.JobAssignedRemoval
 import com.itecknologi.itecktestingcompose.appScreens.finalTicket
 
 
@@ -57,8 +55,6 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
         }
         composable("NotificationScreen") { NotificationScreen(navController, prefs) }
         composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
-        composable("Redo Assigned Tasks Screen") { JobAssignedRedo(context, navController, prefs) }
-        composable("Removal Assigned Tasks Screen") { JobAssignedRemoval(context, navController, prefs) }
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }
         composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }

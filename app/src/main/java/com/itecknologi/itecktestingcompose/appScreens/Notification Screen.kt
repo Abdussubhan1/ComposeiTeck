@@ -55,6 +55,7 @@ import com.itecknologi.itecktestingcompose.functions.BottomLogo
 fun NotificationScreen(navController: NavHostController, prefs: PreferenceManager) {
     var notifications by remember { mutableStateOf<List<NotificationHistoryItem>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    prefs.setHasNewNotification(value = false)
 
     LaunchedEffect(Unit) {
         notifications = notificationHistory(prefs.getUserCNIC())

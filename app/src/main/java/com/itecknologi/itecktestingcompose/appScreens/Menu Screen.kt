@@ -2,33 +2,46 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CarRepair
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Start
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +88,6 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-
         Spacer(modifier = Modifier.height(40.dp))
 
         Row(
@@ -104,31 +117,6 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Box(
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Notifications,
-                        contentDescription = "Tips",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clickable {
-                                navController.navigate("NotificationScreen")
-                                prefs.setHasNewNotification(value = false)
-                                hasNewNotification.value = false
-                            }
-                    )
-
-                    if (hasNewNotification.value) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp) // Small dot
-                                .background(Color(0xFFFFEB3B), shape = CircleShape)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
@@ -185,24 +173,9 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
             }
         }
 
-        Spacer(modifier = Modifier.height(200.dp))
+        Spacer(modifier = Modifier.height(150.dp))
+        MenuScreenCard(navController, context,hasNewNotification)
 
-        MenuButton("New Installation") {
-            navController.navigate("New Installations Assigned Tasks Screen")
-        }
-
-        MenuButton("Redo (Coming Soon)") {
-            navController.navigate("Redo Assigned Tasks Screen")
-        }
-
-        MenuButton("Removal (Coming Soon)") {
-            navController.navigate("Removal Assigned Tasks Screen")
-        }
-
-        MenuButton("Exit") {
-            (context as? Activity)?.finish()
-        }
-        Spacer(modifier = Modifier.height(200.dp))
         BottomLogo()
 
 
@@ -210,18 +183,138 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
 }
 
 @Composable
-fun MenuButton(text: String ,onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        enabled = !(text=="Redo (Coming Soon)"||text=="Removal (Coming Soon)"),
+fun MenuScreenCard(
+    navController: NavHostController,
+    context: Context,
+    hasNewNotification: MutableState<Boolean>
+) {
+    Box(
         modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .padding(vertical = 8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF336699), disabledContainerColor = Color.Gray),
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        Text(text = text, fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(4) { index ->
+                MenuItemCard(
+                    title = when (index) {
+                        0 -> "Tasks"
+                        1 -> "Notifications"
+                        2 -> "Settings"
+                        3 -> "Exit"
+                        else -> ""
+                    },
+                    icon = when (index) {
+                        0 -> Icons.Default.CarRepair
+                        1 -> Icons.Default.Notifications
+                        2 -> Icons.Default.Settings
+                        3 -> Icons.Default.ExitToApp
+                        else -> Icons.Default.Start
+                    },
+                    onClick = {
+                        when (index) {
+                            0 -> {
+                                navController.navigate("New Installations Assigned Tasks Screen")
+                            }
+
+                            1 -> {
+                                navController.navigate("NotificationScreen")
+                                hasNewNotification.value = false
+
+                            }
+
+                            2 -> {
+                                openAppNotificationSettings(context)
+                            }
+                            3 -> {
+                                (context as? Activity)?.finish()
+                            }
+                        }
+                    },
+                    showDot = hasNewNotification,index
+                )
+            }
+        }
     }
 }
+
+@Composable
+fun MenuItemCard(
+    title: String, icon: ImageVector, onClick: () -> Unit,
+    showDot: MutableState<Boolean>,
+    index: Int
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E3D59) // Nice dark bluish tone
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f) // Makes it square
+            .clickable { onClick() }
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    Color(0xFF1E3D59)
+                )
+                .fillMaxSize()
+                .padding(12.dp),
+            contentAlignment = Alignment.Center
+        ){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Box(contentAlignment = Alignment.TopEnd){
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = title,
+                        tint = Color.White,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    if (index==1 && showDot.value) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .background(Color.Yellow, shape = CircleShape)
+                                .align(Alignment.TopEnd)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = title,
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+/*@Preview
+@Composable
+fun MenuScreenPreview() {
+    MenuItemCard("Test", Icons.Default.PowerSettingsNew)
+}*/
+
+fun openAppNotificationSettings(context: Context) {
+    val intent = Intent().apply {
+        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    }
+    context.startActivity(intent)
+}
+
 
 @Preview
 @Composable

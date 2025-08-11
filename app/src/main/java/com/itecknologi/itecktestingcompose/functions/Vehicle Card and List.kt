@@ -433,7 +433,6 @@ fun VehicleCard(
                 dismissButton = {
                     TextButton(onClick = {
                         acceptAlertDialog = false
-                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
@@ -459,7 +458,6 @@ fun VehicleCard(
                 dismissButton = {
                     TextButton(onClick = {
                         holdAlertDialog = false
-                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
@@ -473,7 +471,6 @@ fun VehicleCard(
                 onDismissRequest = {
                     holdReasonDialog = false
                     holdReason = ""
-                    navController.navigate("New Installations Assigned Tasks Screen")
                 },
                 title = { Text("Reason for Hold") },
                 text = {
@@ -536,7 +533,6 @@ fun VehicleCard(
                     TextButton(onClick = {
                         holdReasonDialog = false
                         holdReason = ""
-                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
@@ -561,7 +557,6 @@ fun VehicleCard(
                 dismissButton = {
                     TextButton(onClick = {
                         rejectAlertDialog = false
-                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
@@ -573,7 +568,6 @@ fun VehicleCard(
                 onDismissRequest = {
                     rejectReasonDialog = false
                     rejectReason = ""
-                    navController.navigate("New Installations Assigned Tasks Screen")
                 },
                 title = { Text("Reason for Reject") },
                 text = {
@@ -638,7 +632,6 @@ fun VehicleCard(
                     TextButton(onClick = {
                         rejectReasonDialog = false
                         rejectReason = ""
-                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
