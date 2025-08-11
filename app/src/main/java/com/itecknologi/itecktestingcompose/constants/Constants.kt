@@ -38,7 +38,6 @@ object Constants {
     var X:Double=0.0
     var Y:Double=0.0
     var technicalJobAssignedID:String=""
-    var navigateBackto:Int=0
 }
 
 

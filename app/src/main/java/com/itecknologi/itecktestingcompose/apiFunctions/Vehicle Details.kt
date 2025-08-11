@@ -11,10 +11,10 @@ data class getVehicleDetailsResponse(
     val message: String
 )
 
-suspend fun getVehicleDetails(T_ID: String, type: String): getVehicleDetailsResponse {
+suspend fun getVehicleDetails(T_ID: String, app_login_id: String): getVehicleDetailsResponse {
     return try {
         val response = ServiceBuilder.buildService(RetrofitInterface::class.java)
-            .getVehicleDetails(T_ID, type)
+            .getVehicleDetails(T_ID, app_login_id)
 
         response.body()?.let { responseBody ->
             return if (responseBody.Success) {

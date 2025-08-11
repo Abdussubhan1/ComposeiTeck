@@ -60,7 +60,6 @@ import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
-import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
@@ -74,8 +73,8 @@ fun JobAssignedRemoval(
     prefs: PreferenceManager
 ) {
     val name = prefs.getTechnicianName()
-/*    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
+        val hasNewNotification =
+            remember { mutableStateOf(prefs.getHasNewNotification()) }
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
@@ -91,21 +90,25 @@ fun JobAssignedRemoval(
             )
         )
     }
-    Constants.navigateBackto = 3
 
     LaunchedEffect(Unit) {
-        while (true) {
-            response = getVehicleDetails(
-                T_ID = prefs.getTechnicianID().toString(),
-                type = "3"
-            )
-            if (response.success) {
-                break
-            } else {
-                Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+        if (isInternetAvailable(context)) {
+            while (true) {
+                response = getVehicleDetails(
+                    T_ID = prefs.getTechnicianID().toString(),
+                    app_login_id = prefs.getAppLoginID()
+                )
+                if (response.success) {
+                    break
+                } else {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                }
+                delay(2000)
             }
-            delay(2000)
         }
+        else
+            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
+
     }
     BackHandler { navController.navigate("Menu Screen") }
 
@@ -147,7 +150,7 @@ fun JobAssignedRemoval(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-/*                Box(
+                /*Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
@@ -257,11 +260,11 @@ fun JobAssignedRemoval(
                             if (isInternetAvailable(context)) {
                                 response = getVehicleDetails(
                                     T_ID = prefs.getTechnicianID().toString(),
-                                    type = "3"
+                                    app_login_id = prefs.getAppLoginID()
                                 )
                                 delay(2000)
                                 isRefreshing = false
-                            } else{
+                            } else {
                                 isRefreshing = false
                                 Toast.makeText(
                                     context,
@@ -353,7 +356,8 @@ fun JobAssignedRemoval(
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                         },
-                                        navController = navController
+                                        navController = navController,
+                                        prefs = prefs
                                     )
 
 
@@ -363,12 +367,15 @@ fun JobAssignedRemoval(
 
                     }, swipeEnabled = true, refreshTriggerDistance = 80.dp
                 )
-                /*
-                                Box(
+
+                              /*  Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .fillMaxHeight(0.80f)
-                                        .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
+                                        .background(
+                                            Color(0xFF122333),
+                                            shape = RoundedCornerShape(24.dp)
+                                        )
                                         .padding(8.dp)
                                 ) {
                                     if (!response.success) {

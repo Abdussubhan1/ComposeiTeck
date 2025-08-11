@@ -7,12 +7,13 @@ suspend fun jobPendingComments(
     jobAssignedID: String,
     techStatus: String,
     comments: String,
-    pocNumberId: Int
+    pocNumberId: Int,
+    T_ID: Int
 ): String {
     return try {
         val response =
             ServiceBuilder.buildService(RetrofitInterface::class.java)
-                .jobPendingComments(jobAssignedID, techStatus, comments,pocNumberId)
+                .jobPendingComments(jobAssignedID, techStatus, comments,pocNumberId,T_ID)
         val body = response.body()
         body?.message ?: "Response error: ${response.code()} ${response.message() ?: ""}"
     } catch (e: Exception) {

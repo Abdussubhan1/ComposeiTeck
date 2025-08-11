@@ -61,7 +61,6 @@ import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
-import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
@@ -94,21 +93,25 @@ fun JobAssignedNewInstallation(
             )
         )
     }
-    Constants.navigateBackto = 1
+
 
     LaunchedEffect(Unit) {
-        while (true) {
-            response = getVehicleDetails(
-                T_ID = prefs.getTechnicianID().toString(),
-                type = "1"
-            )
-            if (response.success) {
-                break
-            } else {
-                Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+        if (isInternetAvailable(context)) {
+            while (true) {
+                response = getVehicleDetails(
+                    T_ID = prefs.getTechnicianID().toString(),
+                    app_login_id = prefs.getAppLoginID()
+                )
+                if (response.success) {
+                    break
+                } else {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                }
+                delay(2000)
             }
-            delay(2000)
-        }
+        }else
+            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
+
     }
     BackHandler { navController.navigate("Menu Screen") }
 
@@ -232,13 +235,13 @@ fun JobAssignedNewInstallation(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            "New Installation Tasks",
+            "My Pending Tasks",
             color = Color.White,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(5.dp))
-        Text("Select Vehicle for Installation", color = Color.White, fontSize = 14.sp)
+        Text("Select task to perform", color = Color.White, fontSize = 14.sp)
         Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
@@ -260,11 +263,11 @@ fun JobAssignedNewInstallation(
                             if (isInternetAvailable(context)) {
                                 response = getVehicleDetails(
                                     T_ID = prefs.getTechnicianID().toString(),
-                                    type = "1"
+                                    app_login_id = prefs.getAppLoginID()
                                 )
                                 delay(2000)
                                 isRefreshing = false
-                            } else{
+                            } else {
                                 isRefreshing = false
                                 Toast.makeText(
                                     context,
@@ -358,7 +361,7 @@ fun JobAssignedNewInstallation(
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
-                                        }, navController
+                                        }, navController,prefs
                                     )
                                 }
                             }

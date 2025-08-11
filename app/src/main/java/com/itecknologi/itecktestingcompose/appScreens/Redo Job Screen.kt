@@ -61,7 +61,6 @@ import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.VehicleListScreen
-import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import com.itecknologi.itecktestingcompose.objects.vehicle_details
@@ -72,8 +71,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
-/*    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
+        val hasNewNotification =
+            remember { mutableStateOf(prefs.getHasNewNotification()) }
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
@@ -89,21 +88,24 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
             )
         )
     }
-    Constants.navigateBackto=2
 
     LaunchedEffect(Unit) {
-        while (true) {
-            response = getVehicleDetails(
-                T_ID = prefs.getTechnicianID().toString(),
-                type = "2"
-            )
-            if (response.success) {
-                break
-            } else {
-                Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+        if (isInternetAvailable(context)) {
+            while (true) {
+                response = getVehicleDetails(
+                    T_ID = prefs.getTechnicianID().toString(),
+                    app_login_id = prefs.getAppLoginID(),
+                )
+                if (response.success) {
+                    break
+                } else {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                }
+                delay(2000)
             }
-            delay(2000)
-        }
+        }else
+            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
+
     }
     BackHandler { navController.navigate("Menu Screen") }
 
@@ -145,30 +147,30 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-/*                Box(
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Notifications,
-                        contentDescription = "Tips",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clickable {
-                                navController.navigate("NotificationScreen")
-                                prefs.setHasNewNotification(value = false)
-                                hasNewNotification.value = false
-                            }
-                    )
+                                /*Box(
+                                    contentAlignment = Alignment.TopEnd
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Notifications,
+                                        contentDescription = "Tips",
+                                        tint = Color.White,
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .clickable {
+                                                navController.navigate("NotificationScreen")
+                                                prefs.setHasNewNotification(value = false)
+                                                hasNewNotification.value = false
+                                            }
+                                    )
 
-                    if (hasNewNotification.value) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp) // Small dot
-                                .background(Color(0xFFFFEB3B), shape = CircleShape)
-                        )
-                    }
-                }*/
+                                    if (hasNewNotification.value) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(8.dp) // Small dot
+                                                .background(Color(0xFFFFEB3B), shape = CircleShape)
+                                        )
+                                    }
+                                }*/
                 Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd
@@ -255,11 +257,11 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                             if (isInternetAvailable(context)) {
                                 response = getVehicleDetails(
                                     T_ID = prefs.getTechnicianID().toString(),
-                                    type = "2"
+                                    app_login_id = prefs.getAppLoginID()
                                 )
                                 delay(2000)
                                 isRefreshing = false
-                            } else{
+                            } else {
                                 isRefreshing = false
                                 Toast.makeText(
                                     context,
@@ -328,7 +330,8 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                         onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
                                             enableProceed = isSelected
                                             Constants.vehicleID =
-                                                vehicleID ?: "" //Yeh last get log wali api mein bhejna hai
+                                                vehicleID
+                                                    ?: "" //Yeh last get log wali api mein bhejna hai
                                             Constants.engineNumber = vehicleEngine
                                                 ?: "" //Saving for selected card in device entry screen
                                             Constants.chassisNumber = vehicleChassis
@@ -350,7 +353,8 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                         },
-                                        navController = navController
+                                        navController = navController,
+                                        prefs = prefs
                                     )
 
 
@@ -360,8 +364,8 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
 
                     }, swipeEnabled = true, refreshTriggerDistance = 80.dp
                 )
-                /*
-                                Box(
+
+                                /*Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .fillMaxHeight(0.80f)
@@ -422,7 +426,7 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
                                                         ?: "" //Yeh last get log wali api mein bhejna hai
                                                     Constants.cust_Contact = customerContactNumber
                                                         ?: "" //Yeh last get log wali api mein bhejna hai
-                                                }
+                                                },navController
                                             )
                                         }
 
@@ -438,7 +442,8 @@ fun JobAssignedRedo(context: Context, navController: NavHostController, prefs: P
         Button(
             onClick = {
 
-                navController.navigate("mainscreen") },
+                navController.navigate("mainscreen")
+            },
             enabled = enableProceed,
             modifier = Modifier
                 .fillMaxWidth()

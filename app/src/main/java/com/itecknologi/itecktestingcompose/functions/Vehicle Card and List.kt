@@ -31,7 +31,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -50,7 +49,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,6 +59,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.apiFunctions.jobPendingComments
+import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.modelClasses.Data
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -70,7 +69,8 @@ import java.util.Locale
 fun VehicleListScreen(
     vehicleList: List<Data>,
     onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?) -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    prefs: PreferenceManager
 
 ) {
 
@@ -103,7 +103,7 @@ fun VehicleListScreen(
                     ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
 
 
-                }, navController
+                }, navController, prefs
             )
         }
     }
@@ -115,7 +115,8 @@ fun VehicleCard(
     vehicle: Data,
     isSelected: Boolean,
     cardSelection: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    prefs: PreferenceManager
 ) {
     val coroutineScope = rememberCoroutineScope()
     val backgroundColor = if (isSelected) Color(0xFF90A4AE) else Color(0xFF102027)
@@ -133,7 +134,7 @@ fun VehicleCard(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 12.dp)
             .fillMaxWidth()
-            .clickable(enabled = vehicle.status_id != 1) {
+            .clickable(enabled = vehicle.status_id  == 5 || vehicle.status_id == 3) {
                 cardSelection()
             }, // Click sirf tab ho jab status 1 nhi hai
         shape = RoundedCornerShape(16.dp),
@@ -179,8 +180,18 @@ fun VehicleCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val modifiedCustomerName = vehicle.customer_name.uppercase(Locale.getDefault())
+                val modifiedTypeName = vehicle.type.uppercase(Locale.getDefault())
                 Text(
                     text = "VRN: ${vehicle.VEH_REG}", color = Color.White, fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = modifiedTypeName, color = when (vehicle.type) {
+                        "Installation" -> Color.Green
+                        "Redo" -> Color.Yellow
+                        "Removal" -> Color.Red
+                        else -> Color.White
+                    }, fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
                 // Assigned Date
@@ -347,24 +358,23 @@ fun VehicleCard(
                             }
                         }
 
-                        3 -> {
-                            Box(
+                        0 -> {
+                            Row(
                                 modifier = Modifier
-                                    .padding(top = 8.dp)
-                                    .size(16.dp)
-                                    .background(
-                                        color = if (isSelected) Color(0xFF39B54A) else Color.Transparent,
-                                        shape = CircleShape
-                                    )
-                                    .border(
-                                        width = 2.dp,
-                                        color = if (isSelected) Color.White else Color.Gray,
-                                        shape = CircleShape
-                                    )
-                            )
+                                    .clickable { acceptAlertDialog = true }
+                                    .padding(horizontal = 6.dp)
+                            ) {
+                                Text(
+                                    text = "Accept",
+                                    color = Color.Green,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 12.sp
+                                )
+                            }
                         }
 
-                        5 -> {
+                        3, 5 -> {
                             Box(
                                 modifier = Modifier
                                     .padding(top = 8.dp)
@@ -398,7 +408,8 @@ fun VehicleCard(
                                 vehicle.Technical_job_assign_id,
                                 "5",
                                 "",
-                                vehicle.poc_number_id.toInt()
+                                vehicle.poc_number_id.toInt(),
+                                T_ID = prefs.getTechnicianID()
                             )
                             if (commentSubmission == "Record updated successfully.") {
                                 acceptAlertDialog = false
@@ -407,12 +418,7 @@ fun VehicleCard(
                                     "Task Accepted",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                when (Constants.navigateBackto) {
-                                    1 -> navController.navigate("New Installations Assigned Tasks Screen")
-                                    2 -> navController.navigate("Redo Assigned Tasks Screen")
-                                    3 -> navController.navigate("Removal Assigned Tasks Screen")
-                                    else -> navController.navigate("Menu Screen")
-                                }
+                                navController.navigate("New Installations Assigned Tasks Screen")
                             } else {
                                 Log.d("RejectReason", "RejectReason: $commentSubmission")
                                 Toast.makeText(context, commentSubmission, Toast.LENGTH_SHORT)
@@ -425,7 +431,10 @@ fun VehicleCard(
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { acceptAlertDialog = false }) {
+                    TextButton(onClick = {
+                        acceptAlertDialog = false
+                        navController.navigate("New Installations Assigned Tasks Screen")
+                    }) {
                         Text("Cancel")
                     }
                 }
@@ -448,7 +457,10 @@ fun VehicleCard(
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { holdAlertDialog = false }) {
+                    TextButton(onClick = {
+                        holdAlertDialog = false
+                        navController.navigate("New Installations Assigned Tasks Screen")
+                    }) {
                         Text("Cancel")
                     }
                 }
@@ -461,6 +473,7 @@ fun VehicleCard(
                 onDismissRequest = {
                     holdReasonDialog = false
                     holdReason = ""
+                    navController.navigate("New Installations Assigned Tasks Screen")
                 },
                 title = { Text("Reason for Hold") },
                 text = {
@@ -487,7 +500,9 @@ fun VehicleCard(
                                     val commentSubmission = jobPendingComments(
                                         vehicle.Technical_job_assign_id,
                                         "3",
-                                        holdReason, vehicle.poc_number_id.toInt()
+                                        holdReason,
+                                        vehicle.poc_number_id.toInt(),
+                                        T_ID = prefs.getTechnicianID()
                                     )
                                     if (commentSubmission == "Record updated successfully.") {
                                         holdReasonDialog = false
@@ -497,12 +512,8 @@ fun VehicleCard(
                                             "Task Put on Hold",
                                             Toast.LENGTH_LONG
                                         ).show()
-                                        when (Constants.navigateBackto) {
-                                            1 -> navController.navigate("New Installations Assigned Tasks Screen")
-                                            2 -> navController.navigate("Redo Assigned Tasks Screen")
-                                            3 -> navController.navigate("Removal Assigned Tasks Screen")
-                                            else -> navController.navigate("Menu Screen")
-                                        }
+                                        navController.navigate("New Installations Assigned Tasks Screen")
+
                                     } else {
                                         Log.d("HoldReason", "HoldReason: $commentSubmission")
                                         Toast.makeText(
@@ -525,6 +536,7 @@ fun VehicleCard(
                     TextButton(onClick = {
                         holdReasonDialog = false
                         holdReason = ""
+                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
@@ -547,7 +559,10 @@ fun VehicleCard(
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { rejectAlertDialog = false }) {
+                    TextButton(onClick = {
+                        rejectAlertDialog = false
+                        navController.navigate("New Installations Assigned Tasks Screen")
+                    }) {
                         Text("Cancel")
                     }
                 }
@@ -558,6 +573,7 @@ fun VehicleCard(
                 onDismissRequest = {
                     rejectReasonDialog = false
                     rejectReason = ""
+                    navController.navigate("New Installations Assigned Tasks Screen")
                 },
                 title = { Text("Reason for Reject") },
                 text = {
@@ -585,7 +601,9 @@ fun VehicleCard(
                                         vehicle.Technical_job_assign_id,
                                         "2",
                                         rejectReason,
-                                        vehicle.poc_number_id.toInt()
+                                        vehicle.poc_number_id.toInt(),
+                                        T_ID = prefs.getTechnicianID()
+
                                     )
                                     if (commentSubmission == "Record updated successfully.") {
                                         rejectReasonDialog = false
@@ -595,12 +613,8 @@ fun VehicleCard(
                                             "Task Rejected",
                                             Toast.LENGTH_LONG
                                         ).show()
-                                        when (Constants.navigateBackto) {
-                                            1 -> navController.navigate("New Installations Assigned Tasks Screen")
-                                            2 -> navController.navigate("Redo Assigned Tasks Screen")
-                                            3 -> navController.navigate("Removal Assigned Tasks Screen")
-                                            else -> navController.navigate("Menu Screen")
-                                        }
+                                        navController.navigate("New Installations Assigned Tasks Screen")
+
                                     } else {
                                         Log.d("RejectReason", "RejectReason: $commentSubmission")
                                         Toast.makeText(
@@ -624,6 +638,7 @@ fun VehicleCard(
                     TextButton(onClick = {
                         rejectReasonDialog = false
                         rejectReason = ""
+                        navController.navigate("New Installations Assigned Tasks Screen")
                     }) {
                         Text("Cancel")
                     }
@@ -768,7 +783,8 @@ fun VehicleCardInList() {
         ),
         isSelected = false,
         cardSelection = {},
-        rememberNavController()
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
     )
 }
 

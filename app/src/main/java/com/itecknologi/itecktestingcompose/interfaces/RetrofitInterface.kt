@@ -100,7 +100,7 @@ interface RetrofitInterface {
     @POST("technical_jobs_pending.php")
     suspend fun getVehicleDetails(
         @Field("T_ID") techID: String,
-        @Field("type") type:String
+        @Field("App_ID") app_id:String
     ): Response<vehicleDetailsCheck>
 
     @FormUrlEncoded
@@ -143,7 +143,8 @@ interface RetrofitInterface {
         @Field("Technical_job_assign_id") jobbAssignID: String,
         @Field("Technical_status") technicalStatus: String,
         @Field("comment") comment: String,
-        @Field("poc_number_id") pocNumberId: Int
+        @Field("poc_number_id") pocNumberId: Int,
+        @Field("T_ID") techID: Int
     ): Response<JobPendingComments>
 }
 
