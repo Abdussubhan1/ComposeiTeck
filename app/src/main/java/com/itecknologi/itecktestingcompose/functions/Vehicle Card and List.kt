@@ -403,6 +403,7 @@ fun VehicleCard(
                 text = { Text("Are you sure you want to Accept this Task?") },
                 confirmButton = {
                     TextButton(onClick = {
+                        acceptAlertDialog = false
                         coroutineScope.launch {
                             val commentSubmission = jobPendingComments(
                                 vehicle.Technical_job_assign_id,
@@ -412,7 +413,7 @@ fun VehicleCard(
                                 T_ID = prefs.getTechnicianID()
                             )
                             if (commentSubmission == "Record updated successfully.") {
-                                acceptAlertDialog = false
+
                                 Toast.makeText(
                                     context,
                                     "Task Accepted",
