@@ -2,8 +2,6 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -35,6 +33,7 @@ import androidx.compose.material.icons.filled.Start
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,16 +61,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.getStatsOfLast7Days
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.functions.openAppNotificationSettings
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
+
 
 @Composable
 fun MenuScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
+    var statsData by remember { mutableStateOf<Map<String, Int>?>(null) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
         animationSpec = tween(durationMillis = 500),
@@ -80,6 +83,7 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
     val hasNewNotification =
         remember { mutableStateOf(prefs.getHasNewNotification()) }
     HandleDoubleBackToExit()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,6 +92,12 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
+        LaunchedEffect(Unit) {
+
+            statsData= getStatsOfLast7Days(prefs.getUserCNIC())
+
+        }
+
         Spacer(modifier = Modifier.height(40.dp))
 
         Row(
@@ -172,9 +182,25 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
                 }
             }
         }
+        Spacer(modifier = Modifier.height(30.dp))
+        statsData?.let { data ->
+            StatsLineChart(
+                stats = data,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+            )
+        } ?: Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.White)
+        }
 
-        Spacer(modifier = Modifier.height(150.dp))
-        MenuScreenCard(navController, context,hasNewNotification)
+        Spacer(modifier = Modifier.height(30.dp))
+        MenuScreenCard(navController, context, hasNewNotification)
 
         BottomLogo()
 
@@ -308,13 +334,6 @@ fun MenuScreenPreview() {
     MenuItemCard("Test", Icons.Default.PowerSettingsNew)
 }*/
 
-fun openAppNotificationSettings(context: Context) {
-    val intent = Intent().apply {
-        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-    }
-    context.startActivity(intent)
-}
 
 @Preview
 @Composable

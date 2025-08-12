@@ -146,6 +146,13 @@ interface RetrofitInterface {
         @Field("poc_number_id") pocNumberId: Int,
         @Field("T_ID") techID: Int
     ): Response<JobPendingComments>
+
+    @FormUrlEncoded
+    @POST("statistics.php")
+    suspend fun getStatsOfLast7Days(
+        @Field("CNIC") cnic: String
+    ): Response<Map<String, Int>>
+
 }
 
 

@@ -111,9 +111,7 @@ dependencies {
 
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.35.1-alpha")
 
-
-
-
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 
 
