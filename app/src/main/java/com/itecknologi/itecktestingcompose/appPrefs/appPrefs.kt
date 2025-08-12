@@ -7,7 +7,6 @@ import androidx.core.content.edit
 class PreferenceManager(context: Context) {
 
     private val sharedPref = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-    private val reasonPrefs = context.getSharedPreferences("hold_reasons", Context.MODE_PRIVATE)
 
     fun setHasNewNotification(value: Boolean) {
         sharedPref.edit { putBoolean("hasNewNotification", value) }
