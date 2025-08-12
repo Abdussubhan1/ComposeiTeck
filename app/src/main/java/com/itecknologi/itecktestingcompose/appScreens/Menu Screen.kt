@@ -230,12 +230,13 @@ fun MenuScreenCard(
                             2 -> {
                                 openAppNotificationSettings(context)
                             }
+
                             3 -> {
                                 (context as? Activity)?.finish()
                             }
                         }
                     },
-                    showDot = hasNewNotification,index
+                    showDot = hasNewNotification, index
                 )
             }
         }
@@ -267,19 +268,19 @@ fun MenuItemCard(
                 .fillMaxSize()
                 .padding(12.dp),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
-            ){
-                Box(contentAlignment = Alignment.TopEnd){
+            ) {
+                Box(contentAlignment = Alignment.TopEnd) {
                     Icon(
                         imageVector = icon,
                         contentDescription = title,
                         tint = Color.White,
                         modifier = Modifier.size(48.dp)
                     )
-                    if (index==1 && showDot.value) {
+                    if (index == 1 && showDot.value) {
                         Box(
                             modifier = Modifier
                                 .size(10.dp)
@@ -314,7 +315,6 @@ fun openAppNotificationSettings(context: Context) {
     }
     context.startActivity(intent)
 }
-
 
 @Preview
 @Composable
