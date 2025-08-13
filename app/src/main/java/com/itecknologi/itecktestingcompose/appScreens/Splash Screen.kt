@@ -134,7 +134,6 @@ fun SplashScreen(
             .background(Color(0XFF122333)),
         contentAlignment = Alignment.Center,
     ) {
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -146,9 +145,18 @@ fun SplashScreen(
                     .width(99.dp)
                     .height(124.dp)
             )
-
             Text(
-                text = "Testing",
+                text = "Technicians",
+                fontSize = 27.sp,
+                fontWeight = FontWeight(700),
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(0.7f)
+            )
+            Text(
+                text = "App",
                 fontSize = 27.sp,
                 fontWeight = FontWeight(700),
                 color = Color.White,

@@ -2,6 +2,7 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -24,7 +25,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CarRepair
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
@@ -42,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,6 +64,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.apiFunctions.getStatsOfLast7Days
+import com.itecknologi.itecktestingcompose.apiFunctions.statisticsResponse
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
@@ -74,7 +77,6 @@ import kotlinx.coroutines.delay
 fun MenuScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
     val name = prefs.getTechnicianName()
     var isLoggingOut by remember { mutableStateOf(false) }
-    var statsData by remember { mutableStateOf<Map<String, Int>?>(null) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoggingOut) 0f else 1f,
         animationSpec = tween(durationMillis = 500),
@@ -82,7 +84,14 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
     )
     val hasNewNotification =
         remember { mutableStateOf(prefs.getHasNewNotification()) }
+    var duration by remember { mutableIntStateOf(0) }
+    var statsResult by remember { mutableStateOf<statisticsResponse?>(null) }
     HandleDoubleBackToExit()
+
+    LaunchedEffect(key1 = duration) {
+        statsResult = getStatsOfLast7Days(cnic = prefs.getUserCNIC(), duration)
+        Log.d("statsResult", statsResult.toString())
+    }
 
     Column(
         modifier = Modifier
@@ -92,11 +101,7 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        LaunchedEffect(Unit) {
 
-            statsData= getStatsOfLast7Days(prefs.getUserCNIC())
-
-        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -182,24 +187,27 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
                 }
             }
         }
-        Spacer(modifier = Modifier.height(30.dp))
-        statsData?.let { data ->
-            StatsLineChart(
-                stats = data,
+        Spacer(modifier = Modifier.height(5.dp))
+
+        // Chart Section — This will now recompose on duration change
+        if (statsResult != null) {
+            CardPieChart(
+                duration,
+                OnDurationChange = { newDuration -> duration = newDuration },
+                statistics = statsResult!!
+            )
+        } else {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
-            )
-        } ?: Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(color = Color.White)
+                    .height(220.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.White)
+            }
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         MenuScreenCard(navController, context, hasNewNotification)
 
         BottomLogo()
@@ -235,7 +243,7 @@ fun MenuScreenCard(
                         else -> ""
                     },
                     icon = when (index) {
-                        0 -> Icons.Default.CarRepair
+                        0 -> Icons.Filled.Checklist
                         1 -> Icons.Default.Notifications
                         2 -> Icons.Default.Settings
                         3 -> Icons.Default.ExitToApp

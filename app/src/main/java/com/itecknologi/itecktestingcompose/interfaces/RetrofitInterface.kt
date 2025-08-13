@@ -8,6 +8,7 @@ import com.itecknologi.itecktestingcompose.modelClasses.GetRelay
 import com.itecknologi.itecktestingcompose.modelClasses.Ignition
 import com.itecknologi.itecktestingcompose.modelClasses.JobPendingComments
 import com.itecknologi.itecktestingcompose.modelClasses.NotificationHistory
+import com.itecknologi.itecktestingcompose.modelClasses.StatsData
 import com.itecknologi.itecktestingcompose.modelClasses.Status
 import com.itecknologi.itecktestingcompose.modelClasses.TrackerLocation
 import com.itecknologi.itecktestingcompose.modelClasses.UpdateFCM_API
@@ -150,8 +151,9 @@ interface RetrofitInterface {
     @FormUrlEncoded
     @POST("statistics.php")
     suspend fun getStatsOfLast7Days(
-        @Field("CNIC") cnic: String
-    ): Response<Map<String, Int>>
+        @Field("CNIC") cnic: String,
+        @Field("date_filter") duration: Int
+    ): Response<StatsData>
 
 }
 

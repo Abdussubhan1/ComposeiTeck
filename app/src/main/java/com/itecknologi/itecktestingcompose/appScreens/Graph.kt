@@ -1,26 +1,28 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
 import android.graphics.drawable.GradientDrawable
+import android.widget.LinearLayout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
-
+import com.itecknologi.itecktestingcompose.apiFunctions.statisticsResponse
 
 
 @Composable
@@ -65,11 +67,11 @@ fun StatsLineChart(
                 xAxis.valueFormatter = IndexAxisValueFormatter(labels)
                 xAxis.textColor = onBackground
                 xAxis.labelRotationAngle = 0f // Tilt for readability
-                axisLeft.axisMinimum=0f
+                axisLeft.axisMinimum = 0f
 
                 // Y Axis setup
                 axisLeft.textColor = onBackground
-                axisLeft.granularity=1f
+                axisLeft.granularity = 1f
                 axisRight.isEnabled = false
 
                 axisLeft.valueFormatter = object : ValueFormatter() {
@@ -80,10 +82,11 @@ fun StatsLineChart(
 
                 // Legend
                 legend.textColor = onBackground
-                legend.textSize=14f
-                legend.verticalAlignment = com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
+                legend.textSize = 14f
+                legend.verticalAlignment =
+                    com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
 
-                extraTopOffset=20f
+                extraTopOffset = 20f
 
                 // DataSet
                 val dataSet = LineDataSet(entries, "Last 7 Days Of Activities").apply {
@@ -112,7 +115,7 @@ fun StatsLineChart(
     )
 }
 
-@Preview
+/*@Preview
 @Composable
 fun StatsLineChartPreview() {
     val sampleData = mapOf(
@@ -132,4 +135,70 @@ fun StatsLineChartPreview() {
             .fillMaxWidth()
             .height(300.dp)
     )
+}*/
+
+
+@Composable
+fun PieChartView(statistics: List<statisticsResponse>) {
+    val stat = statistics.firstOrNull() ?: return
+
+    val entries = listOf(
+        PieEntry(stat.installation.toFloat(), "New Installation"),
+        PieEntry(stat.redo.toFloat(), "Redo"),
+        PieEntry(stat.removal.toFloat(), "Removal")
+    )
+
+    AndroidView(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp),
+        factory = { context ->
+            PieChart(context).apply {
+                setDrawEntryLabels(false)
+                description.isEnabled = false
+                isDrawHoleEnabled = false
+                setUsePercentValues(false)
+                isRotationEnabled = false
+
+                legend.isEnabled = true
+                legend.textColor = android.graphics.Color.GRAY
+                legend.verticalAlignment = com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.BOTTOM
+                legend.orientation = com.github.mikephil.charting.components.Legend.LegendOrientation.HORIZONTAL
+                legend.textSize = 14f
+                legend.horizontalAlignment = com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.CENTER
+                legend.formSize = 10f
+
+                val dataSet = PieDataSet(entries, "").apply {
+                    colors = listOf(
+                        android.graphics.Color.parseColor("#47B39C"),
+                        android.graphics.Color.parseColor("#FFC154"),
+                        android.graphics.Color.parseColor("#EC6B56")
+                    )
+                    setDrawValues(true)
+                    valueTextColor = android.graphics.Color.WHITE
+                    valueTextSize = 14f
+                    yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+                    xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+                    valueLinePart1Length = 0.8f
+                    valueLinePart2Length = 0.8f
+                    valueLineColor = android.graphics.Color.WHITE
+                    valueLineWidth = 3f
+                    valueFormatter = object : ValueFormatter() {
+                        override fun getFormattedValue(value: Float): String {
+                            return value.toInt().toString()
+                        }
+                    }
+                }
+
+                data = PieData(dataSet)
+                invalidate()
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+fun pieChart() {
+    PieChartView(statistics = listOf(statisticsResponse(30,40,70,140)))
 }
