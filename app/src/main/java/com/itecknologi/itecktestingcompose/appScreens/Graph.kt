@@ -22,10 +22,10 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.itecknologi.itecktestingcompose.apiFunctions.statisticsResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.StatisticsResponse
 
 
-@Composable
+/*@Composable
 fun StatsLineChart(
     stats: Map<String, Int>, // Pass your dynamic map here
     modifier: Modifier = Modifier
@@ -113,7 +113,7 @@ fun StatsLineChart(
             }
         }
     )
-}
+}*/
 
 /*@Preview
 @Composable
@@ -139,7 +139,7 @@ fun StatsLineChartPreview() {
 
 
 @Composable
-fun PieChartView(statistics: List<statisticsResponse>) {
+fun PieChartView(statistics: List<StatisticsResponse>) {
     val stat = statistics.firstOrNull() ?: return
 
     val entries = listOf(
@@ -200,5 +200,5 @@ fun PieChartView(statistics: List<statisticsResponse>) {
 @Preview
 @Composable
 fun pieChart() {
-    PieChartView(statistics = listOf(statisticsResponse(30,40,70,140)))
+    PieChartView(statistics = listOf(StatisticsResponse(isLoading = true,30,40,70,0)))
 }

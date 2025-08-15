@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,13 +38,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.itecknologi.itecktestingcompose.apiFunctions.statisticsResponse
+import com.itecknologi.itecktestingcompose.apiFunctions.StatisticsResponse
 
 @Composable
-fun CardPieChart(duration:Int,OnDurationChange: (Int) -> Unit, statistics: statisticsResponse?) {
+fun CardPieChart(duration: Int, OnDurationChange: (Int) -> Unit, statistics: StatisticsResponse?) {
     var selectDuration by remember(duration) {
         mutableStateOf(
-            when(duration) {
+            when (duration) {
                 1 -> "Today"
                 2 -> "7 Days"
                 3 -> "1 Month"
@@ -53,7 +54,7 @@ fun CardPieChart(duration:Int,OnDurationChange: (Int) -> Unit, statistics: stati
     }
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth().height(280.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0XFF122333)),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -77,14 +78,16 @@ fun CardPieChart(duration:Int,OnDurationChange: (Int) -> Unit, statistics: stati
                     textAlign = TextAlign.Center
                 )
                 Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
-                    DropdownField_forDurationStats(selectDuration, onOptionSelected = {duration->
-                        when(duration){
-                            "Today"-> OnDurationChange(1)
-                            "7 Days"-> OnDurationChange(2)
-                            "1 Month"-> OnDurationChange(3)
-                        }
-                        selectDuration=duration
-                    })
+                    DropdownField_forDurationStatsSelection(
+                        selectDuration,
+                        onOptionSelected = { duration ->
+                            when (duration) {
+                                "Today" -> OnDurationChange(1)
+                                "7 Days" -> OnDurationChange(2)
+                                "1 Month" -> OnDurationChange(3)
+                            }
+                            selectDuration = duration
+                        })
                 }
             }
             statistics?.let {
@@ -98,7 +101,7 @@ fun CardPieChart(duration:Int,OnDurationChange: (Int) -> Unit, statistics: stati
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownField_forDurationStats(
+fun DropdownField_forDurationStatsSelection(
     selectedOption: String,
     onOptionSelected: (String) -> Unit
 ) {
@@ -108,7 +111,7 @@ fun DropdownField_forDurationStats(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
-        modifier = Modifier.padding(12.dp)
+        modifier = Modifier.padding(10.dp)
     ) {
         TextField(
             value = selectedOption,
@@ -163,5 +166,9 @@ fun DropdownField_forDurationStats(
 @Preview
 @Composable
 fun CardPieChartPreview() {
-    CardPieChart(1,OnDurationChange = {}, statistics = statisticsResponse(10,20,30,90))
+    CardPieChart(
+        1,
+        OnDurationChange = {},
+        statistics = StatisticsResponse(isLoading = true, 10, 20, 30, 0)
+    )
 }

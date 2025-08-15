@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Start
 import androidx.compose.material3.AlertDialog
@@ -63,11 +64,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.R
+import com.itecknologi.itecktestingcompose.apiFunctions.StatisticsResponse
 import com.itecknologi.itecktestingcompose.apiFunctions.getStatsOfLast7Days
-import com.itecknologi.itecktestingcompose.apiFunctions.statisticsResponse
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
 import com.itecknologi.itecktestingcompose.functions.openAppNotificationSettings
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
@@ -85,10 +87,12 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
     val hasNewNotification =
         remember { mutableStateOf(prefs.getHasNewNotification()) }
     var duration by remember { mutableIntStateOf(0) }
-    var statsResult by remember { mutableStateOf<statisticsResponse?>(null) }
+    var statsResult by remember { mutableStateOf(StatisticsResponse(isLoading = true, 0, 0, 0, 0)) }
+    var retryCount by remember { mutableIntStateOf(0) }
     HandleDoubleBackToExit()
 
-    LaunchedEffect(key1 = duration) {
+    LaunchedEffect(key1 = duration, key2 = retryCount) {
+        delay(1000)
         statsResult = getStatsOfLast7Days(cnic = prefs.getUserCNIC(), duration)
         Log.d("statsResult", statsResult.toString())
     }
@@ -101,8 +105,6 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-
-
         Spacer(modifier = Modifier.height(40.dp))
 
         Row(
@@ -190,29 +192,82 @@ fun MenuScreen(context: Context, navController: NavHostController, prefs: Prefer
         Spacer(modifier = Modifier.height(5.dp))
 
         // Chart Section — This will now recompose on duration change
-        if (statsResult != null) {
-            CardPieChart(
-                duration,
-                OnDurationChange = { newDuration -> duration = newDuration },
-                statistics = statsResult!!
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Color.White)
-            }
-        }
+        when {
+            statsResult.errorValue == 0 && !statsResult.isLoading -> {
 
+                CardPieChart(
+                    duration,
+                    OnDurationChange = { newDuration ->
+                        duration = newDuration
+                        statsResult.isLoading = true
+                    },
+                    statistics = statsResult
+                )
+
+
+            }
+            statsResult.errorValue == 1 && !statsResult.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp)
+                        .padding(10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(12.dp)
+                    ) {
+                        Text(
+                            "No Statistics Available!",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Refresh",
+                                tint = Color.DarkGray,
+                                modifier = Modifier.clickable(
+                                    true,
+                                    onClick = {
+                                        retryCount = retryCount + 1
+                                        if (!isInternetAvailable(context)) {
+                                            Toast.makeText(
+                                                context,
+                                                "No Internet",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    })
+                            )
+                        }
+
+                    }
+
+                }
+            }
+            statsResult.errorValue == 0 || statsResult.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
+                }
+            }
+
+            else -> {}
+        }
         Spacer(modifier = Modifier.height(5.dp))
         MenuScreenCard(navController, context, hasNewNotification)
-
         BottomLogo()
-
-
     }
 }
 
