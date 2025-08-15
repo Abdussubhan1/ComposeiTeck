@@ -74,7 +74,7 @@ import kotlinx.coroutines.delay
 
 @SuppressLint("UseKtx")
 @Composable
-fun DeviceEntryScreen(
+fun NewInstallationDeviceEntry(
     context: Context,
     navController: NavHostController,
     prefs: PreferenceManager
@@ -425,7 +425,7 @@ fun CustomTextField(
 @Preview
 @Composable
 fun MainScreenPreview() {
-    DeviceEntryScreen(
+    NewInstallationDeviceEntry(
         LocalContext.current,
         rememberNavController(),
         PreferenceManager(LocalContext.current)

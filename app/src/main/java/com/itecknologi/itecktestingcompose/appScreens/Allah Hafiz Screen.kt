@@ -95,7 +95,7 @@ fun AllahHafiz(navController: NavHostController) {
 
         Button(
             onClick = {
-                navController.navigate("mainscreen") {
+                navController.navigate("New Installations Assigned Tasks Screen") {
                     popUpTo("AllahHafizScreen") {
                         inclusive = true
                     }

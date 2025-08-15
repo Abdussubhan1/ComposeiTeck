@@ -653,7 +653,7 @@ fun ValidationStatusUI(
                     when {
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.0f -> {
                             showConfirmationForKill = true
-                            cmdQueueResult=""
+                            cmdQueueResult = ""
                         }
 
                         cmdQueueResult == "Command Not in queue" && relayProgress == 0.5f -> {
@@ -962,11 +962,34 @@ fun Alert(
         confirmButton = {
             Button(
                 onClick = {
-                    navController.navigate("mainscreen") {
-                        popUpTo("testingPage") {
-                            inclusive = true
+                    when (Constants.navigateToScreen) {
+                        "Installation" -> {
+                            navController.navigate("Device Entry For New Installation") {
+                                popUpTo("testingPage") {
+                                    inclusive = true
+                                }
+                            }
                         }
+
+                        "Redo" -> {
+                            navController.navigate("Device Entry For New Installation") {
+                                popUpTo("testingPage") {
+                                    inclusive = true
+                                }
+                            }
+                        }
+
+                        "Removal" -> {
+                            navController.navigate("Device Entry For New Installation") {
+                                popUpTo("testingPage") {
+                                    inclusive = true
+                                }
+                            }
+                        }
+
+                        else -> {}
                     }
+
                     Constants.deviceID = ""
                     Constants.initialPictures = mutableStateListOf(null, null)
                     Constants.deviceLocationLat = 0.0

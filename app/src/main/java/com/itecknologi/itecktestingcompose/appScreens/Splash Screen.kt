@@ -45,6 +45,10 @@ import kotlinx.coroutines.tasks.await
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
+import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 
@@ -55,7 +59,7 @@ fun SplashScreen(
     prefs: PreferenceManager,
     context: Context
 ) {
-
+    HandleDoubleBackToExit()
     LaunchedEffect(Unit) {
 
         val remoteConfig = Firebase.remoteConfig
@@ -103,18 +107,21 @@ fun SplashScreen(
                     }
                     prefs.setUserCNIC("")
                 }
-            } else if (loginResponse.message.contains("Out",ignoreCase = true)) {
+            } else if (loginResponse.message.contains("Out", ignoreCase = true)) {
                 navController.navigate("login") {
                     popUpTo("splash") { inclusive = true }
                 }
                 prefs.setUserCNIC("")
                 Toast.makeText(context, loginResponse.message, Toast.LENGTH_SHORT).show()
             } else {
-                navController.navigate("login") {
-                    popUpTo("splash") { inclusive = true }
+                CoroutineScope(Dispatchers.Main).launch {
+                    repeat(3) {
+                        Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                        delay(3500) // wait for toast to disappear before next one
+                    }
+                    (context as? Activity)?.finish()
                 }
 
-                Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
             }
 
         } else {

@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.itecknologi.itecktestingcompose.appScreens.MenuScreen
 import com.itecknologi.itecktestingcompose.appScreens.AllahHafiz
-import com.itecknologi.itecktestingcompose.appScreens.DeviceEntryScreen
 import com.itecknologi.itecktestingcompose.appScreens.FinalPicturesScreen
 import com.itecknologi.itecktestingcompose.appScreens.LoginScreen
 import com.itecknologi.itecktestingcompose.appScreens.NotificationScreen
@@ -18,6 +17,7 @@ import com.itecknologi.itecktestingcompose.appScreens.TestingPage
 import com.itecknologi.itecktestingcompose.appScreens.initialPicTake
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.appScreens.JobAssignedNewInstallation
+import com.itecknologi.itecktestingcompose.appScreens.NewInstallationDeviceEntry
 import com.itecknologi.itecktestingcompose.appScreens.finalTicket
 
 
@@ -47,14 +47,21 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
         }
 
         composable("Menu Screen") { MenuScreen(context, navController, prefs) }
-        composable("New Installations Assigned Tasks Screen") { JobAssignedNewInstallation(
-            context,
-            navController,
-            prefs
-        )
+        composable("New Installations Assigned Tasks Screen") {
+            JobAssignedNewInstallation(
+                context,
+                navController,
+                prefs
+            )
         }
         composable("NotificationScreen") { NotificationScreen(navController, prefs) }
-        composable("mainscreen") { DeviceEntryScreen(context, navController, prefs) }
+        composable("Device Entry For New Installation") {
+            NewInstallationDeviceEntry(
+                context,
+                navController,
+                prefs
+            )
+        }
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }
         composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }

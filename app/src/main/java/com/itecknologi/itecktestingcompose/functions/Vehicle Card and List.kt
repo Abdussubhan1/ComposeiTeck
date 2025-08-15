@@ -68,7 +68,7 @@ import java.util.Locale
 @Composable
 fun VehicleListScreen(
     vehicleList: List<Data>,
-    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?) -> Unit,
+    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?,String?) -> Unit,
     navController: NavHostController,
     prefs: PreferenceManager
 
@@ -99,7 +99,8 @@ fun VehicleListScreen(
                         if (!isSame) vehicle.X else null,
                         if (!isSame) vehicle.Y else null,
                         if (!isSame) vehicle.Technical_job_assign_id else null,
-                        if (!isSame) vehicle.customer_number else null
+                        if (!isSame) vehicle.customer_number else null,
+                        if (!isSame) vehicle.type else null
                     ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
 
 

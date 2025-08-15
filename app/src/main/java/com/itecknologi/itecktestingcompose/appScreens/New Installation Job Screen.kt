@@ -336,7 +336,7 @@ fun JobAssignedNewInstallation(
                                 } else {
                                     VehicleListScreen(
                                         vehicleList = vehicle_details.dataList,
-                                        onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
+                                        onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber,navigationDecider ->
                                             enableProceed = isSelected
                                             Constants.vehicleID =
                                                 vehicleID
@@ -361,6 +361,7 @@ fun JobAssignedNewInstallation(
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
+                                            Constants.navigateToScreen = navigationDecider ?: ""
                                         }, navController,prefs
                                     )
                                 }
@@ -446,7 +447,13 @@ fun JobAssignedNewInstallation(
         // Button for Proceed
         Button(
             onClick = {
-                navController.navigate("mainscreen")
+                when(Constants.navigateToScreen){
+                    "Installation"->{navController.navigate("Device Entry For New Installation")}
+                    "Redo"->{navController.navigate("Device Entry For New Installation")}
+                    "Removal"->{navController.navigate("Device Entry For New Installation")}
+                    else -> {}
+                }
+
             },
             enabled = enableProceed,
             modifier = Modifier
