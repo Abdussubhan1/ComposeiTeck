@@ -314,7 +314,7 @@ fun TestingPage(navController: NavHostController, context: Context, prefs: Prefe
         }
 
         if (showDialogueReset) {
-            Alert(
+            AlertForDeviceChange(
                 title = "Change Of Tracker",
                 text = "Do you want to change the Tracker Device?",
                 onDismiss = { showDialogueReset = false },
@@ -932,7 +932,7 @@ fun TestingPagePreview() {
 }
 
 @Composable
-fun Alert(
+fun AlertForDeviceChange(
     title: String,
     text: String,
     onDismiss: () -> Unit,
