@@ -693,16 +693,6 @@ fun SelectedVehicle() {
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (Constants.deviceID != "") {
-                    Text(
-                        text = Constants.deviceID,
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontStyle = FontStyle.Italic
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
                 Text(text = "VRN: ${Constants.VRN}", color = Color.White, fontSize = 12.sp)
                 Text(
                     text = "Engine No: ${Constants.engineNumber}",

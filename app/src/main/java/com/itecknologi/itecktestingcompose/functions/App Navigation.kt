@@ -71,7 +71,7 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
                 prefs
             )
         }
-        composable("Pictures for Removal") {PicTakeForRemovalCase(context, navController, prefs)}
+        composable("Pictures for Removal") { PicTakeForRemovalCase(context, navController, prefs) }
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }
         composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }

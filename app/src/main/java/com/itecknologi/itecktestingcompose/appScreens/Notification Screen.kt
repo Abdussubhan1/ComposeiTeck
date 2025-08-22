@@ -97,7 +97,7 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
             ) {
                 Box(
                     modifier = Modifier
-                        .background(Color.Red, shape = CircleShape)
+                        .background(Color(0xFFEC6B56), shape = CircleShape)
                         .padding(6.dp).size(20.dp) // Optional padding inside red circle
                 ) {
                     Icon(
@@ -157,7 +157,7 @@ fun NotificationCard(item: NotificationHistoryItem) {
                         modifier = Modifier.size(30.dp),
                         alignment = Alignment.Center,
                         contentScale = ContentScale.Fit,
-                        colorFilter = ColorFilter.tint(Color.Green)
+                        colorFilter = ColorFilter.tint(Color(0xFF47B39C))
                     )
                 } else {
                     Image(
@@ -166,7 +166,7 @@ fun NotificationCard(item: NotificationHistoryItem) {
                         modifier = Modifier.size(30.dp),
                         alignment = Alignment.Center,
                         contentScale = ContentScale.Fit,
-                        colorFilter = ColorFilter.tint(Color.Red)
+                        colorFilter = ColorFilter.tint(Color(0xFFEC6B56))
                     )
                 }
 
@@ -177,7 +177,7 @@ fun NotificationCard(item: NotificationHistoryItem) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
                     text = item.title ?: "",
-                    color = if (item.title?.contains("Unassigned") == true) Color.Red else Color.Green,
+                    color = if (item.title?.contains("Unassigned") == true) Color(0xFFEC6B56) else Color(0xFF47B39C),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 14.dp)
