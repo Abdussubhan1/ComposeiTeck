@@ -180,10 +180,10 @@ fun RemovalScreen(context: Context, navController: NavHostController, prefs: Pre
         ) {
             Column {
                 CustomTextField(
-                    "1122334455",
+                    Constants.deviceID,
                     "",
                     onValueChange = { },
-                    false
+                    false, label = "Device ID"
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SelectedVehicle()
@@ -193,7 +193,7 @@ fun RemovalScreen(context: Context, navController: NavHostController, prefs: Pre
 
         // Button
         Button(
-            onClick = { navController.navigate("initialPicturesScreen") },
+            onClick = { navController.navigate("Pictures for Removal") },
             enabled = buttonEnabilityCheck in 1.00..1000.00,
             modifier = Modifier
                 .fillMaxWidth()

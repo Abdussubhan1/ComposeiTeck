@@ -40,6 +40,7 @@ object Constants {
     var technicalJobAssignedID:String=""
     var navigateToScreen:String=""
 
+
 }
 
 

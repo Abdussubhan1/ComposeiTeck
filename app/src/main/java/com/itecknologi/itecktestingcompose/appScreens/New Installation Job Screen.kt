@@ -336,7 +336,7 @@ fun JobAssignedNewInstallation(
                                 } else {
                                     VehicleListScreen(
                                         vehicleList = vehicle_details.dataList,
-                                        onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber,navigationDecider ->
+                                        onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber,navigationDecider,trackerDeviceNumber ->
                                             enableProceed = isSelected
                                             Constants.vehicleID =
                                                 vehicleID
@@ -362,6 +362,7 @@ fun JobAssignedNewInstallation(
                                             Constants.cust_Contact = customerContactNumber
                                                 ?: "" //Yeh last get log wali api mein bhejna hai
                                             Constants.navigateToScreen = navigationDecider ?: ""
+                                            Constants.deviceID=trackerDeviceNumber ?: ""
                                         }, navController,prefs
                                     )
                                 }

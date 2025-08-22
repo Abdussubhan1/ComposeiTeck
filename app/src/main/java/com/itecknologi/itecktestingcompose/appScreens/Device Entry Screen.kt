@@ -31,6 +31,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -119,8 +121,8 @@ fun NewInstallationDeviceEntry(
 
     val name = prefs.getTechnicianName()
 
-/*    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
+    /*    val hasNewNotification =
+            remember { mutableStateOf(prefs.getHasNewNotification()) }*/
 
     var devID by remember { mutableStateOf("") }
 
@@ -263,7 +265,7 @@ fun NewInstallationDeviceEntry(
                             devID,
                             "Enter Device ID",
                             onValueChange = { devID = it },
-                            true
+                            true, "Device ID"
                         )
 
                     }
@@ -273,7 +275,7 @@ fun NewInstallationDeviceEntry(
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(
-                                if ( devID.length >= 4) Color(
+                                if (devID.length >= 4) Color(
                                     0XFF39B54A
                                 ) else Color.Gray
                             ) // Green search
@@ -365,10 +367,18 @@ fun CustomTextField(
     value: String,
     placeholder: String,
     onValueChange: (String) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    label: String
 ) {
-    TextField(
+    OutlinedTextField(
         value = value,
+        label = {
+            Text(
+                label, color = Color.White, // Elegant dark blue label
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        },
         onValueChange = onValueChange,
         enabled = enabled,
         placeholder = {
@@ -382,12 +392,18 @@ fun CustomTextField(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(65.dp),
-        shape = RoundedCornerShape(50),
+            .height(65.dp)
+            .shadow(
+                elevation = 6.dp,
+                shape = RoundedCornerShape(20.dp),
+                clip = false
+            ),
+        shape = RoundedCornerShape(20.dp),
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color(0XFF000000),
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledTextColor = Color.Black
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true

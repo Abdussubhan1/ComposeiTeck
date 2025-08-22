@@ -215,25 +215,12 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
-                        CustomTextField_screen2(
-                            value = Constants.deviceID, onValueChange = {}
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF00C853)) // Green search
-                            .clickable(enabled = false) {
 
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
+                        CustomTextField(
+                            Constants.deviceID,
+                            "",
+                            onValueChange = { },
+                            false, label = "Device ID"
                         )
                     }
                 }
@@ -419,7 +406,7 @@ fun FinalPicturesScreen(navController: NavController, prefs: PreferenceManager, 
                     selectedOption = trackerInstallationLocation,
                     onOptionSelected = { selected ->
                         trackerInstallationLocation = selected
-                        isValidLocation= true
+                        isValidLocation = true
                     }
                 )
 
@@ -513,28 +500,6 @@ fun DropdownField_forDeviceInstallationLocation(
             }
         }
     }
-}
-
-
-@Composable
-fun CustomTextField_screen2(
-    value: String,
-    onValueChange: (String) -> Unit,
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        enabled = false,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp),
-        shape = RoundedCornerShape(50),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color(0XFF000000),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
-    )
 }
 
 

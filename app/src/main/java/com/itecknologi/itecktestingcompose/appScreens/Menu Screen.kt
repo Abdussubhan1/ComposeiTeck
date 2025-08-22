@@ -280,7 +280,7 @@ fun MenuScreenCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -325,7 +325,8 @@ fun MenuScreenCard(
                             }
                         }
                     },
-                    showDot = hasNewNotification, index
+                    showDot = hasNewNotification,
+                    index=index
                 )
             }
         }

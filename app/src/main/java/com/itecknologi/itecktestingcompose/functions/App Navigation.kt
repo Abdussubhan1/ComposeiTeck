@@ -18,6 +18,7 @@ import com.itecknologi.itecktestingcompose.appScreens.initialPicTake
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.appScreens.JobAssignedNewInstallation
 import com.itecknologi.itecktestingcompose.appScreens.NewInstallationDeviceEntry
+import com.itecknologi.itecktestingcompose.appScreens.PicTakeForRemovalCase
 import com.itecknologi.itecktestingcompose.appScreens.RemovalScreen
 import com.itecknologi.itecktestingcompose.appScreens.finalTicket
 
@@ -70,6 +71,7 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
                 prefs
             )
         }
+        composable("Pictures for Removal") {PicTakeForRemovalCase(context, navController, prefs)}
         composable("initialPicturesScreen") { initialPicTake(context, navController, prefs) }
         composable("testingPage") { TestingPage(navController, context, prefs) }
         composable("finalPicturesScreen") { FinalPicturesScreen(navController, prefs, context) }

@@ -3,6 +3,7 @@ package com.itecknologi.itecktestingcompose.appScreens
 import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,13 +28,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -63,17 +62,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.R
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.HandleDoubleBackToExit
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
-
 @Composable
-fun initialPicTake(context: Context, navController: NavHostController, prefs: PreferenceManager) {
-
+fun PicTakeForRemovalCase(
+    context: Context,
+    navController: NavHostController,
+    prefs: PreferenceManager
+) {
     HandleDoubleBackToExit()
     val name = prefs.getTechnicianName()
 
@@ -84,19 +85,26 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
         label = "logoutAnimation"
     )
 
-    var initiallistCompleted by remember { mutableStateOf(false) }
-    var initiallistOfImages = remember { mutableStateListOf<Bitmap?>(null, null) }
+    var listCompleted by remember { mutableStateOf(false) }
+    var removalImages = remember { mutableStateListOf<Bitmap?>(null, null, null, null) }
 
 
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicturePreview()
     ) { result ->
         if (result != null) {
-            val firstNullIndex = initiallistOfImages.indexOfFirst { it == null }
+            val firstNullIndex = removalImages.indexOfFirst { it == null }
 
             if (firstNullIndex != -1) {
-                initiallistOfImages[firstNullIndex] = result
-                Constants.initialPictures = initiallistOfImages
+                removalImages[firstNullIndex] = result
+
+                // Update initialPictures with first 2
+                Constants.initialPictures.clear()
+                Constants.initialPictures.addAll(removalImages.subList(0, 2))
+
+                // Update finalPictures with last 2
+                Constants.finalPictures.clear()
+                Constants.finalPictures.addAll(removalImages.subList(2, 4))
             }
         } else {
             Toast.makeText(context, "Capture Failed!", Toast.LENGTH_SHORT).show()
@@ -117,7 +125,8 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
-            .padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -198,7 +207,7 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 prefs.setTechnicianID(T_ID = 0)
                 Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                 navController.navigate("login") {
-                    popUpTo("initialPicturesScreen") { inclusive = true }
+                    popUpTo("Pictures for Removal") { inclusive = true }
                 }
             }
         }
@@ -217,10 +226,12 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 ) {
                     Box(modifier = Modifier.weight(1f)) {
 
-                        CustomTextField(Constants.deviceID,
+                        CustomTextField(
+                            Constants.deviceID,
                             "",
                             onValueChange = { },
-                            false, label = "Device ID" )
+                            false, label = "Device ID"
+                        )
 
                     }
 
@@ -237,7 +248,7 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (initiallistOfImages[0] == null) {
+            if (removalImages[0] == null) {
                 Text(
                     text = "Click To Take 1st Picture",
                     modifier = Modifier.padding(end = 14.dp),
@@ -257,7 +268,7 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                         }
                 )
 
-            } else if (initiallistOfImages[1] == null) {
+            } else if (removalImages[1] == null) {
                 Text(
                     text = "Click to Take 2nd Picture",
                     modifier = Modifier.padding(end = 14.dp),
@@ -275,8 +286,47 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                             cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                         }
                 )
-            } else
-                initiallistCompleted = true
+            } else if (removalImages[2] == null) {
+                Text(
+                    text = "Click to Take 3rd Picture",
+                    modifier = Modifier.padding(end = 14.dp),
+                    fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Icon(
+                    imageVector = Icons.Default.CameraEnhance,
+                    contentDescription = "Camera Icon 1",
+                    tint = Color(0XFF39B54A),
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(start = 14.dp)
+                        .clickable {
+                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                )
+            } else if (removalImages[3] == null) {
+                Text(
+                    text = "Click to Take 4th Picture",
+                    modifier = Modifier.padding(end = 14.dp),
+                    fontSize = 18.sp, textAlign = TextAlign.End, color = Color.White
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Icon(
+                    imageVector = Icons.Default.CameraEnhance,
+                    contentDescription = "Camera Icon 1",
+                    tint = Color(0XFF39B54A),
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(start = 14.dp)
+                        .clickable {
+                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                )
+            } else {
+                listCompleted = true
+
+            }
+
 
         }
 
@@ -288,8 +338,8 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
             horizontalArrangement = Arrangement.Center, // Center the content
             contentPadding = PaddingValues(horizontal = 8.dp) // No extra side padding
         ) {
-            items(initiallistOfImages.size) { index ->
-                initiallistOfImages[index]?.let { bitmap ->
+            items(removalImages.size) { index ->
+                removalImages[index]?.let { bitmap ->
                     Image(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = "Captured Images $index",
@@ -303,10 +353,10 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
                 }
             }
         }
-        if (initiallistCompleted) {
-            PicConfirm(
-                initiallistOfImages,
-                onRetakeConfirmed = { initiallistCompleted = false },
+        if (listCompleted) {
+            PicConfirm_ForRemoval(
+                removalImages,
+                onRetakeConfirmed = { listCompleted = false },
                 navController
             )
 
@@ -315,8 +365,8 @@ fun initialPicTake(context: Context, navController: NavHostController, prefs: Pr
 }
 
 @Composable
-fun PicConfirm(
-    initiallistOfImages: SnapshotStateList<Bitmap?>,
+fun PicConfirm_ForRemoval(
+    listOfImages: SnapshotStateList<Bitmap?>,
     onRetakeConfirmed: () -> Unit,
     navController: NavHostController
 ) {
@@ -336,8 +386,8 @@ fun PicConfirm(
         ) {
             Button(
                 onClick = {
-                    initiallistOfImages.clear()
-                    initiallistOfImages.addAll(listOf(null, null))
+                    listOfImages.clear()
+                    listOfImages.addAll(listOf(null, null, null, null))
                     onRetakeConfirmed()
                 },
                 colors = ButtonDefaults.buttonColors(Color(0xFF122333)),
@@ -348,7 +398,7 @@ fun PicConfirm(
                     .height(48.dp)
             ) {
                 Text(
-                    text = "Retake Both Pictures",
+                    text = "Retake all Pictures",
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -357,8 +407,8 @@ fun PicConfirm(
             }
             Button(
                 onClick = {
-                    navController.navigate("testingPage") {
-                        popUpTo("initialPicturesScreen") {inclusive=true}
+                    navController.navigate("AllahHafizScreen") {
+                        popUpTo("Pictures for Removal") { inclusive = true }
                     }
                 },
                 elevation = ButtonDefaults.buttonElevation(25.dp, 10.dp),
@@ -370,7 +420,7 @@ fun PicConfirm(
                 border = BorderStroke(1.dp, Color(0XFF39B54A))
             ) {
                 Text(
-                    text = "Proceed",
+                    text = "Removal Complete",
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -381,18 +431,13 @@ fun PicConfirm(
     }
 }
 
+
 @Preview
 @Composable
-fun initialPicTakePreview() {
-    initialPicTake(LocalContext.current, rememberNavController(), PreferenceManager(LocalContext.current))
-}
-
-@Preview(showBackground = false)
-@Composable
-fun PicConfirmPreview() {
-    PicConfirm(
-        remember { mutableStateListOf(null, null) },
-        onRetakeConfirmed = {},
-        rememberNavController()
+fun removalPicsPreview() {
+    PicTakeForRemovalCase(
+        LocalContext.current,
+        rememberNavController(),
+        PreferenceManager(LocalContext.current)
     )
 }

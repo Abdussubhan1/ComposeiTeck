@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
@@ -68,7 +69,7 @@ import java.util.Locale
 @Composable
 fun VehicleListScreen(
     vehicleList: List<Data>,
-    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?,String?) -> Unit,
+    onConfirmSelection: (Boolean, String?, String?, String?, String?, String?, String?, String?, Double?, Double?, String?, String?, String?,String?) -> Unit,
     navController: NavHostController,
     prefs: PreferenceManager
 
@@ -100,7 +101,8 @@ fun VehicleListScreen(
                         if (!isSame) vehicle.Y else null,
                         if (!isSame) vehicle.Technical_job_assign_id else null,
                         if (!isSame) vehicle.customer_number else null,
-                        if (!isSame) vehicle.type else null
+                        if (!isSame) vehicle.type else null,
+                        if (!isSame) vehicle.DeviceId else null //yaha se device number uthana hai
                     ) //Passes All the vehicle.Details for the card if selected, or null if deselected.
 
 
@@ -135,7 +137,7 @@ fun VehicleCard(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 12.dp)
             .fillMaxWidth()
-            .clickable(enabled = vehicle.status_id  == 5 || vehicle.status_id == 3) {
+            .clickable(enabled = vehicle.status_id == 5 || vehicle.status_id == 3) {
                 cardSelection()
             }, // Click sirf tab ho jab status 1 nhi hai
         shape = RoundedCornerShape(16.dp),
@@ -649,7 +651,7 @@ fun SelectedVehicle() {
     val context = LocalContext.current
     Card(
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(horizontal = 0.dp, vertical = 8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color(0xFF90A4AE)),
@@ -688,8 +690,19 @@ fun SelectedVehicle() {
 
             // Engine and Chassis
             Column(
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                if (Constants.deviceID != "") {
+                    Text(
+                        text = Constants.deviceID,
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontStyle = FontStyle.Italic
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 Text(text = "VRN: ${Constants.VRN}", color = Color.White, fontSize = 12.sp)
                 Text(
                     text = "Engine No: ${Constants.engineNumber}",
@@ -773,7 +786,8 @@ fun VehicleCardInList() {
             customer_number = "",
             comments = "",
             status_id = 1,
-            poc_number_id = ""
+            poc_number_id = "",
+            DeviceId = ""
         ),
         isSelected = false,
         cardSelection = {},
