@@ -35,3 +35,30 @@ fun checkLocationWithinRange(): Double {
     return distanceInMeters
 
 }
+
+fun checkLocationWithinRangeForRemoval(): Double {
+    val mobLat = Constants.mobileLocationLat
+    val mobLong = Constants.mobileLocationLong
+    val customerLat = Constants.X
+    val customerLong = Constants.Y
+    Log.d(TAG, "checkLocationWithinRange: customer($customerLat, $customerLong), mobile($mobLat, $mobLong)")
+
+    val earthRadius = 6371000.0 // Radius of Earth in meters
+
+
+    val latDistance = Math.toRadians(mobLat - customerLat)
+    val lonDistance = Math.toRadians(mobLong - customerLong)
+    Log.d(TAG, "checkLocationWithinRange: $latDistance $lonDistance")
+
+    val a = sin(latDistance / 2).pow(2.0) +
+            cos(Math.toRadians(customerLat)) * cos(Math.toRadians(mobLat)) *
+            sin(lonDistance / 2).pow(2.0)
+
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    val distanceInMeters = earthRadius * c
+    Log.d(TAG, "checkLocationWithinRange: $distanceInMeters")
+
+    return distanceInMeters
+
+}

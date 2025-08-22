@@ -1,8 +1,6 @@
 package com.itecknologi.itecktestingcompose.appScreens
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.location.LocationManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -20,129 +18,57 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.itecknologi.itecktestingcompose.apiFunctions.DevValidationResult
-import com.itecknologi.itecktestingcompose.apiFunctions.validateDev
-import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.R
-import kotlinx.coroutines.launch
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
+import com.itecknologi.itecktestingcompose.constants.Constants
 import com.itecknologi.itecktestingcompose.functions.BottomLogo
 import com.itecknologi.itecktestingcompose.functions.SelectedVehicle
-import com.itecknologi.itecktestingcompose.functions.isInternetAvailable
+import com.itecknologi.itecktestingcompose.functions.checkLocationWithinRangeForRemoval
+import com.itecknologi.itecktestingcompose.functions.getLocation
 import com.itecknologi.itecktestingcompose.functions.resetAllData
 import kotlinx.coroutines.delay
 
-
-@SuppressLint("UseKtx")
 @Composable
-fun NewInstallationDeviceEntry(
-    context: Context,
-    navController: NavHostController,
-    prefs: PreferenceManager
-) {
-    var showDialog by remember { mutableStateOf(false) }
-
-    BackHandler {
-        if (Constants.vehicleID != "") {
-            showDialog = true
-        } else {
-            navController.popBackStack()
-        }
-    }
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Confirm Submission") },
-            text = { Text("Are you sure you want to go back?") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showDialog = false
-                    Constants.vehicleID = ""
-                    Constants.deviceID = ""
-                    navController.navigate("New Installations Assigned Tasks Screen") {
-                        popUpTo("mainscreen") {
-                            inclusive = true
-                        }
-                    }
-                }) {
-                    Text("Go Back")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showDialog = false
-                }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
-
+fun RemovalScreen(context: Context, navController: NavHostController, prefs: PreferenceManager) {
+    getLocation()
+    val buttonEnabilityCheck=checkLocationWithinRangeForRemoval()
     val name = prefs.getTechnicianName()
 
-/*    val hasNewNotification =
-        remember { mutableStateOf(prefs.getHasNewNotification()) }*/
+    BackHandler {
 
-    var devID by remember { mutableStateOf("") }
+        navController.popBackStack()
 
-
-    var validationResult by remember {
-        mutableStateOf(
-            DevValidationResult(
-                ifDeviceExist = false,
-                isLoading = false
-            )
-        )
     }
-
-    val keyboard = LocalSoftwareKeyboardController.current
-    val couroutineScope = rememberCoroutineScope()
-    var testingStart by remember { mutableStateOf(false) }
-
-    val locationManager =
-        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    val isLocationEnabled =
-        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
 
     Column(
@@ -150,7 +76,6 @@ fun NewInstallationDeviceEntry(
             .fillMaxSize()
             .background(Color(0xFF122333)) // Dark blue background
             .padding(horizontal = 16.dp),
-//            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -240,14 +165,13 @@ fun NewInstallationDeviceEntry(
                     prefs.setTechnicianID(T_ID = 0)
                     Toast.makeText(context, "Logout Success", Toast.LENGTH_SHORT).show()
                     navController.navigate("login") {
-                        popUpTo("Device Entry For New Installation") { inclusive = true }
+                        popUpTo("Removal Screen") { inclusive = true }
                     }
                 }
             }
 
         }
         Spacer(modifier = Modifier.height(30.dp))
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -255,86 +179,22 @@ fun NewInstallationDeviceEntry(
                 .padding(16.dp)
         ) {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        CustomTextField(
-                            devID,
-                            "Enter Device ID",
-                            onValueChange = { devID = it },
-                            true
-                        )
-
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if ( devID.length >= 4) Color(
-                                    0XFF39B54A
-                                ) else Color.Gray
-                            ) // Green search
-                            .clickable(enabled = (devID.length >= 4)) {
-                                keyboard?.hide()
-                                validationResult = DevValidationResult(
-                                    ifDeviceExist = false,
-                                    isLoading = true
-                                )
-                                if (isLocationEnabled && isInternetAvailable(context)) {
-                                    couroutineScope.launch {
-
-                                        validationResult = validateDev(devID)
-
-                                        if (validationResult.ifDeviceExist) {
-                                            testingStart = true
-                                            Constants.deviceID = devID
-
-                                            Toast.makeText(
-                                                context,
-                                                "Device ID is valid",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
-                                            testingStart = false
-                                            Toast.makeText(
-                                                context,
-                                                "Device Not found in Inventory",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-                                } else
-                                    Toast.makeText(
-                                        context,
-                                        "No Network or Location",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
-                        )
-                    }
-                }
+                CustomTextField(
+                    "1122334455",
+                    "",
+                    onValueChange = { },
+                    false
+                )
                 Spacer(modifier = Modifier.height(12.dp))
                 SelectedVehicle()
             }
         }
-
         Spacer(modifier = Modifier.height(24.dp))
 
         // Button
         Button(
             onClick = { navController.navigate("initialPicturesScreen") },
-            enabled = testingStart,
+            enabled = buttonEnabilityCheck in 1.00..1000.00,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -348,60 +208,23 @@ fun NewInstallationDeviceEntry(
             contentPadding = PaddingValues(0.dp) // Ensures same text alignment as Box
         ) {
             Text(
-                text = "Start Installation",
+                text = "Start Removal",
                 fontWeight = FontWeight.SemiBold
             )
         }
         Spacer(modifier = Modifier.weight(1f))
 
         BottomLogo()
-
-
     }
-}
 
-@Composable
-fun CustomTextField(
-    value: String,
-    placeholder: String,
-    onValueChange: (String) -> Unit,
-    enabled: Boolean
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        enabled = enabled,
-        placeholder = {
-            Text(
-                placeholder,
-                color = Color.DarkGray,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.fillMaxWidth()
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp),
-        shape = RoundedCornerShape(50),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color(0XFF000000),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true
-    )
 }
-
 
 @Preview
 @Composable
-fun MainScreenPreview() {
-    NewInstallationDeviceEntry(
+fun RemovalPreview() {
+    RemovalScreen(
         LocalContext.current,
         rememberNavController(),
         PreferenceManager(LocalContext.current)
     )
 }
-

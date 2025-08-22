@@ -449,10 +449,9 @@ fun VehicleCard(
                 text = { Text("Are you sure you want to Hold this Task?") },
                 confirmButton = {
                     TextButton(onClick = {
-                        /*onStatusChange(TaskStatus.HELD)*/
                         holdReasonDialog = true
                         holdAlertDialog = false
-                        //Toast.makeText(context, "Task Put on Hold", Toast.LENGTH_SHORT).show()
+
                     }) {
                         Text("Hold")
                     }

@@ -18,6 +18,7 @@ import com.itecknologi.itecktestingcompose.appScreens.initialPicTake
 import com.itecknologi.itecktestingcompose.appPrefs.PreferenceManager
 import com.itecknologi.itecktestingcompose.appScreens.JobAssignedNewInstallation
 import com.itecknologi.itecktestingcompose.appScreens.NewInstallationDeviceEntry
+import com.itecknologi.itecktestingcompose.appScreens.RemovalScreen
 import com.itecknologi.itecktestingcompose.appScreens.finalTicket
 
 
@@ -57,6 +58,13 @@ fun AppNavigation(context: Context, prefs: PreferenceManager) {
         composable("NotificationScreen") { NotificationScreen(navController, prefs) }
         composable("Device Entry For New Installation") {
             NewInstallationDeviceEntry(
+                context,
+                navController,
+                prefs
+            )
+        }
+        composable("Removal Screen") {
+            RemovalScreen(
                 context,
                 navController,
                 prefs

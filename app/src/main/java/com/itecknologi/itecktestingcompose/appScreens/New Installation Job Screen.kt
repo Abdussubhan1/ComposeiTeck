@@ -450,7 +450,7 @@ fun JobAssignedNewInstallation(
                 when(Constants.navigateToScreen){
                     "Installation"->{navController.navigate("Device Entry For New Installation")}
                     "Redo"->{navController.navigate("Device Entry For New Installation")}
-                    "Removal"->{navController.navigate("Device Entry For New Installation")}
+                    "Removal"->{navController.navigate("Removal Screen")}
                     else -> {}
                 }
 
