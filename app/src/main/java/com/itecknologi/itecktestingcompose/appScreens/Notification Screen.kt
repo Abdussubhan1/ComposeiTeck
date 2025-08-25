@@ -80,25 +80,25 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 4.dp)
         ) {
             // Centered text
             Text(
                 text = "Notifications",
                 color = Color.White,
-                fontSize = 28.sp,
+                fontSize = 24.sp,
                 textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.Center)
             )
 
             // Icon at the end (right)
             IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .background(Color(0xFFEC6B56), shape = CircleShape)
-                        .padding(6.dp).size(20.dp) // Optional padding inside red circle
+                        .size(22.dp) // Optional padding inside red circle
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -108,8 +108,12 @@ fun NotificationScreen(navController: NavHostController, prefs: PreferenceManage
                 }
             }
         }
-
-/*        Spacer(modifier = Modifier.height(8.dp))*/
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = Color.White,
+            thickness = 1.25.dp
+        )
 
         if (isLoading) {
             Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
