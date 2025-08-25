@@ -2,6 +2,7 @@ package com.itecknologi.itecktestingcompose.appScreens
 
 
 import android.content.Context
+import android.location.LocationManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -73,10 +74,14 @@ fun JobAssignedNewInstallation(
     navController: NavHostController,
     prefs: PreferenceManager
 ) {
+    val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled =
+        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
     val name = prefs.getTechnicianName()
 
-    /*    val hasNewNotification =
-            remember { mutableStateOf(prefs.getHasNewNotification()) }*/
 
     var isLoggingOut by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
@@ -96,7 +101,7 @@ fun JobAssignedNewInstallation(
 
 
     LaunchedEffect(Unit) {
-        if (isInternetAvailable(context)) {
+        if (isInternetAvailable(context) && isLocationEnabled) {
             while (true) {
                 response = getVehicleDetails(
                     T_ID = prefs.getTechnicianID().toString(),
@@ -110,7 +115,7 @@ fun JobAssignedNewInstallation(
                 delay(2000)
             }
         }else
-            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please Turn On Internet/Location", Toast.LENGTH_SHORT).show()
 
     }
     BackHandler { navController.navigate("Menu Screen") }
@@ -153,31 +158,6 @@ fun JobAssignedNewInstallation(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                /*Box(
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Notifications,
-                        contentDescription = "Tips",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clickable {
-                                navController.navigate("NotificationScreen")
-                                prefs.setHasNewNotification(value = false)
-                                hasNewNotification.value = false
-                            }
-                    )
-
-                    if (hasNewNotification.value) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp) // Small dot
-                                .background(Color(0xFFFFEB3B), shape = CircleShape)
-                        )
-                    }
-                }*/
-                Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     contentAlignment = Alignment.TopEnd
                 ) {
@@ -260,7 +240,7 @@ fun JobAssignedNewInstallation(
 
                         // Simulate network call
                         coroutineScope.launch {
-                            if (isInternetAvailable(context)) {
+                            if (isInternetAvailable(context) && isLocationEnabled) {
                                 response = getVehicleDetails(
                                     T_ID = prefs.getTechnicianID().toString(),
                                     app_login_id = prefs.getAppLoginID()
@@ -271,7 +251,7 @@ fun JobAssignedNewInstallation(
                                 isRefreshing = false
                                 Toast.makeText(
                                     context,
-                                    "No Internet Connection",
+                                    "Please Turn On Internet/Location",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -371,75 +351,7 @@ fun JobAssignedNewInstallation(
 
                     }, swipeEnabled = true, refreshTriggerDistance = 80.dp
                 )
-                /*
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.80f)
-                                        .background(Color(0xFF122333), shape = RoundedCornerShape(24.dp))
-                                        .padding(8.dp)
-                                ) {
-                                    if (!response.success) {
-                                        Column(
-                                            modifier = Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text("Loading..", color = Color.White, fontSize = 18.sp)
-                                            Spacer(modifier = Modifier.height(18.dp))
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.size(32.dp),
-                                                color = Color(0XFF39B54A)
-                                            )
-                                        }
 
-                                    } else {
-                                        if (vehicle_details.dataList.isEmpty()) {
-                                            Column(
-                                                modifier = Modifier.fillMaxSize(),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Text(
-                                                    "No Pending Tasks",
-                                                    color = Color.White,
-                                                    fontSize = 18.sp,
-                                                )
-                                            }
-                                        } else {
-                                            VehicleListScreen(
-                                                vehicleList = vehicle_details.dataList,
-                                                onConfirmSelection = { isSelected, vehicleID, vehicleEngine, vehicleChassis, vehicleMake, vehicleModel, assignedDate, vehicleVRN, xcordinate, ycordinate, jobAssignedID, customerContactNumber ->
-                                                    enableProceed = isSelected
-                                                    Constants.vehicleID =
-                                                        vehicleID ?: "" //Yeh last get log wali api mein bhejna hai
-                                                    Constants.engineNumber = vehicleEngine
-                                                        ?: "" //Saving for selected card in device entry screen
-                                                    Constants.chassisNumber = vehicleChassis
-                                                        ?: "" //Saving for selected card in device entry screen
-                                                    Constants.make = vehicleMake
-                                                        ?: "" //Saving for selected card in device entry screen
-                                                    Constants.model = vehicleModel
-                                                        ?: "" //Saving for selected card in device entry screen
-                                                    Constants.JobAssigneddate = assignedDate
-                                                        ?: "" //Saving for selected card in device entry screen
-                                                    Constants.VRN = vehicleVRN
-                                                        ?: "" //Saving for selected card in device entry screen
-                                                    Constants.X = xcordinate
-                                                        ?: 0.0 //Saving for selected card in device entry screen
-                                                    Constants.Y = ycordinate
-                                                        ?: 0.0 //Saving for selected card in device entry screen
-                                                    Constants.technicalJobAssignedID = jobAssignedID
-                                                        ?: "" //Yeh last get log wali api mein bhejna hai
-                                                    Constants.cust_Contact = customerContactNumber
-                                                        ?: "" //Yeh last get log wali api mein bhejna hai
-                                                }
-                                            )
-                                        }
-
-                                    }
-
-                                }*/
             }
 
 
@@ -456,7 +368,7 @@ fun JobAssignedNewInstallation(
                 }
 
             },
-            enabled = enableProceed,
+            enabled = enableProceed && isLocationEnabled && isInternetAvailable(context),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -474,10 +386,6 @@ fun JobAssignedNewInstallation(
                 fontWeight = FontWeight.SemiBold
             )
         }
-
-
-
-
         BottomLogo()
     }
 }

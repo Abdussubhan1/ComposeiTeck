@@ -183,7 +183,7 @@ fun RemovalScreen(context: Context, navController: NavHostController, prefs: Pre
                     Constants.deviceID,
                     "",
                     onValueChange = { },
-                    false, label = "Device ID"
+                    false, label = ""
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SelectedVehicle()
@@ -194,7 +194,7 @@ fun RemovalScreen(context: Context, navController: NavHostController, prefs: Pre
         // Button
         Button(
             onClick = { navController.navigate("Pictures for Removal") },
-            enabled = buttonEnabilityCheck in 1.00..1000.00,
+            enabled = buttonEnabilityCheck in 1.00..2000.00, //Button will only be enabled if customer location and technician mobile location is within 2km range
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
